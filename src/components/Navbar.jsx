@@ -96,7 +96,7 @@ const Navbar = ({ setValue }) => {
 
           <div className=" flex flex-row flex-wrap w-100 justify-between items-center" >
 
-            <button className="bg-red-500 px-2  ml-2 text-white rounded-sm" onClick={handleBack}>X</button>
+            <button className="bg-red-500 px-2.5  ml-2 text-white rounded-sm" onClick={handleBack}>X</button>
 
 
             <div className="flex">
