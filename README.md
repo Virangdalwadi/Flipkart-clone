@@ -18,4 +18,3 @@ If you are developing a production application, we recommend using TypeScript wi
 =======
 # Flipkart-clone
 A full-stack, responsive e-commerce web application built with React.js and Node.js/Express, featuring user authentication, product search, and integrated Stripe payments.
->>>>>>> 0937ae705b95ff8af757ffbce3d239a9e174f661
