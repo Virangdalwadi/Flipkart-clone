@@ -6,8 +6,6 @@ import Navbar from "../components/Navbar";
 const Home = () => {
 
   const [value, setValue] = useState('');
-
-
   return (
     <>
       <Navbar setValue={setValue} />
