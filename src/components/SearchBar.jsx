@@ -1,33 +1,44 @@
-import React, { useState } from 'react'
+import React from 'react'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
 
-const SearchBar = ({ onSubmitSuccess }) => {
-
-  const [inputValue, setInputValue] = useState('');
+const SearchBar = ({ value, onChange, onSubmitSuccess, onClear }) => {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    onSubmitSuccess(inputValue);
+    onSubmitSuccess(value);
   }
 
   return (
-    <div>
-      <div className="flex h-10 justify-center">
-        <div className="flex items-center w-200 border-2 border-blue-500 p-1 rounded-xl">
-          <span className="mr-1 ">
-            {/* Fixed: Use the imported icon object directly */}
-            {/* <FontAwesomeIcon icon={faMagnifyingGlass} size="xl" /> */}
-          </span>
-          <form onSubmit={handleSubmit}>
-            <input
-              type="search"
-              value={inputValue}
-              className='flex items-center w-195 outline-none'
-              onChange={(e) => setInputValue(e.target.value)}
-              placeholder='Search for Products, Brands and More' />
-          </form>
+    <>
+      <div className='flex items-center'>
+        <div className="flex h-10 justify-center items-center">
+          <div className="flex items-center w-200 border-2 border-blue-500 p-1 rounded-xl">
+            <span className="mr-1 ">
+              <FontAwesomeIcon icon={faMagnifyingGlass} size="xl" className="stroke-[0.1px] stroke-current" />
+            </span>
+            <form className="flex-1" onSubmit={handleSubmit}>
+              <input
+                type="text"
+                value={value}
+                className='flex items-center w-full outline-none'
+                onChange={(e) => onChange(e.target.value)}
+                placeholder='Search for Products, Brands and More' />
+            </form>
+            {value.trim() && (
+              <button
+                type="button"
+                className="px-2 text-xl font-bold leading-none"
+                onClick={onClear}
+                aria-label="Clear search"
+              >
+                X
+              </button>
+            )}
+          </div>
         </div>
       </div>
-    </div >
+    </ >
   )
 }
 

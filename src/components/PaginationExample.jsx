@@ -1,211 +1,204 @@
-// import React, { useState } from 'react';
+// import { useState, useEffect } from "react";
 
-// // 1. Mock Dataset
-// const MOCK_DATA = [
-//   { id: 1, name: "Alpha", status: "Active" },
-//   { id: 2, name: "Beta", status: "Pending" },
-//   { id: 3, name: "Gamma", status: "Completed" },
-//   { id: 4, name: "Delta", status: "Active" },
-//   { id: 5, name: "Epsilon", status: "Pending" },
-//   { id: 6, name: "Zeta", status: "Completed" },
-//   { id: 7, name: "Eta", status: "Active" },
-//   { id: 8, name: "Theta", status: "Pending" },
-// ];
-
-// export default function PaginationExample() {
-//   // 2. Pagination States
+// const PaginationExample = () => {
+//   const [data, setData] = useState([]);
 //   const [currentPage, setCurrentPage] = useState(1);
-//   const itemsPerPage = 3;
+//   const [loading, setLoading] = useState(true);
 
-//   // 3. Mathematical Calculations
-//   const totalPages = Math.ceil(MOCK_DATA.length / itemsPerPage);
+//   const itemsPerPage = 40;
+
+//   // 1. Fetch your 200 items from the API
+//   useEffect(() => {
+//     fetch("https://dummyjson.com/products?limit=200")
+//       .then((response) => response.json())
+//       .then((apiData) => {
+//         // FIX: Extract the "products" array from the API response object
+//         const productsArray = apiData.products || [];
+//         setData(productsArray.slice(0, 200));
+//         setLoading(false);
+//       })
+//       .catch((error) => {
+//         console.error("Error fetching data:", error);
+//         setLoading(false);
+//       });
+//   }, []);
+
+//   // 2. Calculate total number of pages
+//   const totalPages = Math.ceil(data.length / itemsPerPage);
+
+//   // 3. Calculate indices for slicing the data array
 //   const indexOfLastItem = currentPage * itemsPerPage;
 //   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
 
-//   // Extracting only the current page's slice of data
-//   const currentItems = MOCK_DATA.slice(indexOfFirstItem, indexOfLastItem);
+//   // 4. Slice the array to get only the items for the current page
+//   const currentItems = data.slice(indexOfFirstItem, indexOfLastItem);
 
-//   // 4. Navigation Handlers
-//   const handlePageChange = (pageNumber) => {
+//   // Navigation handlers
+//   const goToNextPage = () => {
+//     setCurrentPage((prev) => Math.min(prev + 1, totalPages));
+//   };
+
+//   const goToPreviousPage = () => {
+//     setCurrentPage((prev) => Math.max(prev - 1, 1));
+//   };
+
+//   const handlePageClick = (pageNumber) => {
 //     setCurrentPage(pageNumber);
 //   };
 
-//   // Helper function to style statuses conditionally
-//   const getStatusClass = (status) => {
-//     switch (status) {
-//       case 'Active': return 'bg-green-100 text-green-800';
-//       case 'Pending': return 'bg-yellow-100 text-yellow-800';
-//       case 'Completed': return 'bg-blue-100 text-blue-800';
-//       default: return 'bg-gray-100 text-gray-800';
-//     }
-//   };
+//   // Generate page numbers
+//   const pageNumbers = [];
+//   for (let i = 1; i <= totalPages; i++) {
+//     pageNumbers.push(i);
+//   }
+
+//   if (loading) return <p>Loading data...</p>;
 
 //   return (
-//     <div className="max-w-xl mx-auto my-8 p-6 bg-white rounded-xl shadow-md border border-gray-100 font-sans">
-//       <h2 className="text-2xl font-bold text-gray-800 mb-6 tracking-tight">Paginated Item List</h2>
+//     <div style={{ padding: "20px", fontFamily: "sans-serif" }}>
+//       <h2>Paginated Items (Total: {data.length})</h2>
 
-//       {/* Data Presentation */}
-//       <ul className="space-y-3 divide-y divide-gray-100">
+//       {/* Render the sliced data for the current page */}
+//       <ul style={{ listStyleType: "none", padding: 0 }}>
 //         {currentItems.map((item) => (
-//           <li key={item.id} className="flex justify-between items-center pt-3 first:pt-0">
-//             <strong className="text-gray-700 font-medium">{item.name}</strong>
-//             <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${getStatusClass(item.status)}`}>
-//               {item.status}
-//             </span>
+//           <li
+//             key={item.id}
+//             style={{ padding: "10px", borderBottom: "1px solid #ccc" }}
+//           >
+//             <strong>{item.id}.</strong> {item.title} - ${item.price}
 //           </li>
 //         ))}
 //       </ul>
 
-//       {/* Pagination Element UI Controls */}
-//       <div className="mt-8 flex justify-center items-center gap-2">
+//       {/* Pagination Controls */}
+//       <div style={{ marginTop: "20px", display: "flex", gap: "5px", alignItems: "center" }}>
 //         <button
-//           onClick={() => handlePageChange(currentPage - 1)}
+//           onClick={goToPreviousPage}
 //           disabled={currentPage === 1}
-//           className="px-3 py-1.5 rounded-lg border border-gray-300 text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition duration-150 ease-in-out"
+//           style={{ padding: "5px 10px", cursor: "pointer" }}
 //         >
-//           Prev
+//           Previous
 //         </button>
 
-//         {Array.from({ length: totalPages }, (_, index) => {
-//           const pageNum = index + 1;
-//           const isActive = currentPage === pageNum;
-//           return (
-//             <button
-//               key={pageNum}
-//               onClick={() => handlePageChange(pageNum)}
-//               className={`px-3.5 py-1.5 rounded-lg text-sm font-medium transition duration-150 ease-in-out ${isActive
-//                 ? 'bg-blue-600 text-white shadow-sm border border-blue-600'
-//                 : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
-//                 }`}
-//             >
-//               {pageNum}
-//             </button>
-//           );
-//         })}
+//         {pageNumbers.map((number) => (
+//           <button
+//             key={number}
+//             onClick={() => handlePageClick(number)}
+//             style={{
+//               backgroundColor: currentPage === number ? "#007bff" : "#fff",
+//               color: currentPage === number ? "#fff" : "#000",
+//               border: "1px solid #ccc",
+//               padding: "5px 10px",
+//               cursor: "pointer",
+//               borderRadius: "3px"
+//             }}
+//           >
+//             {number}
+//           </button>
+//         ))}
 
 //         <button
-//           onClick={() => handlePageChange(currentPage + 1)}
-//           disabled={currentPage === totalPages}
-//           className="px-3 py-1.5 rounded-lg border border-gray-300 text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition duration-150 ease-in-out"
+//           onClick={goToNextPage}
+//           disabled={currentPage === totalPages || totalPages === 0}
+//           style={{ padding: "5px 10px", cursor: "pointer" }}
 //         >
 //           Next
 //         </button>
 //       </div>
+
+//       <p style={{ marginTop: "10px", fontSize: "14px", color: "#666" }}>
+//         Page {currentPage} of {totalPages || 1}
+//       </p>
 //     </div>
 //   );
-// }
+// };
 
+// export default PaginationExample;
 
-import React, { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from 'react';
 
 export default function PaginationExample() {
-  const [data, setData] = useState([]);
-  const [currentPage, setCurrentPage] = useState(1);
+  const [items, setItems] = useState([]);
+  const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
 
-  const itemsPerPage = 10;
-  const totalItems = 200;
-  const totalPages = Math.ceil(totalItems / itemsPerPage);
+  // Ref attached to the hidden "sentinel" div at the bottom of the list
+  const observerTarget = useRef(null);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      try {
-        const response = await fetch(
-          `https://typicode.com${currentPage}&_limit=${itemsPerPage}`
-        );
-        const result = await response.json();
-        setData(result);
-      } catch (error) {
-        console.error("Error fetching data", error);
-      } finally {
-        setLoading(false);
+  // 1. Mock API fetch function (Replace with your actual fetch/axios call)
+  const fetchMoreItems = useCallback(async (pageNum) => {
+    if (loading || !hasMore) return;
+
+    setLoading(true);
+    try {
+      // Example API call simulation
+      // const response = await fetch(`https://typicode.com${pageNum}&_limit=10`);
+      // const response = await fetch(`https://dummyjson.com/products${pageNum}&_limit=10`);
+      const data = await response.json();
+
+      if (data.length === 0) {
+        setHasMore(false); // Stop observing if there is no more data
+      } else {
+        setItems((prevItems) => [...prevItems, ...data]);
       }
-    };
+    } catch (error) {
+      console.error("Error fetching items:", error);
+    } finally {
+      setLoading(false);
+    }
+  }, [loading, hasMore]);
 
-    fetchData();
-  }, [currentPage]);
+  // 2. Fetch data whenever the page number changes
+  useEffect(() => {
+    fetchMoreItems(page);
+  }, [page]);
+
+  // 3. Setup the Intersection Observer
+  useEffect(() => {
+    const target = observerTarget.current;
+    if (!target) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        // If the loader div enters the screen and we have more data, load next page
+        if (entries[0].isIntersecting && hasMore && !loading) {
+          setPage((prevPage) => prevPage + 1);
+        }
+      },
+      { threshold: 1.0 } // 100% of the element must be visible
+    );
+
+    observer.observe(target);
+
+    // Clean up the observer on component unmount
+    return () => {
+      if (target) observer.unobserve(target);
+    };
+  }, [hasMore, loading]);
 
   return (
-    <div className="max-w-4xl mx-auto p-6 bg-gray-50 min-h-screen">
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-        <h2 className="text-2xl font-bold text-gray-800 mb-6">
-          API Pagination Example <span className="text-sm font-normal text-gray-500">(Total: {totalItems})</span>
-        </h2>
+    <div style={{ maxWidth: '500px', margin: '0 auto', padding: '20px' }}>
+      <h1>Infinite Scroll Items</h1>
 
-        {/* Data List */}
-        {loading ? (
-          <div className="flex justify-center items-center h-64">
-            <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-indigo-600"></div>
-          </div>
-        ) : (
-          <ul className="divide-y divide-gray-100 min-h-[400px]">
-            {data.map((item) => (
-              <li key={item.id} className="py-3.5 hover:bg-gray-50 transition-colors px-2 rounded-lg">
-                <span className="inline-flex items-center justify-center bg-indigo-50 text-indigo-700 font-semibold text-sm rounded-md px-2 py-1 mr-3 w-8">
-                  {item.id}
-                </span>
-                <span className="text-gray-700 capitalize text-sm sm:text-base">{item.title}</span>
-              </li>
-            ))}
-          </ul>
-        )}
+      {/* Render your list */}
+      <ul style={{ listStyle: 'none', padding: 0 }}>
+        {items.map((item) => (
+          <li
+            key={item.id}
+            style={{ padding: '15px', border: '1px solid #ddd', margin: '10px 0', borderRadius: '5px' }}
+          >
+            <h3>{item.title}</h3>
+          </li>
+        ))}
+      </ul>
 
-        {/* Tailwind Pagination Control Bar */}
-        <div className="flex items-center justify-between border-t border-gray-200 px-4 py-4 mt-6 sm:px-6">
-          <div className="flex flex-1 justify-between sm:hidden">
-            <button
-              onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-              disabled={currentPage === 1}
-              className="relative inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              Previous
-            </button>
-            <button
-              onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
-              disabled={currentPage === totalPages}
-              className="relative ml-3 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              Next
-            </button>
-          </div>
-
-          <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
-            <div>
-              <p className="text-sm text-gray-700">
-                Showing <span className="font-medium">{(currentPage - 1) * itemsPerPage + 1}</span> to{" "}
-                <span className="font-medium">{Math.min(currentPage * itemsPerPage, totalItems)}</span> of{" "}
-                <span className="font-medium">{totalItems}</span> results
-              </p>
-            </div>
-
-            <div>
-              <nav className="isolate inline-flex -space-x-px rounded-md shadow-xs" aria-label="Pagination">
-                <button
-                  onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-                  disabled={currentPage === 1}
-                  className="relative inline-flex items-center rounded-l-md px-3 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 disabled:opacity-40 disabled:cursor-not-allowed"
-                >
-                  <span className="text-sm font-medium text-gray-700">Prev</span>
-                </button>
-
-                <span className="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 bg-indigo-50/50">
-                  Page {currentPage} of {totalPages}
-                </span>
-
-                <button
-                  onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
-                  disabled={currentPage === totalPages}
-                  className="relative inline-flex items-center rounded-r-md px-3 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 disabled:opacity-40 disabled:cursor-not-allowed"
-                >
-                  <span className="text-sm font-medium text-gray-700">Next</span>
-                </button>
-              </nav>
-            </div>
-          </div>
-        </div>
-
+      {/* The invisible observer target and loader state indicator */}
+      <div ref={observerTarget} style={{ height: '20px', margin: '20px 0', textAlign: 'center' }}>
+        {loading && <p>Loading more items...</p>}
+        {!hasMore && <p>No more items to display.</p>}
       </div>
     </div>
   );
 }
+

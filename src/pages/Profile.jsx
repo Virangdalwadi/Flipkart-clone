@@ -8,9 +8,8 @@ const Profile = () => {
     <>
       <Navbar />
       <div className="flex h-[90vh] text-3xl items-center justify-center">
-        <h1>Profile page</h1>
+        <h1>Profile Page</h1>
       </div>
-
       <PaginationExample />
       <Footer />
     </>
