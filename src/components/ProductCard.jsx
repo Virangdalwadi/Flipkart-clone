@@ -12,7 +12,6 @@ const ProductCard = ({ query }) => {
   const [products, setProducts] = useState([]);
   const [item, setItem] = useState(JSON.parse(localStorage.getItem('Products')) || []);
 
-
   // Infinite Scroll State Management
 
   const [itemsToShow, setItemsToShow] = useState(30);
@@ -142,17 +141,40 @@ const ProductCard = ({ query }) => {
                   </h3>
 
                   <div className="flex items-center mt-2.5 mb-4">
-                    <div className="flex text-amber-400 space-x-0.5">
-                      <span>★</span>
-                      <span>★</span>
-                      <span>★</span>
-                      <span>★</span>
-                      <span className="text-gray-300">★</span>
+                    <div className="flex text-amber-400 space-x-0.5 relative">
+                      {[...Array(5)].map((_, index) => {
+                        const starValue = index + 1;
+                        const rating = product.rating || 4.0;
+
+                        // Full Star
+                        if (rating >= starValue) {
+                          return <span key={index}>★</span>;
+                        }
+                        // Half Star (Rating falls within this specific star slot)
+                        if (rating > index && rating < starValue) {
+                          return (
+                            <span key={index} className="relative inline-block overflow-hidden">
+                              {/* Background grey empty star */}
+                              <span className="text-gray-300">★</span>
+                              {/* Foreground filled star cropped horizontally */}
+                              <span
+                                className="absolute top-0 left-0 overflow-hidden text-amber-400"
+                                style={{ width: `${(rating - index) * 100}%` }}
+                              >
+                                ★
+                              </span>
+                            </span>
+                          );
+                        }
+                        // Empty Star
+                        return <span key={index} className="text-gray-300">★</span>;
+                      })}
                     </div>
                     <span className="bg-blue-50 text-blue-800 text-xs font-semibold px-2 py-0.5 rounded ml-3">
                       {product.rating || "4.0"}
                     </span>
                   </div>
+
 
                   <div className="flex items-center justify-between">
                     <div className="flex flex-col">
