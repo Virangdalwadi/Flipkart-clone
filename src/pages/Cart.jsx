@@ -4,12 +4,13 @@ import Footer from "../components/Footer";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrashCan } from "@fortawesome/free-solid-svg-icons";
+import { useNavigate } from "react-router-dom";
 
 const Cart = () => {
+
   const [value, setValue] = useState("");
-  const [items, setItems] = useState(
-    () => JSON.parse(localStorage.getItem("Products")) || []
-  );
+  const [items, setItems] = useState(JSON.parse(localStorage.getItem("Products")) || []);
+  const navigate = useNavigate();
 
   // Fixed execution on every render
   React.useEffect(() => {
@@ -17,15 +18,21 @@ const Cart = () => {
   }, []);
 
   const handleRemovefromCart = (indexToRemove, productName) => {
-    const remove = confirm(
-      `Are you sure you want to remove ${productName || "this item"}?`
-    );
-    if (!remove) return;
+    const message = `Are you sure you want to remove ${productName || 'this item'}`;
 
-    const updatedArray = items.filter((_, index) => index !== indexToRemove);
-    setItems(updatedArray);
-    localStorage.setItem("Products", JSON.stringify(updatedArray));
+    if (confirm(message)) {
+      const updatedArray = items.filter((_, index) => index !== indexToRemove);
+      setItems(updatedArray);
+      localStorage.setItem("Products", JSON.stringify(updatedArray));
+    }
   };
+
+  const handlePlaceorder = (price) => {
+    const message = confirm(`Your Total bill is $${price}`);
+    if (!message) return;
+    navigate("/");
+
+  }
 
   // Fixed order total calculation
   const totalAmount = items.reduce(
@@ -35,7 +42,7 @@ const Cart = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-[#f1f2f4]">
-      <Navbar3 setValue={setValue} />
+      <Navbar3 setValue={value} />
 
       {/* Main Content Area */}
       <main className="grow max-w-7xl w-full mx-auto px-4 py-8 mt-16">
@@ -129,7 +136,8 @@ const Cart = () => {
                 </div>
                 <div className="flex justify-between">
                   <span>Discount</span>
-                  <span className="text-green-600">-$0.00</span>
+                  <span
+                    className="text-green-600">-$0.00</span>
                 </div>
                 <div className="flex justify-between">
                   <span>Delivery Charges</span>
@@ -142,7 +150,7 @@ const Cart = () => {
                 <span>${totalAmount.toFixed(2)}</span>
               </div>
 
-              <button className="w-full bg-[#ffc200] cursor-pointer font-light text-black text-lg py-3 px-4 rounded-sm transition-colors shadow-sm focus:outline-none font-['Roboto_Medium']">
+              <button onClick={() => handlePlaceorder(totalAmount)} className="w-full bg-[#ffc200] cursor-pointer font-light text-black text-lg py-3 px-4 rounded-sm transition-colors shadow-sm focus:outline-none font-['Roboto_Medium']">
                 Place Order
               </button>
             </div>

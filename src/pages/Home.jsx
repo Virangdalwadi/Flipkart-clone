@@ -7,6 +7,7 @@ const Home = () => {
   window.scrollTo(0, 0);
 
   const [value, setValue] = useState('');
+
   return (
     <>
       <Navbar setValue={setValue} />

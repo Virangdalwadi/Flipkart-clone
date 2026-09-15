@@ -1,13 +1,12 @@
 import React from 'react'
-import ProductButtons from './ProductButtons'
 import { NavLink } from 'react-router-dom'
 
 const Footer = () => {
   return (
     <>
-      <div className=" flex scroll bottom-0 left-0 right-0 py-17 px-7 bg-[#212121] justify-center mb-15">
-        <div className='flex gap-9'>
-          <div className='flex flex-col'>
+      <footer className="bottom-0 left-0 right-0 mb-15 bg-[#212121] px-6 py-12 sm:px-8 lg:py-16">
+        <div className='mx-auto grid w-full max-w-7xl grid-cols-2 gap-x-6 gap-y-8 sm:grid-cols-3 lg:grid-cols-6 lg:gap-x-8'>
+          <div className='flex min-w-0 flex-col'>
             <div>
               <h1 className='text-gray-300 mb-1 text-sm font-light'>
                 About
@@ -28,7 +27,7 @@ const Footer = () => {
             </div>
           </div>
 
-          <div className='flex flex-col'>
+          <div className='flex min-w-0 flex-col'>
             <div>
               <h1 className='text-gray-300 mb-1 text-sm font-light'>
                 GROUP COMPANIES
@@ -44,7 +43,7 @@ const Footer = () => {
             </div>
           </div>
 
-          <div className='flex flex-col'>
+          <div className='flex min-w-0 flex-col'>
             <div>
               <h1 className='text-gray-300 mb-1 text-sm font-light'>
                 HELP
@@ -60,7 +59,7 @@ const Footer = () => {
             </div>
           </div>
 
-          <div className='flex flex-col'>
+          <div className='flex min-w-0 flex-col'>
             <div>
               <h1 className='text-gray-300 mb-1 text-sm font-light'>
                 CONSUMER POLICY
@@ -80,16 +79,14 @@ const Footer = () => {
             </div>
           </div>
 
-          <hr className="border-t3 border-gray-300 my-6" />
-
-          <div className='flex flex-col'>
+          <div className='flex min-w-0 flex-col border-l border-gray-600 pl-4 sm:col-span-2 sm:border-l-0 sm:pl-0 lg:col-span-1 lg:border-l lg:pl-6'>
             <div>
               <h1 className='text-gray-300 mb-1 text-sm font-light cursor-default'>
                 Mail Us:
               </h1>
             </div>
             <div>
-              <ul className='text-white text-sm'>
+              <ul className='wrap-break-word text-sm text-white'>
                 <li className='cursor-default'>Flipkart Internet Private Limited,</li>
                 <li className='cursor-default'>Building Alyssa, Begonia &</li>
                 <li className='cursor-default'>Clove Embassy Tech Village,</li>
@@ -100,14 +97,14 @@ const Footer = () => {
             </div>
           </div>
 
-          <div className='flex flex-col'>
+          <div className='flex min-w-0 flex-col'>
             <div>
               <h1 className='text-gray-300 mb-1 text-sm font-light cursor-default'>
                 Registered Office Address:
               </h1>
             </div>
             <div>
-              <ul className='text-white text-sm'>
+              <ul className='wrap-break-word text-sm text-white'>
                 <li className='cursor-default'>Flipkart Internet Private Limited,</li>
                 <li className='cursor-default'>Building Alyssa, Begonia &</li>
                 <li className='cursor-default'>Clove Embassy Tech Village,</li>
@@ -121,9 +118,7 @@ const Footer = () => {
             </div>
           </div>
         </div>
-      </div>
-
-      {/* <ProductButtons /> */}
+      </footer>
     </>
   )
 }

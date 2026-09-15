@@ -11,34 +11,40 @@ const SearchBar = ({ value, onChange, onSubmitSuccess, onClear }) => {
 
   return (
     <>
-      <div className='flex items-center'>
-        <div className="flex h-10 justify-center items-center">
-          <div className="flex items-center w-200 border-2 border-blue-500 p-1 rounded-xl">
-            <span className="mr-1 ">
-              <FontAwesomeIcon icon={faMagnifyingGlass} size="xl" className="stroke-[0.1px] stroke-current" />
+      <div className='flex items-center w-full min-w-0'>
+        <div className="flex h-9 sm:h-10 md:h-11 justify-center items-center w-full min-w-0">
+          <div className="flex items-center w-full min-w-0 border-2 border-blue-500 p-1 sm:p-1.5 rounded-lg sm:rounded-xl gap-1 sm:gap-2">
+            {/* Search Icon - Responsive Size */}
+            <span className="shrink-0 text-blue-500">
+              <FontAwesomeIcon icon={faMagnifyingGlass} size="sm" className="sm:text-base md:text-lg stroke-[0.1px] stroke-current" />
             </span>
-            <form className="flex-1" onSubmit={handleSubmit}>
+
+            {/* Search Input - Responsive */}
+            <form className="flex-1 min-w-0" onSubmit={handleSubmit}>
               <input
                 type="text"
                 value={value}
-                className='flex items-center w-full outline-none'
+                className='w-full outline-none text-xs sm:text-sm md:text-base bg-transparent'
                 onChange={(e) => onChange(e.target.value)}
-                placeholder='Search for Products, Brands and More' />
+                placeholder='Search products...'
+              />
             </form>
+
+            {/* Clear Button - Responsive */}
             {value.trim() && (
               <button
                 type="button"
-                className="px-2 text-xl font-bold leading-none"
+                className="shrink-0 text-sm sm:text-base md:text-lg font-bold leading-none text-gray-600 hover:text-gray-900 transition-colors px-1"
                 onClick={onClear}
                 aria-label="Clear search"
               >
-                X
+                ✕
               </button>
             )}
           </div>
         </div>
       </div>
-    </ >
+    </>
   )
 }
 

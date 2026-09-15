@@ -1,16 +1,18 @@
 import React, { useEffect, useState, useRef } from "react";
-import SearchBar from "./SearchBar";
 import axios from "axios";
 import "../style.css";
 import Loader from "./Loader";
-import Footer from "./Footer";
 import { NavLink } from "react-router-dom";
+import Footer from "./Footer";
 
 const ProductCard = ({ query }) => {
 
   const [loading, setLoading] = useState(true);
   const [products, setProducts] = useState([]);
   const [item, setItem] = useState(JSON.parse(localStorage.getItem('Products')) || []);
+
+  const baseUrl = import.meta.env.VITE_API_BASE_URL; // Use process.env.REACT_APP_API_BASE_URL for CRA or process.env.NEXT_PUBLIC_API_BASE_URL for Next.js
+
 
   // Infinite Scroll State Management
 
@@ -23,14 +25,10 @@ const ProductCard = ({ query }) => {
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
-      console.log(query.length);
       try {
 
         // const api = `https://dummyjson.com/products/category/smartphones`
-        const api = `https://dummyjson.com/products/search?q=${query}&limit=200`;
-        // if (query.length < !0) {
-        //   api = query;
-        // }
+        const api = `${baseUrl}?q=${query}&limit=200`;
 
         const response = await axios.get(api);
 
@@ -108,7 +106,7 @@ const ProductCard = ({ query }) => {
     <>
       <div className="flex justify-center mb-4"></div>
       {loading ? (
-        <div className="flex h-[70vh] justify-center items-center">
+        <div className="flex h-[94vh] justify-center items-center">
           <Loader />
         </div>
       ) : products.length === 0 ? (
@@ -211,7 +209,7 @@ const ProductCard = ({ query }) => {
           {/* Infinite Scroll Trigger Box anchor element */}
           <div ref={observerTarget} className="w-full flex justify-center p-4 mt-2">
             {hasMore ? (
-              <div className="flex flex-col gap-3 animate-pulse mb-2 text-gray-500 font-medium">Loading more products...<Loader /></div>
+              <div className="flex flex-col gap-3 animate-pulse mb-2 text-gray-500 font-medium">Hang on, loading content<Loader /></div>
             ) : (
               <div className="text-gray-400 font-medium text-sm"></div>
             )}
@@ -220,6 +218,7 @@ const ProductCard = ({ query }) => {
 
       )}
       <Footer />
+
     </>
   );
 };

@@ -1,12 +1,8 @@
-import React, { Children } from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Home from "./pages/Home";
-import Navbar from "./components/Navbar";
 import ProductDetails from "./pages/ProductDetails";
-import { Link, Outlet } from "react-router-dom";
 import Notfound from "./components/Notfound";
 import Cart from "./pages/Cart";
-import Footer from "./components/Footer";
 import Login from "./pages/Login";
 import Profile from "./pages/Profile";
 
@@ -46,7 +42,7 @@ const App = () => {
       ),
     },
     {
-      path: "/pages/Profile",
+      path: "/pages/profile",
       element: (
         <div>
           <Profile />
