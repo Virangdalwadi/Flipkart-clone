@@ -8,10 +8,12 @@ const api = axios.create({
 
 let getAccessToken = () => null;
 let setAccessToken = () => { };
+let clearAuthState = () => { };
 
-export const registerAuthHandlers = (getter, setter) => {
+export const registerAuthHandlers = (getter, setter, clearState) => {
   getAccessToken = getter;
   setAccessToken = setter;
+  clearAuthState = clearState;
 };
 
 api.interceptors.request.use((config) => {
@@ -24,15 +26,20 @@ api.interceptors.response.use(
   (res) => res,
   async (error) => {
     const original = error.config;
-    if (error.response?.status === 401 && !original._retry) {
+    if (
+      error.response?.status === 401 &&
+      original &&
+      !original._retry &&
+      !original.url?.includes("/auth/refresh-token")
+    ) {
       original._retry = true;
       try {
-        const res = await api.post("/auth/refreshtoken");
+        const res = await api.get("/auth/refresh-token");
         setAccessToken(res.data.accesstoken);
         original.headers.Authorization = `Bearer ${res.data.accesstoken}`;
         return api(original);
       } catch {
-        setAccessToken(null);
+        clearAuthState();
       }
     }
     return Promise.reject(error);
