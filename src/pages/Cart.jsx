@@ -225,7 +225,7 @@ const Cart = () => {
                       <p className="text-xs uppercase tracking-widest cursor-pointer  text-gray-400 font-semibold mb-1">
                         {product.category || "Product"}
                       </p>
-                      <h3 className="line-clamp-2 break-words text-lg font-bold text-gray-900 cursor-pointer transition-colors">
+                      <h3 className="line-clamp-2 wrap-break-words text-lg font-bold text-gray-900 cursor-pointer transition-colors">
                         {product.title}
                       </h3>
 
@@ -302,7 +302,7 @@ const Cart = () => {
 
               <div className="flex flex-col gap-3 text-base text-gray-600 border-b pb-4">
                 <div className="flex min-w-0 justify-between gap-3">
-                  <span className="break-words">Price ({items.reduce((count, item) => count + item.quantity, 0)} items)</span>
+                  <span className="wrap-break-words">Price ({items.reduce((count, item) => count + item.quantity, 0)} items)</span>
                   <span className="shrink-0">${totalAmount.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between gap-3">

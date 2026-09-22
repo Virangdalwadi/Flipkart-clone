@@ -120,7 +120,7 @@ const ProductDetails = () => {
             <img
               src={product.images?.[0] || product.thumbnail}
               alt={product.title}
-              className="max-h-[18rem] w-full object-contain sm:max-h-[28rem]"
+              className="max-h-72 w-full object-contain sm:max-h-112"
             />
           </div>
 

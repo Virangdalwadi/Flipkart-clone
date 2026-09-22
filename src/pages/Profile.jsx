@@ -10,6 +10,18 @@ import Footer from "../components/Footer";
 import Navbar3 from "../components/Navbar3";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
+import api from "../api/axiosInstance.jsx";
+
+export const createAddress = (data) => api.post("/addresses", data);
+
+export const getAddresses = () => api.get("/addresses");
+
+export const getAddressById = (id) => api.get(`/addresses/${id}`);
+
+export const updateAddress = (id, data) => api.put(`/addresses/${id}`, data);
+
+export const deleteAddress = (id) => api.delete(`/addresses/${id}`);
+
 
 /* ---------- Sidebar nav data ---------- */
 
@@ -75,8 +87,28 @@ const initialAddressForm = {
 
 function ManageAddresses({ onCancel }) {
   const [form, setForm] = useState(initialAddressForm);
+  const [addresses, setAddresses] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   const update = (field) => (e) => setForm((f) => ({ ...f, [field]: e.target.value }));
+  useEffect(() => {
+    const fetchAddresses = async () => {
+      try {
+        setLoading(true);
+
+        const response = await getAddresses();
+
+        setAddresses(response.data || []);
+      } catch (error) {
+        console.error("Failed to fetch addresses:", error);
+        setAddresses([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAddresses();
+  }, []);
 
   const inputCls =
     "w-full min-w-0 border border-gray-300 rounded px-3 py-2 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:border-blue-500 bg-white";
@@ -89,6 +121,61 @@ function ManageAddresses({ onCancel }) {
   return (
     <div className="p-4 sm:p-5">
       <h2 className="text-base font-semibold text-gray-800 mb-4">Manage Addresses</h2>
+
+      {loading ? (
+        <p className="text-sm text-gray-500 mb-4">
+          Loading addresses...
+        </p>
+      ) : addresses.length > 0 ? (
+        <div className="space-y-3 mb-6">
+          {addresses.map((item) => (
+            <div
+              key={item._id}
+              className="border border-gray-200 rounded p-4"
+            >
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="font-semibold text-sm text-gray-800">
+                    {item.name ?? ""}
+                  </p>
+
+                  <p className="text-sm text-gray-600 mt-1">
+                    {item.mobile ?? ""}
+                  </p>
+                </div>
+
+                <span className="text-xs uppercase bg-gray-100 px-2 py-1 rounded">
+                  {item.addressType ?? "home"}
+                </span>
+              </div>
+
+              <p className="text-sm text-gray-600 mt-3">
+                {item.address ?? ""}
+              </p>
+
+              <p className="text-sm text-gray-600">
+                {item.locality ?? ""}
+                {item.locality ? ", " : ""}
+                {item.city ?? ""}
+                {item.city ? ", " : ""}
+                {item.state ?? ""}
+                {item.state ? " - " : ""}
+                {item.pincode ?? ""}
+              </p>
+
+              {item.landmark && (
+                <p className="text-sm text-gray-500 mt-1">
+                  Landmark: {item.landmark}
+                </p>
+              )}
+            </div>
+          ))}
+        </div>
+      ) : (
+        <p className="text-sm text-gray-500 mb-4">
+          No saved addresses found.
+        </p>
+      )}
 
       <div className="bg-gray-50 border border-gray-200 rounded p-4 sm:p-6">
         <p className="text-sm font-semibold text-blue-600 mb-4">ADD A NEW ADDRESS</p>

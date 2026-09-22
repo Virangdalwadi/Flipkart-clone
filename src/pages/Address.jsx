@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import Navbar3 from "../components/Navbar3";
 import Footer from "../components/Footer";
+import { useAuth } from "../context/AuthContext";
 
 const initialAddress = {
   fullName: "",
@@ -17,6 +18,7 @@ const Address = () => {
   const location = useLocation();
   const [address, setAddress] = useState(initialAddress);
   const [errors, setErrors] = useState({});
+  const { user, loading } = useAuth();
 
   const updateField = (event) => {
     const { name, value } = event.target;
