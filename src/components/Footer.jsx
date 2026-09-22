@@ -86,7 +86,7 @@ const Footer = () => {
               </h1>
             </div>
             <div>
-              <ul className='wrap-break-word text-sm text-white'>
+              <ul className='wrap-break-word break-words text-sm text-white'>
                 <li className='cursor-default'>Flipkart Internet Private Limited,</li>
                 <li className='cursor-default'>Building Alyssa, Begonia &</li>
                 <li className='cursor-default'>Clove Embassy Tech Village,</li>
@@ -104,7 +104,7 @@ const Footer = () => {
               </h1>
             </div>
             <div>
-              <ul className='wrap-break-word text-sm text-white'>
+              <ul className='wrap-break-word break-words text-sm text-white'>
                 <li className='cursor-default'>Flipkart Internet Private Limited,</li>
                 <li className='cursor-default'>Building Alyssa, Begonia &</li>
                 <li className='cursor-default'>Clove Embassy Tech Village,</li>

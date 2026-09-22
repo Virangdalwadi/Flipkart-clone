@@ -192,7 +192,7 @@ const Cart = () => {
     <div className="min-h-screen flex flex-col bg-[#f1f2f4]">
       <Navbar3 setValue={value} />
 
-      <main className="grow max-w-7xl w-full mx-auto px-4 py-8 mt-16">
+      <main className="grow mx-auto w-full max-w-7xl px-4 pb-8 pt-28 md:pt-24">
         {cartLoading ? (
           <div className="flex justify-center items-center h-[60vh]">
             <div className="text-lg text-gray-600">Loading your cart...</div>
@@ -222,12 +222,12 @@ const Cart = () => {
                     />
                   </div>
 
-                  <div className="flex flex-col grow justify-between">
+                  <div className="flex min-w-0 grow flex-col justify-between">
                     <div>
                       <p className="text-xs uppercase tracking-widest cursor-pointer  text-gray-400 font-semibold mb-1">
                         {product.category || "Product"}
                       </p>
-                      <h3 className="text-lg font-bold text-gray-900 line-clamp-1 cursor-pointer transition-colors">
+                      <h3 className="line-clamp-2 break-words text-lg font-bold text-gray-900 cursor-pointer transition-colors">
                         {product.title}
                       </h3>
 
@@ -245,7 +245,7 @@ const Cart = () => {
                       </div>
                     </div>
 
-                    <div className="flex items-center justify-between mt-4">
+                    <div className="mt-4 flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:justify-between">
                       <div className="flex flex-col gap-2">
                         <div className="flex items-center gap-2">
                           <button
@@ -272,7 +272,7 @@ const Cart = () => {
                           Subtotal: ${(Number(product.price) * product.quantity).toFixed(2)}
                         </span>
                       </div>
-                      <div className="flex items-baseline gap-2 cursor-pointer ">
+                      <div className="flex flex-wrap items-baseline gap-2 cursor-pointer">
                         <span className="text-xl font-bold text-gray-900">
                           ${Number(product.price).toFixed(2)}
                         </span>
@@ -282,7 +282,7 @@ const Cart = () => {
                       </div>
                       <button
                         type="button"
-                        className="text-gray-500 border-gray-500 border-2 font-medium text-base px-3 py-1.5 transition-colors focus:outline-none cursor-pointer disabled:opacity-60"
+                        className="w-full border-2 border-gray-500 px-3 py-1.5 text-base font-medium text-gray-500 transition-colors focus:outline-none cursor-pointer disabled:opacity-60 sm:w-auto"
                         disabled={Boolean(actionLoading[product.id])}
                         onClick={() => handleRemovefromCart(product, product.title)}
                       >
@@ -303,21 +303,21 @@ const Cart = () => {
               </h2>
 
               <div className="flex flex-col gap-3 text-base text-gray-600 border-b pb-4">
-                <div className="flex justify-between">
-                  <span>Price ({items.reduce((count, item) => count + item.quantity, 0)} items)</span>
-                  <span>${totalAmount.toFixed(2)}</span>
+                <div className="flex min-w-0 justify-between gap-3">
+                  <span className="break-words">Price ({items.reduce((count, item) => count + item.quantity, 0)} items)</span>
+                  <span className="shrink-0">${totalAmount.toFixed(2)}</span>
                 </div>
-                <div className="flex justify-between">
+                <div className="flex justify-between gap-3">
                   <span>Discount</span>
                   <span className="text-green-600">-$0.00</span>
                 </div>
-                <div className="flex justify-between">
+                <div className="flex justify-between gap-3">
                   <span>Delivery Charges</span>
                   <span className="text-green-600">Free</span>
                 </div>
               </div>
 
-              <div className="flex justify-between font-bold text-lg text-gray-900 pt-4 mb-6">
+              <div className="flex justify-between gap-3 font-bold text-lg text-gray-900 pt-4 mb-6">
                 <span>Total Amount</span>
                 <span>${totalAmount.toFixed(2)}</span>
               </div>

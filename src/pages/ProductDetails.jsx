@@ -115,12 +115,12 @@ const ProductDetails = () => {
           <p className="text-3xl">{error}</p>
         </div>
       ) : (
-        <main className="mx-auto mt-55 mb-10 flex max-w-6xl flex-col gap-8 px-4 md:flex-row">
-          <div className="flex w-full items-center justify-center bg-gray-100 p-6 md:w-1/2">
+        <main className="mx-auto mb-10 flex max-w-6xl flex-col gap-8 px-4 pt-60 sm:pt-56 lg:pt-55 md:flex-row">
+          <div className="flex w-full items-center justify-center bg-gray-100 p-3 sm:p-6 md:w-1/2">
             <img
               src={product.images?.[0] || product.thumbnail}
               alt={product.title}
-              className="max-h-115 w-full object-contain"
+              className="max-h-[18rem] w-full object-contain sm:max-h-[28rem]"
             />
           </div>
 
@@ -141,14 +141,14 @@ const ProductDetails = () => {
                 type="button"
                 onClick={handleAddToCart}
                 disabled={addingToCart}
-                className="rounded-xl bg-blue-600 px-5 py-3 font-medium text-white transition-colors hover:bg-blue-700 disabled:opacity-60"
+                className="w-full rounded-xl bg-blue-600 px-5 py-3 font-medium text-white transition-colors hover:bg-blue-700 disabled:opacity-60 sm:w-auto"
               >
                 {/* {addingToCart ? "Adding..." : "Add to Cart"} */}
                 Add to Cart
               </button>
               <NavLink
                 to="/pages/cart"
-                className="rounded-xl bg-green-600 px-5 py-3 font-medium text-white transition-colors hover:bg-green-700"
+                className="w-full rounded-xl bg-green-600 px-5 py-3 text-center font-medium text-white transition-colors hover:bg-green-700 sm:w-auto"
               >
                 Go to Cart
               </NavLink>

@@ -68,10 +68,10 @@ const Popup = ({
             {style.icon}
           </div>
           <div className="min-w-0 flex-1">
-            <h2 id="popup-title" className={`text-lg font-semibold ${style.titleClass}`}>
+            <h2 id="popup-title" className={`break-words text-lg font-semibold ${style.titleClass}`}>
               {title}
             </h2>
-            <p id="popup-message" className="mt-2 text-sm leading-6 text-gray-600">
+            <p id="popup-message" className="mt-2 break-words text-sm leading-6 text-gray-600">
               {message}
             </p>
           </div>

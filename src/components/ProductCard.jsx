@@ -205,31 +205,31 @@ const ProductCard = ({ query }) => {
           <p className="text-center text-3xl">No products found</p>
         </div>
       ) : (
-        <div className="flex flex-col items-center justify-center px-1 mb-10 mt-53">
-          <div className="flex flex-wrap gap-x-4 gap-y-4 w-full max-w-300 mx-auto justify-center">
+        <div className="mt-60 mb-10 flex flex-col items-center justify-center px-1 sm:mt-56 lg:mt-53">
+          <div className="mx-auto grid w-full max-w-7xl grid-cols-2 gap-2 sm:grid-cols-3 sm:gap-4 lg:grid-cols-4">
             {visibleItems.map((product) => (
               <div
                 key={product.id}
-                className="w-70 cursor-pointer  overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm group"
+                className="group min-w-0 w-full cursor-pointer overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm"
                 onClick={() => handleViewProduct(product)}
               >
                 <div className="relative overflow-hidden aspect-square bg-gray-100">
                   <img
                     src={product.images?.[0] || product.thumbnail}
                     alt={product.title}
-                    className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-300 ease-in-out"
+                    className="h-full w-full object-contain object-center transition-transform duration-300 ease-in-out group-hover:scale-105"
                   />
                   <span className="absolute top-3 left-3 bg-red-500 text-white text-xs font-bold px-2.5 py-1 rounded-sm uppercase tracking-wider">
                     Sale
                   </span>
                 </div>
 
-                <div className="p-4">
+                <div className="p-3 sm:p-4">
                   <p className="text-xs uppercase tracking-widest text-gray-400 font-semibold mb-1">
                     {product.category}
                   </p>
 
-                  <h3 className="text-lg font-bold text-gray-900 line-clamp-1 group-hover:text-blue-600 transition-colors">
+                  <h3 className="line-clamp-2 text-base font-bold text-gray-900 transition-colors group-hover:text-blue-600 sm:text-lg">
                     {product.title}
                   </h3>
 
@@ -263,9 +263,9 @@ const ProductCard = ({ query }) => {
                     </span>
                   </div>
 
-                  <div className="flex items-center justify-between">
-                    <div className="flex flex-col">
-                      <span className="text-xl font-bold text-gray-900">
+                  <div className="flex flex-wrap items-end justify-between gap-3">
+                    <div className="flex min-w-0 flex-col">
+                      <span className="text-lg font-bold text-gray-900 sm:text-xl">
                         ${product.price}
                       </span>
                       <span className="text-sm text-gray-400 line-through">
@@ -276,7 +276,7 @@ const ProductCard = ({ query }) => {
                     {!isProductInCart(product) ? (
                       <button
                         type="button"
-                        className="text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 font-medium rounded-xl text-sm px-3 py-2 transition-colors focus:outline-none disabled:opacity-60"
+                        className="w-full rounded-xl bg-blue-600 px-3 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-700 focus:outline-none focus:ring-4 disabled:opacity-60 sm:w-auto"
                         disabled={addingToCart}
                         onClick={(event) => {
                           event.stopPropagation();
@@ -290,7 +290,7 @@ const ProductCard = ({ query }) => {
                       <NavLink to="/pages/cart">
                         <button
                           type="button"
-                          className="text-white bg-green-600 hover:bg-green-700 focus:ring-4 font-medium rounded-xl text-sm px-3 py-2 transition-colors focus:outline-none"
+                          className="w-full rounded-xl bg-green-600 px-3 py-2 text-sm font-medium text-white transition-colors hover:bg-green-700 focus:outline-none focus:ring-4 sm:w-auto"
                           onClick={(event) => event.stopPropagation()}
                         >
                           Go to Cart

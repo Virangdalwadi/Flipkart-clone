@@ -63,7 +63,7 @@ const Address = () => {
   return (
     <div className="min-h-screen flex flex-col bg-[#f1f2f4]">
       <Navbar3 />
-      <main className="grow max-w-3xl w-full mx-auto px-4 py-8 mt-16">
+      <main className="grow mx-auto w-full max-w-3xl px-4 pb-8 pt-28 md:pt-24">
         <form onSubmit={handleSubmit} className="bg-white border border-gray-200 p-5 shadow-sm sm:p-7">
           <h1 className="border-b pb-4 text-2xl font-bold text-gray-900">Delivery Address</h1>
           <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2">

@@ -85,7 +85,7 @@ const Checkout = () => {
     <div className="min-h-screen flex flex-col bg-[#f1f2f4]">
       <Navbar3 />
 
-      <main className="grow max-w-6xl w-full mx-auto px-4 py-8 mt-16">
+      <main className="grow mx-auto w-full max-w-6xl px-4 pb-8 pt-28 md:pt-24">
         {isLoading ? (
           <div className="flex min-h-[60vh] flex-col items-center justify-center text-center">
             <h1 className="text-3xl font-semibold text-gray-800">Loading your cart...</h1>
@@ -118,8 +118,8 @@ const Checkout = () => {
                         className="h-24 w-24 shrink-0 object-contain bg-gray-50"
                       />
                       <div className="min-w-0 grow">
-                        <h2 className="line-clamp-2 font-semibold text-gray-900">{item.title}</h2>
-                        <div className="mt-2 grid grid-cols-3 gap-2 text-sm text-gray-600">
+                        <h2 className="line-clamp-2 break-words font-semibold text-gray-900">{item.title}</h2>
+                        <div className="mt-2 grid grid-cols-1 gap-1 text-sm text-gray-600 sm:grid-cols-3 sm:gap-2">
                           <span>Qty: {item.quantity}</span>
                           <span>Unit: ${unitPrice.toFixed(2)}</span>
                           <span className="text-right font-medium text-gray-900">

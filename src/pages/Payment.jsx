@@ -143,7 +143,7 @@ const Payment = () => {
     return (
       <div className="min-h-screen flex flex-col bg-[#f1f2f4]">
         <Navbar3 />
-        <main className="grow flex flex-col items-center justify-center px-4 text-center">
+        <main className="grow flex flex-col items-center justify-center px-4 pt-28 text-center md:pt-24">
           <h1 className="text-2xl font-bold text-gray-900">Address required</h1>
           <p className="mt-2 text-gray-600">Return to the address step before starting payment.</p>
           <button
@@ -161,15 +161,15 @@ const Payment = () => {
   return (
     <div className="min-h-screen flex flex-col bg-[#f1f2f4]">
       <Navbar3 />
-      <main className="grow max-w-3xl w-full mx-auto px-4 py-8 mt-16">
+      <main className="grow mx-auto w-full max-w-3xl px-4 pb-8 pt-28 md:pt-24">
         <section className="bg-white border border-gray-200 p-5 shadow-sm sm:p-7">
           <h1 className="border-b pb-4 text-2xl font-bold text-gray-900">Payment</h1>
           <div className="mt-6 space-y-3 text-gray-700">
-            <div className="flex justify-between">
+            <div className="flex justify-between gap-3">
               <span>Items</span>
               <span>{totalItems} {totalItems === 1 ? "item" : "items"}</span>
             </div>
-            <div className="flex justify-between border-t pt-3 text-lg font-bold text-gray-900">
+            <div className="flex justify-between gap-3 border-t pt-3 text-lg font-bold text-gray-900">
               <span>Total</span><span>₹{totalAmount.toFixed(2)}</span>
             </div>
           </div>

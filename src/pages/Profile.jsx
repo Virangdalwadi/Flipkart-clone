@@ -561,7 +561,7 @@ export default function ProfilePage() {
   return (
     <>
       <Navbar3 />
-      <div className="mt-17">
+      <div className="pt-28 md:pt-24">
         <div className="min-h-screen bg-gray-200 py-6 px-4">
           <div className="max-w-5xl mx-auto flex flex-col md:flex-row gap-4">
             {/* ---------- Sidebar ---------- */}
@@ -572,7 +572,7 @@ export default function ProfilePage() {
                   <img className="size-10 mr-1" src={ProfileAvatar} alt="" />
                   <div>
                     <p className="text-xs text-gray-500">Hello,</p>
-                    <p className="text-sm font-semibold text-gray-800">{firstName} {lastName}</p>
+                    <p className="break-words text-sm font-semibold text-gray-800">{firstName} {lastName}</p>
                   </div>
                 </div>
 
@@ -661,7 +661,7 @@ export default function ProfilePage() {
             </aside>
 
             {/* ---------- Main content ---------- */}
-            <main className="min-w-0 flex-1 rounded bg-white shadow-sm relative overflow-hidden">
+            <main className="min-w-0 flex-1 rounded bg-white shadow-sm relative">
               {activeLink === "Manage Addresses" ? (
                 <ManageAddresses onCancel={() => setActiveLink("Profile Information")} />
               ) : (
