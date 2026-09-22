@@ -372,6 +372,7 @@ const Login = () => {
 
             {/* Mobile Form */}
             <form
+              id="mobile-auth-form"
               className="mt-7 flex flex-col gap-5"
               onSubmit={handleSubmit}
             >
@@ -558,16 +559,16 @@ const Login = () => {
               disabled={submitting}
               onClick={() => {
                 document
-                  .querySelector('#mobile-auth-form')
+                  .getElementById("mobile-auth-form")
                   ?.requestSubmit();
               }}
-              className="h-12.5 w-full bg-[#fb641b] text-[16px] font-semibold text-white disabled:opacity-60"
+              className="mt-1 w-full cursor-pointer border-none bg-[#fb641b] py-3 font-semibold text-white shadow-sm disabled:opacity-60"
             >
               {submitting
-                ? 'Please wait...'
+                ? "Please wait..."
                 : isLogin
-                  ? 'Login'
-                  : 'Register'}
+                  ? "Login"
+                  : "Register"}
             </button>
           </div>
 

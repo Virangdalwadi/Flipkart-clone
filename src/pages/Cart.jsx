@@ -244,40 +244,47 @@ const Cart = () => {
                     </div>
 
                     <div className="mt-4 flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:justify-between">
-                      <div className="flex flex-col gap-2">
-                        <div className="flex items-center gap-2">
-                          <button
-                            type="button"
-                            onClick={() => updateQuantity(product.id, -1)}
-                            disabled={product.quantity === 1 || Boolean(actionLoading[product.id])}
-                            className="h-8 w-8 border border-gray-400 text-lg disabled:cursor-not-allowed disabled:opacity-40"
-                            aria-label={`Decrease quantity of ${product.title}`}
-                          >
-                            -
-                          </button>
-                          <span className="min-w-8 text-center font-medium">{product.quantity}</span>
-                          <button
-                            type="button"
-                            onClick={() => updateQuantity(product.id, 1)}
-                            disabled={Boolean(actionLoading[product.id])}
-                            className="h-8 w-8 border border-gray-400 text-lg disabled:cursor-not-allowed disabled:opacity-40"
-                            aria-label={`Increase quantity of ${product.title}`}
-                          >
-                            +
-                          </button>
+
+                      <div className="flex flex-row justify-between gap-8">
+                        <div className="flex flex-col gap-2">
+                          <div className="flex items-center gap-2">
+                            <button
+                              type="button"
+                              onClick={() => updateQuantity(product.id, -1)}
+                              disabled={product.quantity === 1 || Boolean(actionLoading[product.id])}
+                              className="h-8 w-8 border border-gray-400 text-lg disabled:cursor-not-allowed disabled:opacity-40"
+                              aria-label={`Decrease quantity of ${product.title}`}
+                            >
+                              -
+                            </button>
+                            <span className="min-w-8 text-center font-medium">{product.quantity}</span>
+                            <button
+                              type="button"
+                              onClick={() => updateQuantity(product.id, 1)}
+                              disabled={Boolean(actionLoading[product.id])}
+                              className="h-8 w-8 border border-gray-400 text-lg disabled:cursor-not-allowed disabled:opacity-40"
+                              aria-label={`Increase quantity of ${product.title}`}
+                            >
+                              +
+                            </button>
+                          </div>
+                          <span className="text-sm text-gray-600">
+                            Subtotal: ${(Number(product.price) * product.quantity).toFixed(2)}
+                          </span>
                         </div>
-                        <span className="text-sm text-gray-600">
-                          Subtotal: ${(Number(product.price) * product.quantity).toFixed(2)}
-                        </span>
+
+                        <div className="flex flex-wrap items-baseline gap-2 cursor-pointer">
+                          <span className="text-xl font-bold text-gray-900">
+                            ${Number(product.price).toFixed(2)}
+                          </span>
+                          <span className="text-sm text-gray-400 line-through">
+                            ${(Number(product.price) * 1.4).toFixed(2)}
+                          </span>
+                        </div>
+
                       </div>
-                      <div className="flex flex-wrap items-baseline gap-2 cursor-pointer">
-                        <span className="text-xl font-bold text-gray-900">
-                          ${Number(product.price).toFixed(2)}
-                        </span>
-                        <span className="text-sm text-gray-400 line-through">
-                          ${(Number(product.price) * 1.4).toFixed(2)}
-                        </span>
-                      </div>
+
+
                       <button
                         type="button"
                         className="w-full border-2 border-gray-500 px-3 py-1.5 text-base font-medium text-gray-500 transition-colors focus:outline-none cursor-pointer disabled:opacity-60 sm:w-auto"

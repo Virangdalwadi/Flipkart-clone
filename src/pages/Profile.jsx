@@ -23,6 +23,7 @@ export const updateAddress = (id, data) => api.put(`/addresses/${id}`, data);
 export const deleteAddress = (id) => api.delete(`/addresses/${id}`);
 
 
+
 /* ---------- Sidebar nav data ---------- */
 
 const settingsLinks = ["Profile Information", "Manage Addresses", "PAN Card Information"];
@@ -81,14 +82,16 @@ const initialAddressForm = {
   city: "",
   state: "",
   landmark: "",
-  altPhone: "",
-  addressType: "home",
+  alternatePhone: "",
+  isDefault: false,
 };
 
 function ManageAddresses({ onCancel }) {
   const [form, setForm] = useState(initialAddressForm);
   const [addresses, setAddresses] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [openMenu, setOpenMenu] = useState(null);
+
 
   const update = (field) => (e) => setForm((f) => ({ ...f, [field]: e.target.value }));
   useEffect(() => {
@@ -96,9 +99,16 @@ function ManageAddresses({ onCancel }) {
       try {
         setLoading(true);
 
+
         const response = await getAddresses();
 
-        setAddresses(response.data || []);
+        const fetchedAddresses = Array.isArray(response.data?.addresses)
+          ? response.data.addresses
+          : [];
+
+        setAddresses(fetchedAddresses);
+
+
       } catch (error) {
         console.error("Failed to fetch addresses:", error);
         setAddresses([]);
@@ -113,9 +123,26 @@ function ManageAddresses({ onCancel }) {
   const inputCls =
     "w-full min-w-0 border border-gray-300 rounded px-3 py-2 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:border-blue-500 bg-white";
 
-  const handleSave = () => {
-    // TODO: wire up to your addresses API (POST /api/addresses)
-    onCancel();
+  const handleSave = async () => {
+    try {
+      const response = await createAddress(form);
+
+      setAddresses((prev) => [
+        ...prev,
+        response.data.address,
+      ]);
+
+      setForm(initialAddressForm);
+
+      alert("Address saved successfully");
+    } catch (error) {
+      console.error("Failed to save address:", error);
+
+      alert(
+        error.response?.data?.message ||
+        "Failed to save address"
+      );
+    }
   };
 
   return (
@@ -131,43 +158,68 @@ function ManageAddresses({ onCancel }) {
           {addresses.map((item) => (
             <div
               key={item._id}
-              className="border border-gray-200 rounded p-4"
+              className="relative border border-gray-200 rounded p-4"
             >
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="font-semibold text-sm text-gray-800">
-                    {item.name ?? ""}
+              {/* Top Row */}
+              <div className="flex items-start justify-between">
+                <div className="min-w-0">
+                  <span className="inline-block text-xs uppercase mb-3 bg-gray-100 px-2 py-1 rounded">
+                    {item.addressType ?? "home"}
+                  </span>
+
+                  <div className="flex items-center gap-5">
+                    <p className="font-semibold text-sm text-gray-800">
+                      {item.name ?? ""}
+                    </p>
+
+                    <p className="font-semibold text-sm text-gray-800">
+                      {item.mobile ?? ""}
+                    </p>
+                  </div>
+
+                  <p className="text-sm text-gray-700 mt-4">
+                    {item.address ?? ""}
                   </p>
 
-                  <p className="text-sm text-gray-600 mt-1">
-                    {item.mobile ?? ""}
+                  <p className="text-sm text-gray-700">
+                    {item.locality ?? ""}
+                    {item.locality ? ", " : ""}
+                    {item.city ?? ""}
+                    {item.city ? ", " : ""}
+                    {item.state ?? ""}
+                    {item.state ? " - " : ""}
+                    {item.pincode ?? ""}
                   </p>
                 </div>
 
-                <span className="text-xs uppercase bg-gray-100 px-2 py-1 rounded">
-                  {item.addressType ?? "home"}
-                </span>
+                {/* Hover Menu */}
+                <div className="relative ml-4 group">
+                  <button
+                    type="button"
+                    className="text-gray-500 hover:text-gray-700 text-2xl leading-none px-1"
+                  >
+                    ⋮
+                  </button>
+
+                  <div className="absolute right-0 top-8 z-20 w-24 rounded bg-white shadow-lg border border-gray-100 hidden group-hover:block">
+                    <button
+                      type="button"
+                      onClick={() => handleEditAddress(item)}
+                      className="block w-full px-4 py-2 text-left text-sm text-blue-600 hover:bg-gray-50"
+                    >
+                      Edit
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => handleDeleteAddress(item._id)}
+                      className="block w-full px-4 py-2 text-left text-sm text-gray-800 hover:bg-gray-50"
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </div>
               </div>
-
-              <p className="text-sm text-gray-600 mt-3">
-                {item.address ?? ""}
-              </p>
-
-              <p className="text-sm text-gray-600">
-                {item.locality ?? ""}
-                {item.locality ? ", " : ""}
-                {item.city ?? ""}
-                {item.city ? ", " : ""}
-                {item.state ?? ""}
-                {item.state ? " - " : ""}
-                {item.pincode ?? ""}
-              </p>
-
-              {item.landmark && (
-                <p className="text-sm text-gray-500 mt-1">
-                  Landmark: {item.landmark}
-                </p>
-              )}
             </div>
           ))}
         </div>
@@ -333,7 +385,7 @@ export default function ProfilePage() {
                   <img className="size-10 mr-1" src={ProfileAvatar} alt="" />
                   <div>
                     <p className="text-xs text-gray-500">Hello,</p>
-                    <p className="break-words text-sm font-semibold text-gray-800">{firstName} {lastName}</p>
+                    <p className="wrap-break-word text-sm font-semibold text-gray-800">{firstName} {lastName}</p>
                   </div>
                 </div>
 

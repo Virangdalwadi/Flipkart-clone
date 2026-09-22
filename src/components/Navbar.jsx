@@ -152,51 +152,46 @@ const Navbar = ({ setValue }) => {
     <>
       <div className="fixed inset-x-0 top-0 z-10 w-full bg-white shadow-sm">
         <div className="mx-auto w-full max-w-6xl px-3 sm:px-4">
-          <div>
-            <div className="flex flex-row gap-3 py-3 sm:flex-row sm:items-center sm:justify-between">
-              <div className="flex min-w-0 flex-row gap-2 sm:gap-3">
-                <div className="flex py-3 min-w-0 flex-1 cursor-pointer items-center justify-center rounded-xl bg-[#ffe51f] px-3 sm:w-40 sm:flex-none sm:px-6">
-                  <img className="size-7 mr-1" src={logo} />
-                  <img className="h-5 w-15" src={name} />
-                </div>
-                <div className="flex min-w-0 flex-1 cursor-pointer items-center justify-center rounded-xl bg-slate-200 px-3 sm:w-40 sm:flex-none sm:px-6">
-                  <img className="size-7 mr-1" src={Aeroplane} />
-                  <img className="h-5 w-10" src={travel} />
-                </div>
-              </div>
-              <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm sm:justify-end">
-                <h2 className="font-semibold">
-                  <span>
-                    <FontAwesomeIcon icon={faLocationDot} />
-                  </span>
-                  Location Not on set
-                </h2>
-                <span className="text-blue-600 font-semibold flex items-center gap-1">
-                  Select delivery location
-                  <span>
-                    <svg
-                      width="16"
-                      height="16"
-                      fill="none"
-                      viewBox="0 0 17 17"
-                      style={{ backgroundColor: "rgba(0,0,0,0.00)" }}
-                    >
-                      <path
-                        d="m6.627 3.749 5 5-5 5"
-                        stroke="#1254E7"
-                        strokeWidth="1.2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      />
-                    </svg>
-                  </span>
-                </span>
 
+          <div className="flex flex-col gap-3 py-3 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex min-w-0 flex-row gap-2 sm:gap-3">
+              <div className="flex py-3 min-w-0 flex-1 cursor-pointer items-center justify-center rounded-xl bg-[#ffe51f] px-3 sm:w-40 sm:flex-none sm:px-6">
+                <img className="size-7 mr-1" src={logo} />
+                <img className="h-5 w-15" src={name} />
+              </div>
+              <div className="flex min-w-0 flex-1 cursor-pointer items-center justify-center rounded-xl bg-slate-200 px-3 sm:w-40 sm:flex-none sm:px-6">
+                <img className="size-7 mr-1" src={Aeroplane} />
+                <img className="h-5 w-10" src={travel} />
               </div>
             </div>
-
-
-
+            <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm sm:justify-end">
+              <h2 className="font-semibold">
+                <span>
+                  <FontAwesomeIcon icon={faLocationDot} />
+                </span>
+                Location Not on set
+              </h2>
+              <span className="text-blue-600 font-semibold flex items-center gap-1">
+                Select delivery location
+                <span>
+                  <svg
+                    width="16"
+                    height="16"
+                    fill="none"
+                    viewBox="0 0 17 17"
+                    style={{ backgroundColor: "rgba(0,0,0,0.00)" }}
+                  >
+                    <path
+                      d="m6.627 3.749 5 5-5 5"
+                      stroke="#1254E7"
+                      strokeWidth="1.2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                </span>
+              </span>
+            </div>
           </div>
 
           <div className="flex flex-col gap-2 pb-2 sm:flex-row sm:items-center sm:justify-between">
