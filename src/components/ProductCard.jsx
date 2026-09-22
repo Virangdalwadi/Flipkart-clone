@@ -205,7 +205,7 @@ const ProductCard = ({ query }) => {
           <p className="text-center text-3xl">No products found</p>
         </div>
       ) : (
-        <div className="mt-60 mb-10 flex flex-col items-center justify-center px-1 sm:mt-56 lg:mt-53">
+        <div className="mt-65 mb-10 flex flex-col items-center justify-center px-1 sm:mt-56 lg:mt-53">
           <div className="mx-auto grid w-full max-w-7xl grid-cols-2 gap-2 sm:grid-cols-3 sm:gap-4 lg:grid-cols-4">
             {visibleItems.map((product) => (
               <div

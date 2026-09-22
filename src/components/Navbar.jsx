@@ -146,14 +146,11 @@ const Navbar = ({ setValue }) => {
     window.scrollTo(0, 0);
     handleFormSubmit("books");
   }
-
-
   return (
     <>
       <div className="fixed inset-x-0 top-0 z-10 w-full bg-white shadow-sm">
         <div className="mx-auto w-full max-w-6xl px-3 sm:px-4">
-
-          <div className="flex flex-col gap-3 py-3 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex flex-col gap-3 py-3 sm:flex-row sm:items-center sm:justify-between ">
             <div className="flex min-w-0 flex-row gap-2 sm:gap-3">
               <div className="flex py-3 min-w-0 flex-1 cursor-pointer items-center justify-center rounded-xl bg-[#ffe51f] px-3 sm:w-40 sm:flex-none sm:px-6">
                 <img className="size-7 mr-1" src={logo} />
@@ -298,7 +295,7 @@ const Navbar = ({ setValue }) => {
               </div>
             </ul>
           </div>
-        </div >
+        </div>
       </div>
     </>
   );
