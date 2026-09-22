@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import Navbar3 from "../components/Navbar3";
 import Footer from "../components/Footer";
@@ -23,6 +23,10 @@ const Address = () => {
     setAddress((current) => ({ ...current, [name]: value }));
     setErrors((current) => ({ ...current, [name]: "" }));
   };
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [])
 
   const validate = () => {
     const nextErrors = {};

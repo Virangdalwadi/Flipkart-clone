@@ -87,11 +87,10 @@ const Login = () => {
     setFormData((currentData) => ({ ...currentData, [name]: value }));
   };
 
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, []);
+
 
   useEffect(() => {
+    window.scrollTo(0, 0);
     if (location.state?.mode === "register") {
       setIsLogin(false);
       return;
@@ -143,127 +142,6 @@ const Login = () => {
     }
   };
 
-  // return (
-  //   <>
-  //     <Navbar3 />
-  //     <div className="flex min-h-[calc(100svh-6rem)] w-full items-center justify-center bg-gray-200 px-4 py-6 sm:px-6 md:min-h-[calc(100svh-5rem)]">
-  //       <div className='mt-0 flex w-full max-w-4xl flex-col bg-white md:mt-6 md:flex-row'>
-  //         <div className='hidden flex-col justify-between bg-[#2874f0] px-8 py-9 md:flex md:w-2/5' >
-  //           <div className='flex flex-col'>
-  //             <h1 className='text-[28px] text-white font-inter-stack'>
-  //               {isLogin ? 'Login' : `Looks like you're new here!`}
-  //             </h1>
-  //             <h2 className='text-[18px] mt-4 text-[#DBDBDB]'>
-  //               {isLogin ? 'Get access to your Orders, Wishlist and Recommendations' : 'Sign up with your email id to get started'}
-  //             </h2>
-  //           </div>
-  //           <img src={Loginimg} />
-  //         </div>
-
-  //         {/* Right side div */}
-  //         <div className='flex w-full flex-col justify-between px-5 pb-6 pt-8 sm:px-8 md:w-3/5 md:px-8.75 md:pb-4 md:pt-14'>
-  //           <div className='flex flex-col'>
-
-  //             <form className='flex flex-col gap-5' onSubmit={handleSubmit}>
-  //               {!isLogin && (
-  //                 <input
-  //                   className='w-full border-b border-gray-300 px-1 py-2 outline-none focus:border-blue-600'
-  //                   name='name'
-  //                   value={formData.name}
-  //                   onChange={handleChange}
-  //                   placeholder='Enter Name'
-  //                   autoComplete='username'
-  //                   required
-  //                 />
-
-  //               )}
-  //               <input
-  //                 className='w-full border-b border-gray-300 px-1 py-2 outline-none focus:border-blue-600'
-  //                 name='email'
-  //                 value={formData.email}
-  //                 onChange={handleChange}
-  //                 placeholder='Enter Email'
-  //                 type='email'
-  //                 autoComplete='email'
-  //                 required
-  //               />
-  //               <div className='flex items-center border-b border-gray-300 focus-within:border-blue-600'>
-  //                 <input
-  //                   className='w-full px-1 py-2 outline-none'
-  //                   name='password'
-  //                   value={formData.password}
-  //                   onChange={handleChange}
-  //                   placeholder='Enter Password'
-  //                   type={showPassword ? 'text' : 'password'}
-  //                   autoComplete={isLogin ? 'current-password' : 'new-password'}
-  //                   minLength={isLogin ? undefined : 8}
-  //                   maxLength={isLogin ? undefined : 128}
-  //                   required
-  //                 />
-  //                 <button
-  //                   type='button'
-  //                   onClick={() => setShowPassword((visible) => !visible)}
-  //                   className='px-2 py-2 text-gray-500 hover:text-gray-800'
-  //                   aria-label={showPassword ? 'Hide password' : 'Show password'}
-  //                 >
-  //                   <FontAwesomeIcon icon={showPassword ? faEyeSlash : faEye} />
-  //                 </button>
-  //               </div>
-  //               {!isLogin && (
-  //                 <div className='flex items-center border-b border-gray-300 focus-within:border-blue-600'>
-  //                   <input
-  //                     className='w-full px-1 py-2 outline-none'
-  //                     name='confirmPassword'
-  //                     value={formData.confirmPassword}
-  //                     onChange={handleChange}
-  //                     placeholder='Confirm Password'
-  //                     type={showConfirmPassword ? 'text' : 'password'}
-  //                     autoComplete='new-password'
-  //                     required
-  //                   />
-  //                   <button
-  //                     type='button'
-  //                     onClick={() => setShowConfirmPassword((visible) => !visible)}
-  //                     className='px-2 py-2 text-gray-500 hover:text-gray-800'
-  //                     aria-label={showConfirmPassword ? 'Hide confirmation password' : 'Show confirmation password'}
-  //                   >
-  //                     <FontAwesomeIcon icon={showConfirmPassword ? faEyeSlash : faEye} />
-  //                   </button>
-  //                 </div>
-  //               )}
-  //               {error && <p className='text-sm text-red-600'>{error}</p>}
-  //               <p className='mt-2 text-sm text-gray-500'>By continuing, you agree to Flipkart's <span className='text-blue-600 cursor-pointer'>Terms of Use</span> and <span className='text-blue-600 cursor-pointer'>Privacy Policy</span>.</p>
-
-  //               <button type='submit' disabled={submitting} className='mt-1 cursor-pointer w-full border-none bg-[#fb641b] py-3 text-white shadow-sm font-semibold disabled:opacity-60' >
-  //                 {submitting ? 'Please wait...' : (isLogin ? 'Login' : 'Register')}
-  //               </button>
-  //             </form>
-  //           </div>
-
-  //           <div>
-  //             <div className="mt-6 text-center text-sm text-gray-600">
-  //               {isLogin ? "Don't have an account? " : "Already have an account? "}
-  //               <button
-  //                 onClick={() => {
-  //                   setIsLogin(!isLogin);
-  //                   setFormData({ name: '', email: '', password: '', confirmPassword: '' });
-  //                   setError('');
-  //                 }}
-  //                 className="text-blue-600  font-semibold hover: bg-transparent border-none cursor-pointer"
-  //               >
-  //                 {isLogin ? 'Register here' : 'Login here'}
-  //               </button>
-  //             </div>
-
-  //           </div>
-
-  //         </div>
-
-  //       </div>
-  //     </div >
-  //     <Footer />
-  //   </>
-  // )
   return (
     <>
       {/* Desktop Navbar - unchanged on desktop */}
@@ -272,7 +150,7 @@ const Login = () => {
       </div>
 
       {/* ================= MOBILE HEADER ================= */}
-      <div className="fixed left-0 right-0 top-0 z-50 flex h-[87px] items-center justify-center bg-[#2874f0] md:hidden">
+      <div className="fixed left-0 right-0 top-0 z-50 flex h-21.75 items-center justify-center bg-[#2874f0] md:hidden">
         {/* Close Button */}
         <button
           type="button"
@@ -287,7 +165,7 @@ const Login = () => {
         <img
           src={logo}
           alt="Flipkart"
-          className="h-[32px] w-auto"
+          className="h-8 w-auto"
         />
       </div>
 
@@ -506,14 +384,11 @@ const Login = () => {
                     name="name"
                     value={formData.name}
                     onChange={handleChange}
-                    placeholder=" "
+                    placeholder="Name"
                     autoComplete="username"
                     required
                   />
 
-                  <label className="pointer-events-none absolute left-0 top-3 text-gray-500 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-[16px] peer-focus:-top-2 peer-focus:bg-white peer-focus:px-1 peer-focus:text-[12px] peer-focus:text-[#2874f0]">
-                    Name
-                  </label>
                 </div>
               )}
 
@@ -525,15 +400,11 @@ const Login = () => {
                   name="email"
                   value={formData.email}
                   onChange={handleChange}
-                  placeholder=" "
+                  placeholder="Email"
                   type="email"
                   autoComplete="email"
                   required
                 />
-
-                <label className="pointer-events-none absolute left-0 top-3 text-gray-500 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-[16px] peer-focus:-top-2 peer-focus:bg-white peer-focus:px-1 peer-focus:text-[12px] peer-focus:text-[#2874f0]">
-                  Email
-                </label>
               </div>
 
 
@@ -545,7 +416,7 @@ const Login = () => {
                     name="password"
                     value={formData.password}
                     onChange={handleChange}
-                    placeholder=" "
+                    placeholder="Password"
                     type={showPassword ? 'text' : 'password'}
                     autoComplete={
                       isLogin ? 'current-password' : 'new-password'
@@ -577,9 +448,7 @@ const Login = () => {
                   </button>
                 </div>
 
-                <label className="pointer-events-none absolute left-0 top-3 text-gray-500 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-[16px] peer-focus:-top-2 peer-focus:bg-white peer-focus:px-1 peer-focus:text-[12px] peer-focus:text-[#2874f0]">
-                  Password
-                </label>
+
               </div>
 
 
@@ -592,7 +461,7 @@ const Login = () => {
                       name="confirmPassword"
                       value={formData.confirmPassword}
                       onChange={handleChange}
-                      placeholder=" "
+                      placeholder="Confirm Password"
                       type={
                         showConfirmPassword
                           ? 'text'
@@ -626,9 +495,7 @@ const Login = () => {
                     </button>
                   </div>
 
-                  <label className="pointer-events-none absolute left-0 top-3 text-gray-500 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-[16px] peer-focus:-top-2 peer-focus:bg-white peer-focus:px-1 peer-focus:text-[12px] peer-focus:text-[#2874f0]">
-                    Confirm Password
-                  </label>
+
                 </div>
               )}
 
@@ -642,7 +509,7 @@ const Login = () => {
 
 
               {/* TERMS */}
-              <p className="mt-2 text-[13px] leading-[18px] text-gray-500">
+              <p className="mt-2 text-[13px] leading-4.5 text-gray-500">
                 By continuing, you agree to Flipkart's{' '}
                 <span className="cursor-pointer text-[#2874f0]">
                   Terms of Use
@@ -682,7 +549,6 @@ const Login = () => {
             </form>
           </div>
 
-
           {/* =================================================
             MOBILE BOTTOM BUTTON
             ================================================= */}
@@ -695,7 +561,7 @@ const Login = () => {
                   .querySelector('#mobile-auth-form')
                   ?.requestSubmit();
               }}
-              className="h-[50px] w-full bg-[#fb641b] text-[16px] font-semibold text-white disabled:opacity-60"
+              className="h-12.5 w-full bg-[#fb641b] text-[16px] font-semibold text-white disabled:opacity-60"
             >
               {submitting
                 ? 'Please wait...'

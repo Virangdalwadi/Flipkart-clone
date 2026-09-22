@@ -4,6 +4,7 @@ import Navbar3 from "../components/Navbar3";
 import Footer from "../components/Footer";
 import { useAuth } from "../context/AuthContext";
 import api from "../api/axiosInstance";
+import Loader from "../components/Loader";
 
 const readCart = () => {
   try {
@@ -29,6 +30,9 @@ const readCart = () => {
   }
 };
 
+
+
+
 const normalizeBackendCart = (cart) => {
   const items = cart?.items || [];
   return items.map((item) => ({
@@ -48,6 +52,9 @@ const getProductImage = (item) => {
   return "https://placeholder.com";
 };
 
+
+
+
 const Checkout = () => {
   const navigate = useNavigate();
   const { user, loading } = useAuth();
@@ -55,6 +62,7 @@ const Checkout = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
+    window.scrollTo(0, 0);
     if (loading) return;
 
     if (user) {
@@ -75,7 +83,10 @@ const Checkout = () => {
     }
 
     setItems(readCart());
+
+
   }, [user, loading]);
+
 
   const subtotal = items.reduce((total, item) => {
     return total + (Number(item.price) || 0) * item.quantity;
@@ -88,7 +99,8 @@ const Checkout = () => {
       <main className="grow mx-auto w-full max-w-6xl px-4 pb-8 pt-28 md:pt-24">
         {isLoading ? (
           <div className="flex min-h-[60vh] flex-col items-center justify-center text-center">
-            <h1 className="text-3xl font-semibold text-gray-800">Loading your cart...</h1>
+            {/* <h1 className="text-3xl font-semibold text-gray-800">Loading your cart...</h1> */}
+            <Loader />
           </div>
         ) : items.length === 0 ? (
           <div className="flex min-h-[60vh] flex-col items-center justify-center text-center">
@@ -118,7 +130,7 @@ const Checkout = () => {
                         className="h-24 w-24 shrink-0 object-contain bg-gray-50"
                       />
                       <div className="min-w-0 grow">
-                        <h2 className="line-clamp-2 break-words font-semibold text-gray-900">{item.title}</h2>
+                        <h2 className="line-clamp-2 wrap-break-word font-semibold text-gray-900">{item.title}</h2>
                         <div className="mt-2 grid grid-cols-1 gap-1 text-sm text-gray-600 sm:grid-cols-3 sm:gap-2">
                           <span>Qty: {item.quantity}</span>
                           <span>Unit: ${unitPrice.toFixed(2)}</span>

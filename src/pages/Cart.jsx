@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Navbar3 from "../components/Navbar3";
 import Footer from "../components/Footer";
 import Popup from "../components/Popup";
@@ -8,6 +8,7 @@ import { faTrashCan } from "@fortawesome/free-solid-svg-icons";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import api from "../api/axiosInstance";
+import Loader from "../components/Loader";
 
 const readCart = () => {
   try {
@@ -58,13 +59,9 @@ const Cart = () => {
   const location = useLocation();
   const { user, loading } = useAuth();
 
-  React.useEffect(() => {
+  useEffect(() => {
     window.scrollTo(0, 0);
-  }, []);
-
-  React.useEffect(() => {
     if (loading) return;
-
     if (user) {
       const fetchCart = async () => {
         setCartLoading(true);
@@ -195,7 +192,8 @@ const Cart = () => {
       <main className="grow mx-auto w-full max-w-7xl px-4 pb-8 pt-28 md:pt-24">
         {cartLoading ? (
           <div className="flex justify-center items-center h-[60vh]">
-            <div className="text-lg text-gray-600">Loading your cart...</div>
+            {/* <div className="text-lg text-gray-600">Loading your cart...</div> */}
+            <Loader />
           </div>
         ) : items.length === 0 ? (
           <div className="flex flex-col justify-center items-center h-[70vh] text-center">
