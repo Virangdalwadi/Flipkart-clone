@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL, // your backend base URL
+  baseURL: import.meta.env.VITE_API_URL || "http://localhost:3044/api", // your backend base URL
   withCredentials: true, // REQUIRED so the refreshtoken httpOnly cookie is sent/received
 });
 
