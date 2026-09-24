@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Loginimg from "../assets/Login Image/Login.png";
 import Footer from '../components/Footer';
-import Navbar3 from '../components/Navbar3';
+import Navbar2 from '../components/Navbar2';
 import logo from "../assets/Login Image/flipkart-logo.svg"
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext.jsx';
@@ -53,15 +53,15 @@ const validateRegistrationPassword = (password, username, email) => {
   if (commonPasswords.has(normalizedPassword)) {
     return "This password is too common. Please choose a stronger password.";
   }
-  if (predictablePatterns.some((pattern) => normalizedPassword.includes(pattern))) {
-    return "Password must not contain predictable sequences.";
-  }
-  if (normalizedUsername && normalizedPassword.includes(normalizedUsername)) {
-    return "Password must not contain your name.";
-  }
-  if (normalizedEmail && normalizedPassword.includes(normalizedEmail)) {
-    return "Password must not contain your email.";
-  }
+  // if (predictablePatterns.some((pattern) => normalizedPassword.includes(pattern))) {
+  //   return "Password must not contain predictable sequences.";
+  // }
+  // if (normalizedUsername && normalizedPassword.includes(normalizedUsername)) {
+  //   return "Password must not contain your name.";
+  // }
+  // if (normalizedEmail && normalizedPassword.includes(normalizedEmail)) {
+  //   return "Password must not contain your email.";
+  // }
   return "";
 };
 
@@ -146,7 +146,7 @@ const Login = () => {
     <>
       {/* Desktop Navbar - unchanged on desktop */}
       <div className="hidden md:block">
-        <Navbar3 />
+        <Navbar2 />
       </div>
 
       {/* ================= MOBILE HEADER ================= */}
@@ -312,11 +312,7 @@ const Login = () => {
                   disabled={submitting}
                   className="mt-1 w-full cursor-pointer border-none bg-[#fb641b] py-3 font-semibold text-white shadow-sm disabled:opacity-60"
                 >
-                  {submitting
-                    ? 'Please wait...'
-                    : isLogin
-                      ? 'Login'
-                      : 'Register'}
+                  {isLogin ? 'Login' : 'Register'}
                 </button>
               </form>
             </div>
@@ -564,11 +560,7 @@ const Login = () => {
               }}
               className="mt-1 w-full cursor-pointer border-none bg-[#fb641b] py-3 font-semibold text-white shadow-sm disabled:opacity-60"
             >
-              {submitting
-                ? "Please wait..."
-                : isLogin
-                  ? "Login"
-                  : "Register"}
+              {isLogin ? 'Login' : 'Register'}
             </button>
           </div>
 

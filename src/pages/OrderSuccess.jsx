@@ -1,6 +1,6 @@
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
-import Navbar3 from "../components/Navbar3";
+import Navbar2 from "../components/Navbar2";
 import Footer from "../components/Footer";
 
 const OrderSuccess = () => {
@@ -9,7 +9,7 @@ const OrderSuccess = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-[#f1f2f4]">
-      <Navbar3 />
+      <Navbar2 />
       <main className="grow mx-auto w-full max-w-4xl px-4 pb-8 pt-28 md:pt-24">
         {!order ? (
           <section className="bg-white border border-gray-200 p-7 text-center shadow-sm">
@@ -23,9 +23,9 @@ const OrderSuccess = () => {
           <section className="bg-white border border-gray-200 p-5 shadow-sm sm:p-7">
             <h1 className="text-3xl font-bold text-green-700">Order Placed Successfully</h1>
             <div className="mt-6 grid gap-3 text-sm text-gray-700 sm:grid-cols-2">
-              <p className="break-words"><strong>MongoDB Order ID:</strong> {order._id}</p>
-              <p className="break-words"><strong>Razorpay Payment ID:</strong> {order.payment?.razorpayPaymentId}</p>
-              <p><strong>Total:</strong> ₹{Number(order.totalAmount).toFixed(2)}</p>
+              {/* <p className="wrap-break-words"><strong>MongoDB Order ID:</strong> {order._id}</p>
+              <p className="wrap-break-words"><strong>Razorpay Payment ID:</strong> {order.payment?.razorpayPaymentId}</p> */}
+
               <p><strong>Order Status:</strong> {order.orderStatus}</p>
               <p><strong>Payment Status:</strong> {order.payment?.status}</p>
             </div>
@@ -43,8 +43,9 @@ const OrderSuccess = () => {
               <div className="mt-3 divide-y">
                 {order.items.map((item) => (
                   <div key={item.productId} className="flex flex-col gap-1 py-3 text-sm text-gray-700 sm:flex-row sm:justify-between sm:gap-4">
-                    <span className="break-words">{item.title} × {item.quantity}</span>
+                    <span className="wrap-break-words">{item.title} × {item.quantity}</span>
                     <span className="shrink-0">₹{Number(item.subtotal).toFixed(2)}</span>
+
                   </div>
                 ))}
               </div>

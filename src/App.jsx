@@ -1,7 +1,6 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Home from "./pages/Home";
 import ProductDetails from "./pages/ProductDetails";
-import Notfound from "./components/Notfound";
 import Cart from "./pages/Cart";
 import Checkout from "./pages/Checkout";
 import Address from "./pages/Address";
@@ -9,35 +8,25 @@ import Payment from "./pages/Payment";
 import OrderSuccess from "./pages/OrderSuccess";
 import Login from "./pages/Login";
 import Profile from "./pages/Profile";
+import Notfound from "./components/Notfound";
 import ProtectedRoute from "./components/ProtectedRoute";
 import PublicOnlyRoute from "./components/PublicOnlyRoute";
+import Loader from "./components/Loader";
 
 
 const App = () => {
   const router = createBrowserRouter([
     {
       path: "/",
-      element: (
-        <div>
-          <Home />
-        </div>
-      ),
+      element: <Home />
     },
     {
       path: "/products/:id",
-      element: (
-        <div>
-          <ProductDetails />
-        </div>
-      ),
+      element: <ProductDetails />
     },
     {
       path: "/pages/cart",
-      element: (
-        <div>
-          <Cart />
-        </div>
-      ),
+      element: <Cart />
     },
     {
       path: "/pages/checkout",

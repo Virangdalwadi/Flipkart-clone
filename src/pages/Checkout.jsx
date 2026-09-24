@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import Navbar3 from "../components/Navbar3";
+import Navbar2 from "../components/Navbar2";
 import Footer from "../components/Footer";
 import { useAuth } from "../context/AuthContext";
 import api from "../api/axiosInstance";
@@ -94,7 +94,7 @@ const Checkout = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-[#f1f2f4]">
-      <Navbar3 />
+      <Navbar2 />
 
       <main className="grow mx-auto w-full max-w-6xl px-4 pb-8 pt-28 md:pt-24">
         {isLoading ? (

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import Navbar3 from "../components/Navbar3";
+import Navbar2 from "../components/Navbar2";
 import Footer from "../components/Footer";
 import Popup from "../components/Popup";
 
@@ -9,6 +9,8 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import api from "../api/axiosInstance";
 import Loader from "../components/Loader";
+import shield from "../assets/Cart Page image/shield.webp"
+import discount from "../assets/Cart Page image/discount.webp"
 
 const readCart = () => {
   try {
@@ -36,11 +38,12 @@ const readCart = () => {
 
 const normalizeBackendCart = (cart) => {
   const items = cart?.items || [];
+  
   return items.map((item) => ({
     id: item.productId,
     title: item.title,
     price: Number(item.price) || 0,
-    image: item.image || "https://placeholder.com",
+    image: item.image || item.title,
     quantity: Number(item.quantity) || 1,
     category: item.category || "",
   }));
@@ -58,6 +61,8 @@ const Cart = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { user, loading } = useAuth();
+  const [showFees, setShowFees] = useState(false);
+  const [showDiscounts, setShowDiscounts] = useState(false);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -142,7 +147,6 @@ const Cart = () => {
       }
       return;
     }
-
     const updatedArray = items.filter((item) => String(item.id) !== String(removeItem.id));
     setItems(updatedArray);
     localStorage.setItem("Products", JSON.stringify(updatedArray));
@@ -185,11 +189,22 @@ const Cart = () => {
     0,
   );
 
+  const totalDiscount = items.reduce(
+    (acc, item) => {
+      const discountedPrice = Number(item.price) || 0;
+      const mrp = discountedPrice * 1.4;
+      const discount = mrp - discountedPrice;
+
+      return acc + discount * item.quantity;
+    },
+    0
+  );
+
   return (
     <div className="min-h-screen flex flex-col bg-[#f1f2f4]">
-      <Navbar3 setValue={value} />
+      <Navbar2 setValue={value} />
 
-      <main className="grow mx-auto w-full max-w-7xl px-4 pb-8 pt-28 md:pt-24">
+      <main className="grow mx-auto w-full max-w-7xl px-4 pb-8 pt-28 md:pt-17">
         {cartLoading ? (
           <div className="flex justify-center items-center h-[60vh]">
             {/* <div className="text-lg text-gray-600">Loading your cart...</div> */}
@@ -302,50 +317,246 @@ const Cart = () => {
               ))}
             </div>
 
-            <div className="w-full lg:w-[35%] lg:sticky lg:top-24 bg-white border border-gray-200 p-6 shadow-sm">
-              <h2 className="text-xl font-bold text-gray-900 mb-4 border-b pb-3">
-                Order Summary
-              </h2>
+            <div className="w-full lg:w-[35%] lg:sticky lg:top-17">
 
-              <div className="flex flex-col gap-3 text-base text-gray-600 border-b pb-4">
-                <div className="flex min-w-0 justify-between gap-3">
-                  <span className="wrap-break-words">Price ({items.reduce((count, item) => count + item.quantity, 0)} items)</span>
-                  <span className="shrink-0">${totalAmount.toFixed(2)}</span>
+              {/* ================= PRICE DETAILS ================= */}
+              <div className="bg-white border border-gray-200 shadow-sm">
+
+                {/* Header */}
+                <div className="bg-[#f1f2f4] pb-4">
+                  <h2 className="text-lg font-semibold text-gray-900">
+                    Price Details
+                  </h2>
                 </div>
-                <div className="flex justify-between gap-3">
-                  <span>Discount</span>
-                  <span className="text-green-600">-$0.00</span>
-                </div>
-                <div className="flex justify-between gap-3">
-                  <span>Delivery Charges</span>
-                  <span className="text-green-600">Free</span>
+
+                <div className="px-5 py-5">
+
+                  {/* MRP */}
+                  <div className="flex justify-between items-center text-base text-gray-800">
+                    <span className="underline cursor-pointer decoration-dotted">
+                      MRP (incl. of all taxes)
+                    </span>
+
+                    <span className="cursor-pointer">
+                      ${(totalDiscount + totalAmount).toFixed(2)}
+                    </span>
+                  </div>
+
+                  {/* ================= FEES ================= */}
+                  <div className="mt-5">
+                    <button
+                      type="button"
+                      onClick={() => setShowFees((prev) => !prev)}
+                      className="flex w-full items-center justify-between text-base text-gray-800"
+                    >
+                      <span className="flex items-center cursor-pointer gap-2">
+                        Fees
+
+                        <span className="flex items-center">
+                          <svg
+                            width="16"
+                            height="16"
+                            fill="none"
+                            viewBox="0 0 17 17"
+                            className={`transition-transform duration-200 ${showFees ? "-rotate-90" : "rotate-90"
+                              }`}
+                          >
+                            <path
+                              d="m6.627 3.749 5 5-5 5"
+                              stroke="#111112"
+                              strokeWidth="1.2"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            />
+                          </svg>
+                        </span>
+                      </span>
+
+                      {!showFees && (
+                        <span className="cursor-pointer">
+                          $10
+                        </span>
+                      )}
+                    </button>
+
+                    {showFees && (
+                      <div className="mt-3 border-b border-dashed border-gray-200 pb-3">
+                        <div className="flex justify-between text-base text-gray-500">
+                          <span className="underline cursor-pointer decoration-dotted">
+                            Platform Fee
+                          </span>
+
+                          <span className="cursor-pointer">
+                            $10
+                          </span>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* ================= DISCOUNTS ================= */}
+                  <div className="mt-5">
+                    <button
+                      type="button"
+                      onClick={() => setShowDiscounts((prev) => !prev)}
+                      className="flex w-full items-center justify-between text-base text-gray-800"
+                    >
+                      <span className="flex items-center cursor-pointer gap-2">
+                        Discounts
+
+                        <span className="flex items-center">
+                          <svg
+                            width="16"
+                            height="16"
+                            fill="none"
+                            viewBox="0 0 17 17"
+                            className={`transition-transform duration-200 ${showDiscounts ? "-rotate-90" : "rotate-90"
+                              }`}
+                          >
+                            <path
+                              d="m6.627 3.749 5 5-5 5"
+                              stroke="#111112"
+                              strokeWidth="1.2"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            />
+                          </svg>
+                        </span>
+                      </span>
+
+                      {!showDiscounts && (
+                        <span className="text-green-600 cursor-pointer">
+                          - ${totalDiscount.toFixed(2)}
+                        </span>
+                      )}
+                    </button>
+
+                    {showDiscounts && (
+                      <div className="mt-3 space-y-3 border-b border-gray-200 pb-3">
+                        <div className="flex justify-between text-base text-gray-500">
+                          <span className="underline cursor-pointer decoration-dotted">
+                            Discount on MRP
+                          </span>
+
+                          <span className="text-green-600 cursor-pointer">
+                            - ${totalDiscount.toFixed(2)}
+                          </span>
+                        </div>
+
+                        <div className="flex justify-between text-base text-gray-500">
+                          <span className="underline cursor-pointer decoration-dotted">
+                            Coupons Applied (0)
+                          </span>
+
+                          <span className="text-green-600 cursor-pointer">
+                            - $0.00
+                          </span>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* ================= TOTAL ================= */}
+                  <div className="flex font-['Roboto_Medium',Roboto-Medium,'Droid_Sans',HelveticaNeue-Medium,'Helvetica_Neue_Medium',sans-serif-medium] justify-between items-center border-t border-gray-200 pt-5 mt-4 text-base text-gray-900">
+                    <span>
+                      Total Amount
+                    </span>
+
+                    <span>
+                      ${(totalAmount + 10).toFixed(2)}
+                    </span>
+                  </div>
+
+                  {/* Saving message */}
+                  <div className="mt-4 font-['inter_regular',Roboto,Helvetica,Arial,sans-serif] flex items-center justify-center gap-2 rounded-lg bg-[#ddfbf0] px-3 py-2 text-sm text-[#0e772d]
+">
+                    <span className="text-lg"><img className="size-5" src={discount} alt="discount" /></span>
+
+                    <span>
+                      You'll save <strong>${(totalDiscount).toFixed(2)}</strong> on this order!
+                    </span>
+                  </div>
+
                 </div>
               </div>
 
-              <div className="flex justify-between gap-3 font-bold text-lg text-gray-900 pt-4 mb-6">
-                <span>Total Amount</span>
-                <span>${totalAmount.toFixed(2)}</span>
+
+              {/* ================= SECURITY MESSAGE ================= */}
+              <div className="flex items-center font-sans font-semibold gap-4 px-10 py-2 text-[#717478]">
+
+                <span className="">
+                  <img className="size-8" src={shield} alt="shield" />
+                </span>
+
+                <p className="felx justify-center text-base font-semibold leading-6 ">
+                  <span>Safe and secure payments. Easy returns.</span><span><br /> 100% Authentic products.</span>
+                </p>
               </div>
 
-              {/* <button
-                type="button"
-                onClick={() => setShowClearCartPopup(true)}
-                className="w-full mb-3 bg-gray-200 text-gray-800 cursor-pointer font-medium text-base py-2.5 px-4 rounded-sm transition-colors shadow-sm focus:outline-none"
-              >
-                Clear Cart
-              </button> */}
 
-              <button
-                type="button"
-                onClick={handlePlaceorder}
-                className="w-full bg-[#ffc200] cursor-pointer font-light text-black text-lg py-3 px-4 rounded-sm transition-colors shadow-sm focus:outline-none font-['Roboto_Medium']"
-              >
-                Place Order
-              </button>
+              {/* ================= DESKTOP BOTTOM BAR ================= */}
+              <div className="hidden lg:flex items-center justify-between border border-gray-200 bg-white px-4 py-2 shadow-sm">
+
+                {/* Price */}
+                <div className="flex flex-col cursor-pointer font-['Roboto_Medium',Roboto-Medium,'Droid_Sans',HelveticaNeue-Medium,'Helvetica_Neue_Medium',sans-serif-medium]">
+                  <span className="text-sm text-gray-400 line-through">
+                    ${(totalDiscount + totalAmount).toFixed(2)}
+                  </span>
+
+                  <div className="flex items-center gap-2">
+                    <span className="text-xl text-gray-900">
+                      ${(totalAmount + 10).toFixed(2)}
+                    </span>
+
+                    <span className="text-gray-400 text-sm">
+                      ⓘ
+                    </span>
+                  </div>
+                </div>
+
+                {/* Place Order */}
+                <button
+                  type="button"
+                  onClick={handlePlaceorder}
+                  className="w-[45%] bg-[#ffc200] py-3 font-['Roboto_Medium',Roboto-Medium,'Droid_Sans',HelveticaNeue-Medium,'Helvetica_Neue_Medium',sans-serif-medium] text-lg font-medium text-black shadow-sm cursor-pointer"
+                >
+                  Place Order
+                </button>
+              </div>
+              {/* ================= MOBILE BOTTOM BAR ================= */}
+              <div className="fixed bottom-0 left-0 right-0 z-50 flex items-center justify-between border-t border-gray-200 bg-white px-4 py-2 shadow-lg lg:hidden">
+
+                {/* Price */}
+                <div className="flex flex-col text font-['Roboto_Medium',Roboto-Medium,'Droid_Sans',HelveticaNeue-Medium,'Helvetica_Neue_Medium',sans-serif-medium]">
+                  <span className="text-sm text-gray-400 line-through">
+                    ${(totalDiscount + totalAmount).toFixed(2)}
+                  </span>
+
+                  <div className="flex items-center gap-2">
+                    <span className="text-xl text-gray-900">
+                      ${(totalAmount + 10).toFixed(2)}
+                    </span>
+
+                    <span className="text-gray-400 text-sm">
+                      ⓘ
+                    </span>
+                  </div>
+                </div>
+
+                {/* Place Order */}
+                <button
+                  type="button"
+                  onClick={handlePlaceorder}
+                  className="w-[45%] font-['Roboto_Medium',Roboto-Medium,'Droid_Sans',HelveticaNeue-Medium,'Helvetica_Neue_Medium',sans-serif-medium] bg-[#ffc200] py-3 text-lg font-medium text-black shadow-sm"
+                >
+                  Place Order
+                </button>
+              </div>
             </div>
           </div>
-        )}
-      </main>
+        )
+        }
+      </main >
 
       <Footer />
       <Popup
@@ -387,7 +598,7 @@ const Cart = () => {
         message={cartPopup.message}
         onClose={() => setCartPopup((prev) => ({ ...prev, show: false }))}
       />
-    </div>
+    </div >
   );
 };
 
