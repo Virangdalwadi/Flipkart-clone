@@ -6,7 +6,6 @@ const api = axios.create({
 });
 
 let getAccessToken = () => null;
-
 let setAccessToken = () => { };
 let clearAuthState = () => { };
 
