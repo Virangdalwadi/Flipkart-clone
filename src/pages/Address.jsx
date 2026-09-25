@@ -244,8 +244,7 @@ const Address = () => {
   return (
     <div className="min-h-screen flex flex-col bg-[#f1f2f4]">
       <Navbar2 />
-
-      <main className="grow mx-auto w-full max-w-3xl px-4 pb-8 pt-28 md:pt-24">
+      <main className="grow mx-auto w-full max-w-4xl px-4 pb-8 pt-28 md:pt-24">
         <div className="bg-white border border-gray-200 shadow-sm">
 
           {/* HEADER */}

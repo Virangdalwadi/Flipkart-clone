@@ -4,7 +4,7 @@ import { NavLink, useParams } from "react-router-dom";
 import Footer from "../components/Footer";
 import Loader from "../components/Loader";
 import Navbar from "../components/Navbar";
-import Popup from "../components/Popup";
+// import Popup from "../components/Popup";
 import manualCategoryProducts from "../data/manualCategoryProducts";
 import api from "../api/axiosInstance";
 import { useAuth } from "../context/AuthContext";
@@ -32,7 +32,7 @@ const ProductDetails = () => {
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [popup, setPopup] = useState({ show: false, type: "success", title: "Added to Cart", message: "Added to Cart" });
+  // const [popup, setPopup] = useState({ show: false, type: "success", title: "Added to Cart", message: "Added to Cart" });
   const [addingToCart, setAddingToCart] = useState(false);
   const [isInCart, setIsInCart] = useState(false);
 
@@ -139,7 +139,8 @@ const ProductDetails = () => {
           title: "Unable to update cart.",
           message: "Unable to update cart.",
         });
-      } finally {
+      }
+      finally {
         setAddingToCart(false);
       }
 
@@ -236,13 +237,13 @@ const ProductDetails = () => {
         </main>
       )}
       <Footer />
-      <Popup
+      {/* <Popup
         show={popup.show}
         type={popup.type}
         title={popup.title}
         message={popup.message}
         onClose={() => setPopup((prev) => ({ ...prev, show: false }))}
-      />
+      /> */}
     </>
   );
 };

@@ -4,7 +4,6 @@ import "../style.css";
 import Loader from "./Loader";
 import { NavLink, useNavigate } from "react-router-dom";
 import Footer from "./Footer";
-import Popup from "./Popup";
 import manualCategoryProducts from "../data/manualCategoryProducts";
 import api from "../api/axiosInstance";
 import { useAuth } from "../context/AuthContext";
@@ -37,7 +36,7 @@ const getGuestCart = () => {
 
 const normalizeMongoCart = (cart) => {
   const items = cart?.items || [];
-
+  
   return items.map((cartItem) => ({
     ...cartItem,
     id: Number(cartItem.productId),
@@ -51,7 +50,6 @@ const ProductCard = ({ query }) => {
   const { user } = useAuth();
   const [loading, setLoading] = useState(true);
   const [products, setProducts] = useState([]);
-  const [popup, setPopup] = useState({ show: false, type: "success", title: "Added to Cart", message: "Added to Cart" });
   const [addingToCart, setAddingToCart] = useState(false);
   const [item, setItem] = useState(getGuestCart);
   const navigate = useNavigate();
@@ -262,7 +260,7 @@ const ProductCard = ({ query }) => {
                     </span>
                   </div>
 
-                  <div className="mt-auto flex items-start justify-between gap-3">
+                  <div className="mt-auto flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between sm:gap-3">
                     <div className="flex min-w-0 flex-col">
                       <span className="text-lg font-bold text-gray-900 sm:text-xl">
                         ${product.price}
@@ -275,7 +273,7 @@ const ProductCard = ({ query }) => {
                     {!isProductInCart(product) ? (
                       <button
                         type="button"
-                        className="rounded-xl bg-blue-600 px-3 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-700 focus:outline-none focus:ring-4 disabled:opacity-60 shrink-0"
+                        className="w-full rounded-xl bg-blue-600 px-3 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-700 focus:outline-none focus:ring-4 disabled:opacity-60 sm:w-auto sm:shrink-0"
                         disabled={addingToCart}
                         onClick={(event) => {
                           event.stopPropagation();
@@ -285,10 +283,10 @@ const ProductCard = ({ query }) => {
                         Add to Cart
                       </button>
                     ) : (
-                      <NavLink to="/pages/cart" className="shrink-0">
+                      <NavLink to="/pages/cart" className="w-full sm:w-auto sm:shrink-0">
                         <button
                           type="button"
-                          className="rounded-xl bg-green-600 px-3 py-2 text-sm font-medium text-white transition-colors hover:bg-green-700 focus:outline-none focus:ring-4"
+                          className="w-full rounded-xl bg-green-600 px-3 py-2 text-sm font-medium text-white transition-colors hover:bg-green-700 focus:outline-none focus:ring-4 sm:w-auto"
                           onClick={(event) => event.stopPropagation()}
                         >
                           Go to Cart
@@ -311,13 +309,6 @@ const ProductCard = ({ query }) => {
         </div>
       )}
       <Footer />
-      <Popup
-        show={popup.show}
-        type={popup.type}
-        title={popup.title}
-        message={popup.message}
-        onClose={() => setPopup((prev) => ({ ...prev, show: false }))}
-      />
     </>
   );
 };

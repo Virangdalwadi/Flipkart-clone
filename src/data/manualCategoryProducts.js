@@ -16,7 +16,7 @@ const manualCategoryProducts = [
     price: 39.99,
     rating: 4.2,
     images: [
-      "https://encrypted-tbn3.gstatic.com/shopping?q=tbn:ANd9GcS-DzU7u5xbSkxcDRuEyf9dmsUHdFh-vUMnVUxRhDTwbTm_ZHL9xa8OtLcvni8bM8s6Mus3OsjBrnk2HCdrlR2tZdxnEqQ3Af_i_OFIwkTHX3Xb1EfgmaFxdg",
+      "https://res.cloudinary.com/hoomudyq/image/upload/f_auto,q_auto/Gemini_Generated_Image_fer42dfer42dfer4",
     ],
   },
   {

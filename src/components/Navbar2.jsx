@@ -1,36 +1,44 @@
 import React, { useState } from "react";
-
-// Images
 import { NavLink, useNavigate } from "react-router-dom";
 import logo from "../assets/Logo/logo.webp";
 import name from "../assets/Logo/name.webp";
 import SearchBar from "./SearchBar";
 import { useAuth } from "../context/AuthContext";
+import useProductSuggestions from "../hooks/useProductSuggestions";
 
 const Navbar2 = ({ setValue }) => {
-
   const [search, setSearch] = useState("");
   const navigate = useNavigate();
   const { user, logout } = useAuth();
+  const baseUrl = import.meta.env.VITE_API_BASE_URL;
+  const { suggestions } = useProductSuggestions(search, baseUrl);
+
+  const handleSuggestionClick = (item) => {
+    setSearch("");
+    if (setValue) setValue("");
+    navigate(`/products/${item.id}`);
+  };
 
   const handleFormSubmit = (value) => {
+    setSearch(value);
     if (setValue) setValue(value);
-  }
+    navigate("/"); // go to the page that renders ProductCard, carrying the query
+  };
 
   function handleBack() {
     setSearch("");
     if (setValue) setValue("");
-    navigate("/");
-    console.log("Navigated Successfully")
   }
+
   const handleHomenavigation = () => {
-    // setValue("");
+    setSearch("");
+    if (setValue) setValue("");
     navigate("/");
-  }
+  };
 
   function handleSports() {
     const value = "Sports";
-    handleFormSubmit(value)
+    handleFormSubmit(value);
   }
 
   return (
@@ -49,11 +57,12 @@ const Navbar2 = ({ setValue }) => {
               {/* SearchBar - Full width on mobile, auto on desktop */}
               <div className="min-w-0 flex-1 md:flex-initial">
                 <SearchBar
-
                   value={search}
                   onChange={setSearch}
                   onSubmitSuccess={handleFormSubmit}
                   onClear={handleBack}
+                  onSuggestionClick={handleSuggestionClick}
+                  suggestions={suggestions}
                 />
               </div>
             </div>
@@ -114,4 +123,3 @@ const Navbar2 = ({ setValue }) => {
 };
 
 export default Navbar2;
-

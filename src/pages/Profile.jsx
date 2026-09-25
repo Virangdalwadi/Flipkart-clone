@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+
+import { useEffect, useState, useRef } from "react";
 import MyOrdersIcon from "../assets/Profile Page Image/My ORDERS.svg"
 import ProfileAvatar from "../assets/Profile Page Image/ProfileAvatar.svg"
 import AccountSettingsIcon from "../assets/Profile Page Image/ACCOUNT SETTINGS.svg"
@@ -11,6 +12,7 @@ import Navbar2 from "../components/Navbar2";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import api from "../api/axiosInstance.jsx";
+import Popup from "../components/Popup.jsx";
 
 export const createAddress = (data) => api.post("/addresses", data);
 
@@ -101,6 +103,7 @@ function ManageAddresses({ onCancel }) {
 
   // Controls three-dot menu
   const [openMenu, setOpenMenu] = useState(null);
+  const menuRef = useRef(null);
 
 
 
@@ -148,6 +151,19 @@ function ManageAddresses({ onCancel }) {
 
     fetchAddresses();
   }, []);
+
+  useEffect(() => {
+    if (!openMenu) return undefined;
+
+    const handleClickOutside = (event) => {
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+        setOpenMenu(null);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [openMenu]);
 
   const inputCls =
     "w-full min-w-0 border border-gray-300 rounded px-3 py-2 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:border-blue-500 bg-white";
@@ -265,40 +281,97 @@ function ManageAddresses({ onCancel }) {
   // DELETE ADDRESS
   // --------------------------------------------------
 
-  const handleDeleteAddress = async (id) => {
-    const confirmDelete = window.confirm(
-      "Are you sure you want to delete this address?"
-    );
+  // const handleDeleteAddress = async (id) => {
+  //   const confirmDelete = window.confirm(
+  //     "Are you sure you want to delete this address?"
+  //   );
 
-    if (!confirmDelete) return;
+  //   if (!confirmDelete) return;
+
+  //   try {
+  //     await deleteAddress(id);
+
+  //     setAddresses((prev) =>
+  //       prev.filter((item) => item._id !== id)
+  //     );
+
+  //     setOpenMenu(null);
+
+  //     // If this was the last address,
+  //     // automatically show the form
+  //     setAddresses((prev) => {
+  //       if (prev.length === 0) {
+  //         setShowForm(true);
+  //       }
+
+  //       return prev;
+  //     });
+  //   } catch (error) {
+  //     console.error("Failed to delete address:", error);
+
+  //     alert(
+  //       error.response?.data?.message ||
+  //       "Failed to delete address"
+  //     );
+  //   }
+  // };
+
+  const [popup, setPopup] = useState({
+    show: false,
+    type: "warning",
+    title: "",
+    message: "",
+    onConfirm: null,
+    showOkButton: true,
+    confirmButtonText: "OK",
+  });
+
+  const closePopup = () => setPopup((prev) => ({ ...prev, show: false }));
+
+  const handleDeleteAddress = (id) => {
+    setPopup({
+      show: true,
+      type: "warning",
+      title: "Delete Address",
+      message: "Are you sure you want to delete this address?",
+      confirmButtonText: "Delete",
+      showOkButton: true,
+      onConfirm: () => confirmDeleteAddress(id),
+    });
+  };
+
+  const confirmDeleteAddress = async (id) => {
+    closePopup();
 
     try {
       await deleteAddress(id);
 
-      setAddresses((prev) =>
-        prev.filter((item) => item._id !== id)
-      );
-
+      setAddresses((prev) => prev.filter((item) => item._id !== id));
       setOpenMenu(null);
 
-      // If this was the last address,
-      // automatically show the form
       setAddresses((prev) => {
         if (prev.length === 0) {
           setShowForm(true);
         }
-
         return prev;
       });
     } catch (error) {
       console.error("Failed to delete address:", error);
 
-      alert(
-        error.response?.data?.message ||
-        "Failed to delete address"
-      );
+      setPopup({
+        show: true,
+        type: "error",
+        title: "Delete Failed",
+        message:
+          error.response?.data?.message || "Failed to delete address",
+        confirmButtonText: "OK",
+        showOkButton: true,
+        onConfirm: null,
+      });
     }
   };
+
+
 
   // --------------------------------------------------
   // CANCEL FORM
@@ -599,7 +672,10 @@ function ManageAddresses({ onCancel }) {
                     </div>
 
                     {/* THREE DOT MENU */}
-                    <div className="relative ml-4">
+                    <div
+                      className="relative ml-4"
+                      ref={openMenu === item._id ? menuRef : null}
+                    >
                       <button
                         type="button"
                         onClick={() =>
@@ -614,7 +690,6 @@ function ManageAddresses({ onCancel }) {
 
                       {openMenu === item._id && (
                         <div className="absolute right-0 top-0 z-20 w-28 rounded bg-white shadow-lg border border-gray-200">
-
                           <button
                             type="button"
                             onClick={() => handleEditAddress(item)}
@@ -630,7 +705,6 @@ function ManageAddresses({ onCancel }) {
                           >
                             Delete
                           </button>
-
                         </div>
                       )}
                     </div>
@@ -641,9 +715,21 @@ function ManageAddresses({ onCancel }) {
           )}
         </>
       )}
+      <Popup
+        show={popup.show}
+        type={popup.type}
+        title={popup.title}
+        message={popup.message}
+        onConfirm={popup.onConfirm}
+        onClose={closePopup}
+        showOkButton={popup.showOkButton}
+        confirmButtonText={popup.confirmButtonText}
+      />
     </div>
   );
 }
+
+
 
 /* ---------- Page ---------- */
 
@@ -693,7 +779,7 @@ export default function ProfilePage() {
               <span>My Account</span>
 
               <span className="text-xl leading-none">
-                {mobileSidebarOpen ? "×" : "☰"}
+                {mobileSidebarOpen ? "🗙" : "☰"}
               </span>
             </button>
           </div>
@@ -714,7 +800,10 @@ export default function ProfilePage() {
                 </div>
 
                 {/* My Orders */}
-                <button className="w-full flex items-center justify-between cursor-pointer px-4 py-3 border-b text-gray-800  border-gray-100 hover:text-blue-600  hover:bg-gray-50">
+                <button
+                  onClick={() => setMobileSidebarOpen(false)}
+                  className="w-full flex items-center justify-between cursor-pointer px-4 py-3 border-b text-gray-800  border-gray-100 hover:text-blue-600  hover:bg-gray-50"
+                >
                   <span className="flex items-center gap-3 text-sm font-semibold">
                     <img className="size-5" src={MyOrdersIcon} alt="" />
                     MY ORDERS
@@ -753,7 +842,10 @@ export default function ProfilePage() {
                   <ul className="mt-2">
                     {paymentsLinks.map((link) => (
                       <li key={link.label}>
-                        <button className="w-full flex cursor-pointer items-center justify-between pl-11 pr-4 py-1.5 text-sm text-gray-600 hover:text-blue-600 hover:bg-blue-50">
+                        <button
+                          onClick={() => setMobileSidebarOpen(false)}
+                          className="w-full flex cursor-pointer items-center justify-between pl-11 pr-4 py-1.5 text-sm text-gray-600 hover:text-blue-600 hover:bg-blue-50"
+                        >
                           <span>{link.label}</span>
                           {link.trailing && <span className="text-green-600">{link.trailing}</span>}
                         </button>
@@ -771,7 +863,10 @@ export default function ProfilePage() {
                   <ul className="mt-2">
                     {stuffLinks.map((link) => (
                       <li key={link}>
-                        <button className="w-full cursor-pointer text-left pl-11 pr-4 py-1.5 text-sm text-gray-600 hover:text-blue-600 hover:bg-blue-50">
+                        <button
+                          onClick={() => setMobileSidebarOpen(false)}
+                          className="w-full cursor-pointer text-left pl-11 pr-4 py-1.5 text-sm text-gray-600 hover:text-blue-600 hover:bg-blue-50"
+                        >
                           {link}
                         </button>
                       </li>
@@ -780,8 +875,7 @@ export default function ProfilePage() {
                 </div>
 
                 {/* Logout */}
-                <button onClick={async () => { await logout(); navigate("/"); }} className="w-full flex items-center gap-3 px-4 py-3 text-base font-semibold text-gray-500 hover:text-blue-600 transition-colors duration-200">
-                  <img className="size-7 bold" src={LogoutIcon} alt="Logout" />
+                <button onClick={async () => { setMobileSidebarOpen(false); await logout(); navigate("/"); }} className="w-full flex items-center gap-3 px-4 py-3 text-base font-semibold text-gray-500 hover:text-blue-600 transition-colors duration-200">
                   Logout
                 </button>
 
@@ -987,9 +1081,11 @@ export default function ProfilePage() {
 
 
 
+
             </main>
           </div>
         </div>
+
       </div>
       <Footer />
     </>
