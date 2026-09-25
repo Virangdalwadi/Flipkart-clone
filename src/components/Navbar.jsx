@@ -28,20 +28,32 @@ import nav14 from "../assets/Navbar-svg/nav14.svg";
 import "../App.css";
 import SearchBar from "./SearchBar";
 import { useAuth } from "../context/AuthContext";
+import useProductSuggestions from "../hooks/useProductSuggestions"; // add this import
+
 
 const Navbar = ({ setValue }) => {
 
   const [search, setSearch] = useState("");
-  const navigate = useNavigate();
   const { user, logout } = useAuth();
+  const baseUrl = import.meta.env.VITE_API_BASE_URL;
+  const { suggestions } = useProductSuggestions(search, baseUrl);
+  const navigate = useNavigate();
+
+
 
   const handleinput = () => {
     console.log(search);
   }
 
   const handleFormSubmit = (value) => {
-    if (setValue) setValue(value);
-  }
+    setSearch(value);
+    if (setValue) setValue(value); // this drives ProductCard's query in the parent
+  };
+
+  const handleSearchClear = () => {
+    setSearch("");
+    if (setValue) setValue("");
+  };
 
   // ForYou Navigation
   const handleForyou = () => {
@@ -109,7 +121,6 @@ const Navbar = ({ setValue }) => {
     window.scrollTo(0, 0);
     const value = "Motorcycle";
     handleFormSubmit(value)
-
   }
 
   function handleBack() {
@@ -197,7 +208,8 @@ const Navbar = ({ setValue }) => {
                 value={search}
                 onChange={setSearch}
                 onSubmitSuccess={handleFormSubmit}
-                onClear={handleBack}
+                onClear={handleSearchClear}
+                suggestions={suggestions}
               />
 
             </div>

@@ -209,7 +209,7 @@ const ProductCard = ({ query }) => {
             {visibleItems.map((product) => (
               <div
                 key={product.id}
-                className="group min-w-0 w-full cursor-pointer overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm"
+                className="group min-w-0 w-full cursor-pointer overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm flex flex-col"
                 onClick={() => handleViewProduct(product)}
               >
                 <div className="relative overflow-hidden aspect-square bg-gray-100">
@@ -223,7 +223,7 @@ const ProductCard = ({ query }) => {
                   </span>
                 </div>
 
-                <div className="p-3 sm:p-4">
+                <div className="p-3 sm:p-4 flex flex-col flex-1">
                   <p className="text-xs uppercase tracking-widest text-gray-400 font-semibold mb-1">
                     {product.category}
                   </p>
@@ -262,7 +262,7 @@ const ProductCard = ({ query }) => {
                     </span>
                   </div>
 
-                  <div className="flex flex-wrap items-end justify-between gap-3">
+                  <div className="mt-auto flex items-start justify-between gap-3">
                     <div className="flex min-w-0 flex-col">
                       <span className="text-lg font-bold text-gray-900 sm:text-xl">
                         ${product.price}
@@ -275,21 +275,20 @@ const ProductCard = ({ query }) => {
                     {!isProductInCart(product) ? (
                       <button
                         type="button"
-                        className="w-full rounded-xl bg-blue-600 px-3 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-700 focus:outline-none focus:ring-4 disabled:opacity-60 sm:w-auto"
+                        className="rounded-xl bg-blue-600 px-3 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-700 focus:outline-none focus:ring-4 disabled:opacity-60 shrink-0"
                         disabled={addingToCart}
                         onClick={(event) => {
                           event.stopPropagation();
                           handleAddtoCart(product);
                         }}
                       >
-                        {/* {addingToCart ? "Adding..." : "Add to Cart"} */}
                         Add to Cart
                       </button>
                     ) : (
-                      <NavLink to="/pages/cart">
+                      <NavLink to="/pages/cart" className="shrink-0">
                         <button
                           type="button"
-                          className="w-full rounded-xl bg-green-600 px-3 py-2 text-sm font-medium text-white transition-colors hover:bg-green-700 focus:outline-none focus:ring-4 sm:w-auto"
+                          className="rounded-xl bg-green-600 px-3 py-2 text-sm font-medium text-white transition-colors hover:bg-green-700 focus:outline-none focus:ring-4"
                           onClick={(event) => event.stopPropagation()}
                         >
                           Go to Cart

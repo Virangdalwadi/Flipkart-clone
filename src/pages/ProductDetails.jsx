@@ -231,12 +231,6 @@ const ProductDetails = () => {
                   Add to Cart
                 </button>
               )}
-              {/* <NavLink
-                to="/pages/cart"
-                className="w-full rounded-xl bg-green-600 px-5 py-3 text-center font-medium text-white transition-colors hover:bg-green-700 sm:w-auto"
-              >
-                Go to Cart
-              </NavLink> */}
             </div>
           </div>
         </main>
