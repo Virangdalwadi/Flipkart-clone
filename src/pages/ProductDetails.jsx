@@ -90,7 +90,7 @@ const ProductDetails = () => {
         setProduct(response.data);
       } catch {
         const manualProduct = manualCategoryProducts.find(
-          (item) => item.id === id,
+          (item) => String(item.id) === String(id),
         );
 
         if (manualProduct) {
