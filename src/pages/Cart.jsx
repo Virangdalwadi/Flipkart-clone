@@ -38,7 +38,7 @@ const readCart = () => {
 
 const normalizeBackendCart = (cart) => {
   const items = cart?.items || [];
-  
+
   return items.map((item) => ({
     id: item.productId,
     title: item.title,
@@ -547,7 +547,7 @@ const Cart = () => {
                 <button
                   type="button"
                   onClick={handlePlaceorder}
-                  className="w-[45%] font-['Roboto_Medium',Roboto-Medium,'Droid_Sans',HelveticaNeue-Medium,'Helvetica_Neue_Medium',sans-serif-medium] bg-[#ffc200] py-3 text-lg font-medium text-black shadow-sm"
+                  className="w-[45%] font-['Roboto_Medium',Roboto-Medium,'Droid_Sans',HelveticaNeue-Medium,'Helvetica_Neue_Medium',sans-serif-medium] bg-[#ffc200] py-3 text-base font-medium text-black shadow-sm"
                 >
                   Place Order
                 </button>

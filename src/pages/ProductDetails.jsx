@@ -34,10 +34,49 @@ const ProductDetails = () => {
   const [error, setError] = useState("");
   const [popup, setPopup] = useState({ show: false, type: "success", title: "Added to Cart", message: "Added to Cart" });
   const [addingToCart, setAddingToCart] = useState(false);
+  const [isInCart, setIsInCart] = useState(false);
 
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
+
+  useEffect(() => {
+    const checkCart = async () => {
+      if (!product) return;
+
+      try {
+        if (user) {
+          const response = await api.get("/cart");
+
+          const cartItems = response.data?.cart?.items || [];
+
+          const exists = cartItems.some(
+            (item) => String(item.productId) === String(product.id)
+          );
+
+          setIsInCart(exists);
+        } else {
+          const storedCart = JSON.parse(
+            localStorage.getItem("Products") || "[]"
+          );
+
+          const cartItems = normalizeCart(storedCart);
+
+          const exists = cartItems.some(
+            (item) =>
+              String(item.id ?? item.productId ?? item.btn_id) ===
+              String(product.id)
+          );
+
+          setIsInCart(exists);
+        }
+      } catch (error) {
+        console.error("Failed to check cart:", error);
+      }
+    };
+
+    checkCart();
+  }, [product, user]);
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -70,8 +109,12 @@ const ProductDetails = () => {
   const handleAddToCart = async () => {
     if (!product || addingToCart) return;
 
+    // Already in cart → don't add again
+    if (isInCart) return;
+
     if (user) {
       setAddingToCart(true);
+
       try {
         await api.post("/cart", {
           productId: product.id,
@@ -80,27 +123,61 @@ const ProductDetails = () => {
           image: product.thumbnail || product.images?.[0],
           quantity: 1,
         });
-        setPopup({ show: true, type: "success", title: "Added to cart", message: "Added to cart" });
+
+        setIsInCart(true);
+
+        setPopup({
+          show: true,
+          type: "success",
+          title: "Added to cart",
+          message: "Added to cart",
+        });
       } catch {
-        setPopup({ show: true, type: "error", title: "Unable to update cart.", message: "Unable to update cart." });
+        setPopup({
+          show: true,
+          type: "error",
+          title: "Unable to update cart.",
+          message: "Unable to update cart.",
+        });
       } finally {
         setAddingToCart(false);
       }
+
       return;
     }
 
-    const currentCart = normalizeCart(JSON.parse(localStorage.getItem("Products")) || []);
-    const existingItem = currentCart.find((item) => String(item.id) === String(product.id));
-    const updatedCart = existingItem
-      ? currentCart.map((item) =>
-        String(item.id) === String(product.id)
-          ? { ...item, quantity: (Number(item.quantity) || 1) + 1 }
-          : item,
-      )
-      : [...currentCart, { ...product, btn_id: product.id, quantity: 1 }];
+    const currentCart = normalizeCart(
+      JSON.parse(localStorage.getItem("Products") || "[]")
+    );
+
+    const existingItem = currentCart.find(
+      (item) => String(item.id) === String(product.id)
+    );
+
+    if (existingItem) {
+      setIsInCart(true);
+      return;
+    }
+
+    const updatedCart = [
+      ...currentCart,
+      {
+        ...product,
+        btn_id: product.id,
+        quantity: 1,
+      },
+    ];
 
     localStorage.setItem("Products", JSON.stringify(updatedCart));
-    setPopup({ show: true, type: "success", title: "Added to Cart", message: "Added to Cart" });
+
+    setIsInCart(true);
+
+    setPopup({
+      show: true,
+      type: "success",
+      title: "Added to Cart",
+      message: "Added to Cart",
+    });
   };
 
   return (
@@ -137,21 +214,29 @@ const ProductDetails = () => {
             <p className="text-gray-700">Rating: {product.rating || "4.0"}</p>
             <p className="text-gray-700">Stock: {product.stock ?? "Available"}</p>
             <div className="flex flex-wrap gap-3">
-              <button
-                type="button"
-                onClick={handleAddToCart}
-                disabled={addingToCart}
-                className="w-full rounded-xl bg-blue-600 px-5 py-3 font-medium text-white transition-colors hover:bg-blue-700 disabled:opacity-60 sm:w-auto"
-              >
-                {/* {addingToCart ? "Adding..." : "Add to Cart"} */}
-                Add to Cart
-              </button>
-              <NavLink
+              {isInCart ? (
+                <NavLink
+                  to="/pages/cart"
+                  className="w-full rounded-xl bg-green-600 px-5 py-3 text-center font-medium text-white transition-colors hover:bg-green-700 sm:w-auto"
+                >
+                  Go to Cart
+                </NavLink>
+              ) : (
+                <button
+                  type="button"
+                  onClick={handleAddToCart}
+                  disabled={addingToCart}
+                  className="w-full rounded-xl bg-blue-600 px-5 py-3 font-medium text-white transition-colors hover:bg-blue-700 disabled:opacity-60 sm:w-auto"
+                >
+                  Add to Cart
+                </button>
+              )}
+              {/* <NavLink
                 to="/pages/cart"
                 className="w-full rounded-xl bg-green-600 px-5 py-3 text-center font-medium text-white transition-colors hover:bg-green-700 sm:w-auto"
               >
                 Go to Cart
-              </NavLink>
+              </NavLink> */}
             </div>
           </div>
         </main>

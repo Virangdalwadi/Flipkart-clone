@@ -22,7 +22,6 @@ const normalizeCart = (cart = []) => cart.reduce((normalized, cartItem) => {
     existingItem.quantity += quantity;
     return normalized;
   }
-
   return [...normalized, { ...cartItem, quantity }];
 }, []);
 

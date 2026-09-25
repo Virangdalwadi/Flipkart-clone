@@ -45,9 +45,9 @@ const OrderSuccess = () => {
                   <div key={item.productId} className="flex flex-col gap-1 py-3 text-sm text-gray-700 sm:flex-row sm:justify-between sm:gap-4">
                     <span className="wrap-break-words">{item.title} × {item.quantity}</span>
                     <span className="shrink-0">₹{Number(item.subtotal).toFixed(2)}</span>
-
                   </div>
                 ))}
+                <p className="shrink-0"><strong>Total:</strong> ₹{Number(order.totalAmount).toFixed(2)}</p>
               </div>
             </div>
             <Link to="/" className="mt-7 inline-block bg-blue-600 px-5 py-3 font-medium text-white hover:bg-blue-700">
