@@ -13,6 +13,8 @@ import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import api from "../api/axiosInstance.jsx";
 import Popup from "../components/Popup.jsx";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faHouse } from '@fortawesome/free-solid-svg-icons';
 
 export const createAddress = (data) => api.post("/addresses", data);
 
@@ -741,14 +743,24 @@ export default function ProfilePage() {
   const [gender, setGender] = useState("male");
   const [email, setEmail] = useState("");
   const [mobile, setMobile] = useState("+91");
-  const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [activeLink, setActiveLink] = useState("Profile Information");
 
   const [editingPersonal, setEditingPersonal] = useState(false);
   const [editingEmail, setEditingEmail] = useState(false);
   const [editingMobile, setEditingMobile] = useState(false);
 
-
+  // Prevent background scrolling when mobile drawer is open
+  useEffect(() => {
+    if (isDrawerOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "unset";
+    }
+    return () => {
+      document.body.style.overflow = "unset";
+    };
+  }, [isDrawerOpen]);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -764,31 +776,197 @@ export default function ProfilePage() {
 
   return (
     <>
-      <Navbar2 />
+      {/* Desktop Header Navbar */}
+      <div className="hidden md:block">
+        <Navbar2 />
+      </div>
 
-      <div className="pt-28 md:pt-24">
-        <div className="min-h-screen bg-gray-200 py-6 px-4">
+      {/* Mobile Fixed Top Header Bar (< 768px) */}
+      <header className="md:hidden fixed top-0 left-0 right-0 z-30 bg-white border-b border-gray-200 px-4 h-14 flex items-center justify-between shadow-xs">
+        <div className="flex items-center gap-3">
+          <button
+            type="button"
+            onClick={() => setIsDrawerOpen(true)}
+            className="p-1.5 -ml-1.5 rounded-lg text-gray-700 hover:text-blue-600 hover:bg-gray-100 focus:outline-none transition-colors cursor-pointer"
+            aria-label="Open navigation menu"
+          >
+            {/* Hamburger Icon */}
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          </button>
+          <span className="font-semibold text-gray-800 text-base">My Account</span>
+        </div>
 
-          {/* Mobile Sidebar Button */}
-          <div className="md:hidden mb-4">
+        <div className="flex items-center gap-2">
+          <img className="size-8 rounded-full" src={ProfileAvatar} alt="Profile" />
+          <span className="text-sm font-semibold text-gray-700 max-w-30 truncate">{firstName || "User"}</span>
+        </div>
+      </header>
+
+      {/* Mobile Drawer Backdrop Overlay */}
+      <div
+        className={`md:hidden fixed inset-0 z-40 bg-black/50 transition-opacity duration-300 ${isDrawerOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
+          }`}
+        onClick={() => setIsDrawerOpen(false)}
+        aria-hidden="true"
+      />
+
+      {/* Mobile Modal Navigation Drawer (80% width, sliding smoothly from left) */}
+      <div
+        className={`md:hidden fixed inset-y-0 left-0 z-50 w-[80%] max-w-sm bg-white shadow-2xl flex flex-col justify-between overflow-y-auto transform transition-transform duration-300 ease-in-out ${isDrawerOpen ? "translate-x-0" : "-translate-x-full"
+          }`}
+        role="dialog"
+        aria-modal="true"
+      >
+        <div>
+          {/* Drawer Header with User Greeting and Close 'X' Button */}
+          <div className="flex items-center justify-between px-4 py-4 border-b border-gray-100 bg-gray-50">
+            <div className="flex items-center gap-3">
+              <img className="size-10 rounded-full" src={ProfileAvatar} alt="Profile" />
+              <div>
+                <p className="text-xs text-gray-500">Hello,</p>
+                <p className="text-sm font-semibold text-gray-800 truncate max-w-40">
+                  {firstName} {lastName}
+                </p>
+              </div>
+            </div>
             <button
               type="button"
-              onClick={() => setMobileSidebarOpen((prev) => !prev)}
-              className="w-full flex items-center justify-between bg-white px-4 py-3 rounded shadow-sm text-sm font-semibold text-gray-800"
+              onClick={() => setIsDrawerOpen(false)}
+              className="p-1.5 rounded-lg text-gray-500 hover:text-gray-800 hover:bg-gray-200 transition-colors cursor-pointer"
+              aria-label="Close navigation drawer"
             >
-              <span>My Account</span>
-
-              <span className="text-xl leading-none">
-                {mobileSidebarOpen ? "🗙" : "☰"}
-              </span>
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
             </button>
           </div>
-          <div className="max-w-5xl mx-auto flex flex-col md:flex-row gap-4">
-            {/* ---------- Sidebar ---------- */}
-            <aside
-              className={`w-full md:w-64 shrink-0 space-y-3 ${mobileSidebarOpen ? "block" : "hidden"
-                } md:block`}
+
+          {/* Navigation Links Stacked Vertically with Touch-Friendly Spacing */}
+          <div className="py-2">
+            {/* Home Link */}
+            <button
+              onClick={() => {
+                setIsDrawerOpen(false);
+                navigate("/");
+              }}
+              className="w-full flex items-center gap-2 px-4 py-3 text-sm font-semibold text-gray-700 hover:text-blue-600 hover:bg-blue-50 transition-colors cursor-pointer"
             >
+              <span className="text-base leading-none pr-1">
+                <FontAwesomeIcon icon={faHouse} size="lg" style={{ color: "rgb(21, 93, 252)", }} />
+              </span>
+              HOME
+            </button>
+
+            {/* My Orders */}
+            <button
+              onClick={() => setIsDrawerOpen(false)}
+              className="w-full flex items-center justify-between px-5 py-3 border-b border-gray-100 text-gray-800 hover:text-blue-600 hover:bg-gray-50 transition-colors cursor-pointer"
+            >
+              <span className="flex items-center gap-3 text-sm font-semibold">
+                <img className="size-5" src={MyOrdersIcon} alt="" />
+                MY ORDERS
+              </span>
+            </button>
+
+            {/* Account Settings */}
+            <div className="border-b border-gray-100 py-3">
+              <div className="flex items-center gap-3 px-5 text-sm font-semibold text-gray-800 mb-1">
+                <img className="size-5" src={AccountSettingsIcon} alt="" />
+                ACCOUNT SETTINGS
+              </div>
+              <ul>
+                {settingsLinks.map((link) => (
+                  <li key={link}>
+                    <button
+                      onClick={() => {
+                        setActiveLink(link);
+                        setIsDrawerOpen(false);
+                      }}
+                      className={`w-full text-left pl-12 pr-5 py-2.5 text-sm transition-colors cursor-pointer ${activeLink === link
+                        ? "text-blue-600 bg-blue-50 font-semibold"
+                        : "text-gray-600 hover:text-blue-600 hover:bg-blue-50"
+                        }`}
+                    >
+                      {link}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* Payments */}
+            <div className="border-b border-gray-100 py-3">
+              <div className="flex items-center gap-3 px-5 text-sm font-semibold text-gray-800 mb-1">
+                <img className="size-5" src={PaymentsIcon} alt="" />
+                PAYMENTS
+              </div>
+              <ul>
+                {paymentsLinks.map((link) => (
+                  <li key={link.label}>
+                    <button
+                      onClick={() => setIsDrawerOpen(false)}
+                      className="w-full flex items-center justify-between pl-12 pr-5 py-2.5 text-sm text-gray-600 hover:text-blue-600 hover:bg-blue-50 transition-colors cursor-pointer"
+                    >
+                      <span>{link.label}</span>
+                      {link.trailing && <span className="text-green-600 font-medium">{link.trailing}</span>}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* My Stuff */}
+            <div className="border-b border-gray-100 py-3">
+              <div className="flex items-center gap-3 px-5 text-sm font-semibold text-gray-800 mb-1">
+                <img className="size-5" src={MyStuffIcon} alt="" />
+                MY STUFF
+              </div>
+              <ul>
+                {stuffLinks.map((link) => (
+                  <li key={link}>
+                    <button
+                      onClick={() => setIsDrawerOpen(false)}
+                      className="w-full text-left pl-12 pr-5 py-2.5 text-sm text-gray-600 hover:text-blue-600 hover:bg-blue-50 transition-colors cursor-pointer"
+                    >
+                      {link}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* Logout */}
+            <button
+              onClick={async () => {
+                setIsDrawerOpen(false);
+                await logout();
+                navigate("/");
+              }}
+              className="w-full flex items-center gap-3 px-5 py-3 text-sm font-semibold text-red-600 hover:bg-red-50 transition-colors cursor-pointer"
+            >
+              <img className="size-5" src={LogoutIcon} alt="" />
+              Logout
+            </button>
+          </div>
+        </div>
+
+        {/* Frequently Visited Footer in Drawer */}
+        <div className="bg-gray-50 border-t border-gray-100 px-5 py-3 mt-auto">
+          <p className="text-xs font-semibold text-gray-500 mb-1.5">Frequently Visited</p>
+          <div className="flex gap-4 text-xs text-gray-500">
+            <span className="hover:text-blue-600 cursor-pointer">Track Order</span>
+            <span className="hover:text-blue-600 cursor-pointer">Help Center</span>
+          </div>
+        </div>
+      </div>
+
+      <div className="pt-16 md:pt-24">
+        <div className="min-h-screen bg-gray-200 py-6 px-4">
+          <div className="max-w-5xl mx-auto flex flex-col md:flex-row gap-4">
+            {/* ---------- Desktop Sidebar (Exact JSX structure & styles preserved) ---------- */}
+            <aside className="hidden md:block md:w-64 shrink-0 space-y-3">
               <div className="bg-white rounded shadow-sm">
                 {/* Hello, user */}
                 <div className="flex items-center gap-3 px-4 py-4 border-b border-gray-100">
@@ -801,8 +979,7 @@ export default function ProfilePage() {
 
                 {/* My Orders */}
                 <button
-                  onClick={() => setMobileSidebarOpen(false)}
-                  className="w-full flex items-center justify-between cursor-pointer px-4 py-3 border-b text-gray-800  border-gray-100 hover:text-blue-600  hover:bg-gray-50"
+                  className="w-full flex items-center justify-between cursor-pointer px-4 py-3 border-b text-gray-800 border-gray-100 hover:text-blue-600 hover:bg-gray-50"
                 >
                   <span className="flex items-center gap-3 text-sm font-semibold">
                     <img className="size-5" src={MyOrdersIcon} alt="" />
@@ -843,7 +1020,6 @@ export default function ProfilePage() {
                     {paymentsLinks.map((link) => (
                       <li key={link.label}>
                         <button
-                          onClick={() => setMobileSidebarOpen(false)}
                           className="w-full flex cursor-pointer items-center justify-between pl-11 pr-4 py-1.5 text-sm text-gray-600 hover:text-blue-600 hover:bg-blue-50"
                         >
                           <span>{link.label}</span>
@@ -864,7 +1040,6 @@ export default function ProfilePage() {
                     {stuffLinks.map((link) => (
                       <li key={link}>
                         <button
-                          onClick={() => setMobileSidebarOpen(false)}
                           className="w-full cursor-pointer text-left pl-11 pr-4 py-1.5 text-sm text-gray-600 hover:text-blue-600 hover:bg-blue-50"
                         >
                           {link}
@@ -875,7 +1050,7 @@ export default function ProfilePage() {
                 </div>
 
                 {/* Logout */}
-                <button onClick={async () => { setMobileSidebarOpen(false); await logout(); navigate("/"); }} className="w-full flex items-center gap-3 px-4 py-3 text-base font-semibold text-gray-500 hover:text-blue-600 transition-colors duration-200">
+                <button onClick={async () => { await logout(); navigate("/"); }} className="w-full flex items-center gap-3 px-4 py-3 text-base font-semibold text-gray-500 hover:text-blue-600 transition-colors duration-200 cursor-pointer">
                   Logout
                 </button>
 

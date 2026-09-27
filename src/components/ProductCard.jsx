@@ -36,7 +36,7 @@ const getGuestCart = () => {
 
 const normalizeMongoCart = (cart) => {
   const items = cart?.items || [];
-  
+
   return items.map((cartItem) => ({
     ...cartItem,
     id: Number(cartItem.productId),

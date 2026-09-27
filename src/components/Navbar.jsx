@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 // Pages
 // Font Icons
@@ -31,23 +31,26 @@ import { useAuth } from "../context/AuthContext";
 import useProductSuggestions from "../hooks/useProductSuggestions"; // add this import
 
 
-const Navbar = ({ setValue }) => {
+const Navbar = ({ setValue, initialSearch = "" }) => {
 
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState(initialSearch);
   const { user, logout } = useAuth();
   const baseUrl = import.meta.env.VITE_API_BASE_URL;
   const { suggestions } = useProductSuggestions(search, baseUrl);
   const navigate = useNavigate();
 
-
+  useEffect(() => {
+    setSearch(initialSearch);
+  }, [initialSearch]);
 
   const handleinput = () => {
     console.log(search);
   }
 
   const handleFormSubmit = (value) => {
-    setSearch(value);
-    if (setValue) setValue(value); // this drives ProductCard's query in the parent
+    const trimmed = (value || "").trim();
+    setSearch(trimmed);
+    if (setValue) setValue(trimmed); // this drives ProductCard's query in the parent
   };
 
   const handleSearchClear = () => {

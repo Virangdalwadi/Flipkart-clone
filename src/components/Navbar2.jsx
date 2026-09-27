@@ -16,18 +16,28 @@ const Navbar2 = ({ setValue }) => {
   const handleSuggestionClick = (item) => {
     setSearch("");
     if (setValue) setValue("");
-    navigate(`/products/${item.id}`);
+    if (item?.id) {
+      navigate(`/products/${item.id}`);
+    } else if (item?.title) {
+      navigate(`/?search=${encodeURIComponent(item.title.trim())}`);
+    }
   };
 
   const handleFormSubmit = (value) => {
-    setSearch(value);
-    if (setValue) setValue(value);
-    navigate("/"); // go to the page that renders ProductCard, carrying the query
+    const trimmed = (value || "").trim();
+    setSearch(trimmed);
+    if (setValue) setValue(trimmed);
+    if (trimmed) {
+      navigate(`/?search=${encodeURIComponent(trimmed)}`);
+    } else {
+      navigate("/");
+    }
   };
 
   function handleBack() {
     setSearch("");
     if (setValue) setValue("");
+    navigate("/");
   }
 
   const handleHomenavigation = () => {
@@ -37,7 +47,7 @@ const Navbar2 = ({ setValue }) => {
   };
 
   function handleSports() {
-    const value = "Sports";
+    const value = "sports-accessories";
     handleFormSubmit(value);
   }
 
