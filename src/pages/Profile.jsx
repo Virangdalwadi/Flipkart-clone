@@ -1,5 +1,7 @@
 
 import { useEffect, useState, useRef } from "react";
+
+// Images
 import MyOrdersIcon from "../assets/Profile Page Image/My ORDERS.svg"
 import ProfileAvatar from "../assets/Profile Page Image/ProfileAvatar.svg"
 import AccountSettingsIcon from "../assets/Profile Page Image/ACCOUNT SETTINGS.svg"
@@ -7,12 +9,15 @@ import PaymentsIcon from "../assets/Profile Page Image/PAYMENTS.svg"
 import MyStuffIcon from "../assets/Profile Page Image/MY STUFF.svg"
 import LogoutIcon from "../assets/Profile Page Image/Logout.svg"
 import FooterArt from "../assets/Profile Page Image/Footer.png"
+
 import Footer from "../components/Footer";
 import Navbar2 from "../components/Navbar2";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import api from "../api/axiosInstance.jsx";
 import Popup from "../components/Popup.jsx";
+
+
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHouse } from '@fortawesome/free-solid-svg-icons';
 
@@ -906,7 +911,7 @@ export default function ProfilePage() {
               }}
               className="w-full flex items-center gap-3 px-5 py-3 text-sm font-semibold text-red-600 hover:bg-red-50 transition-colors cursor-pointer"
             >
-              <img className="size-5" src={LogoutIcon} alt="" />
+              <img className="size-5" src={LogoutIcon} alt="Logoout button img" />
               Logout
             </button>
           </div>
@@ -1010,7 +1015,8 @@ export default function ProfilePage() {
                 </div>
 
                 {/* Logout */}
-                <button onClick={async () => { await logout(); navigate("/"); }} className="w-full flex items-center gap-3 px-4 py-3 text-base font-semibold text-gray-500 hover:text-blue-600 transition-colors duration-200 cursor-pointer">
+                <button onClick={async () => { await logout(); navigate("/"); }} className="w-full flex items-center gap-3 px-4 py-3 text-base font-semibold text-gray-500 hover:text-red-400 transition-colors duration-200 cursor-pointer">
+                  <img className="size-7" src={LogoutIcon} alt="Logoout button img" />
                   Logout
                 </button>
 

@@ -457,7 +457,7 @@ const Cart = () => {
                   </div>
 
                   {/* ================= TOTAL ================= */}
-                  <div className="flex font-['Roboto_Medium',Roboto-Medium,'Droid_Sans',HelveticaNeue-Medium,'Helvetica_Neue_Medium',sans-serif-medium] justify-between items-center border-t border-gray-200 pt-5 mt-4 text-base text-gray-900">
+                  <div className="flex cursor-default font-['Roboto_Medium',Roboto-Medium,'Droid_Sans',HelveticaNeue-Medium,'Helvetica_Neue_Medium',sans-serif-medium] justify-between items-center border-t border-gray-200 pt-5 mt-4 text-base text-gray-900">
                     <span>
                       Total Amount
                     </span>
@@ -468,7 +468,7 @@ const Cart = () => {
                   </div>
 
                   {/* Saving message */}
-                  <div className="mt-4 font-['inter_regular',Roboto,Helvetica,Arial,sans-serif] flex items-center justify-center gap-2 rounded-lg bg-[#ddfbf0] px-3 py-2 text-sm text-[#0e772d]
+                  <div className="mt-4 cursor-default font-['inter_regular',Roboto,Helvetica,Arial,sans-serif] flex items-center justify-center gap-2 rounded-lg bg-[#ddfbf0] px-3 py-2 text-sm text-[#0e772d]
 ">
                     <span className="text-lg"><img className="size-5" src={discount} alt="discount" /></span>
 
@@ -487,7 +487,7 @@ const Cart = () => {
                   <img className="size-10 sm:size-8" src={shield} alt="shield" />
                 </div>
 
-                <p className="flex flex-col justify-end text-sm sm:text-base font-semibold leading-normal sm:leading-6">
+                <p className="flex flex-col cursor-default justify-end text-sm sm:text-base font-semibold leading-normal sm:leading-6">
                   <span>
                     Safe and secure payments. Easy<br className="hidden sm:inline" /> returns.
                     100% Authentic products.
