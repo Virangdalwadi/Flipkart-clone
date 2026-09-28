@@ -18,11 +18,11 @@ import paymentMethods from '../assets/Footer images/payment-methods.svg'
 const Footer = () => {
   return (
     <>
-      <footer className="bottom-0 left-0 right-0 mb-15 bg-[#212121] px-6 pt-12 sm:px-8 lg:pt-16">
+      <footer className="bottom-0 left-0 right-0 bg-[#212121] px-6 pt-12 sm:px-8 lg:pt-16">
         <div className='mx-auto grid w-full max-w-7xl grid-cols-2 gap-x-6 gap-y-8 sm:grid-cols-3 lg:grid-cols-6 lg:gap-x-8'>
           <div className='flex min-w-0 flex-col'>
             <div>
-              <h1 className='text-gray-300 mb-1 text-sm font-light'>
+              <h1 className='text-gray-300 cursor-default mb-1 text-sm font-light'>
                 About
               </h1>
             </div>
@@ -31,11 +31,16 @@ const Footer = () => {
                 <NavLink to="/">
                   <li className='hover:underline'>Contact US</li>
                 </NavLink>
-                <li className='hover:underline'>About Us</li>
-                <li className='hover:underline'>Careers</li>
-                <li className='hover:underline'>Flipkart Stories</li>
-                <li className='hover:underline'>Press</li>
-                <li className='hover:underline'>Corporate Information</li>
+                <li className='hover:underline cursor-pointer
+                '>About Us</li>
+                <li className='hover:underline cursor-pointer
+                '>Careers</li>
+                <li className='hover:underline cursor-pointer
+                '>Flipkart Stories</li>
+                <li className='hover:underline cursor-pointer
+                '>Press</li>
+                <li className='hover:underline cursor-pointer
+                '>Corporate Information</li>
 
               </ul>
             </div>
@@ -43,52 +48,52 @@ const Footer = () => {
 
           <div className='flex min-w-0 flex-col'>
             <div>
-              <h1 className='text-gray-300 mb-1 text-sm font-light'>
+              <h1 className='text-gray-300 cursor-default mb-1 text-sm font-light'>
                 GROUP COMPANIES
               </h1>
             </div>
 
             <div>
               <ul className='text-white text-sm'>
-                <li className='hover:underline'>Myntra</li>
-                <li className='hover:underline'>Cleartrip</li>
-                <li className='hover:underline'>Shopsy</li>
+                <li className='hover:underline cursor-pointer'>Myntra</li>
+                <li className='hover:underline cursor-pointer'>Cleartrip</li>
+                <li className='hover:underline cursor-pointer'>Shopsy</li>
               </ul>
             </div>
           </div>
 
           <div className='flex min-w-0 flex-col'>
             <div>
-              <h1 className='text-gray-300 mb-1 text-sm font-light'>
+              <h1 className='text-gray-300 mb-1 cursor-default text-sm font-light'>
                 HELP
               </h1>
             </div>
             <div>
               <ul className='text-white text-sm'>
-                <li className='hover:underline'>Payments</li>
-                <li className='hover:underline'>Shipping</li>
-                <li className='hover:underline'>Cancellation & Returns</li>
-                <li className='hover:underline'>FAQ</li>
+                <li className='hover:underline cursor-pointer'>Payments</li>
+                <li className='hover:underline cursor-pointer'>Shipping</li>
+                <li className='hover:underline cursor-pointer'>Cancellation & Returns</li>
+                <li className='hover:underline cursor-pointer'>FAQ</li>
               </ul>
             </div>
           </div>
 
           <div className='flex min-w-0 flex-col'>
             <div>
-              <h1 className='text-gray-300 mb-1 text-sm font-light'>
+              <h1 className='text-gray-300 mb-1 cursor-default text-sm font-light'>
                 CONSUMER POLICY
               </h1>
             </div>
             <div>
               <ul className='text-white text-sm'>
-                <li className='hover:underline'>Cancellation & Returns</li>
-                <li className='hover:underline'>Terms Of Use</li>
-                <li className='hover:underline'>Security</li>
-                <li className='hover:underline'>Privacy</li>
-                <li className='hover:underline'>Sitemap</li>
-                <li className='hover:underline'>Grievance Redressal</li>
-                <li className='hover:underline'>EPR Compliance</li>
-                <li className='hover:underline'>FSSAI Food Safety Connect App</li>
+                <li className='hover:underline cursor-pointer'>Cancellation & Returns</li>
+                <li className='hover:underline cursor-pointer'>Terms Of Use</li>
+                <li className='hover:underline cursor-pointer'>Security</li>
+                <li className='hover:underline cursor-pointer'>Privacy</li>
+                <li className='hover:underline cursor-pointer'>Sitemap</li>
+                <li className='hover:underline cursor-pointer'>Grievance Redressal</li>
+                <li className='hover:underline cursor-pointer'>EPR Compliance</li>
+                <li className='hover:underline cursor-pointer'>FSSAI Food Safety Connect App</li>
               </ul>
             </div>
           </div>

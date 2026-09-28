@@ -482,16 +482,19 @@ const Cart = () => {
 
 
               {/* ================= SECURITY MESSAGE ================= */}
-              <div className="flex items-center font-sans font-semibold gap-4 px-10 py-2 text-[#717478]">
+              <div className="flex flex-row sm:flex-row items-center font-sans font-semibold gap-3 sm:gap-4 px-4 sm:px-8 py-4 sm:py-2 text-center sm:text-left text-[#717478]">
+                <div className="shrink-0">
+                  <img className="size-10 sm:size-8" src={shield} alt="shield" />
+                </div>
 
-                <span className="">
-                  <img className="size-8" src={shield} alt="shield" />
-                </span>
-
-                <p className="felx justify-center text-base font-semibold leading-6 ">
-                  <span>Safe and secure payments. Easy returns.</span><span><br /> 100% Authentic products.</span>
+                <p className="flex flex-col justify-end text-sm sm:text-base font-semibold leading-normal sm:leading-6">
+                  <span>
+                    Safe and secure payments. Easy<br className="hidden sm:inline" /> returns.
+                    100% Authentic products.
+                  </span>
                 </p>
               </div>
+
 
 
               {/* ================= DESKTOP BOTTOM BAR ================= */}

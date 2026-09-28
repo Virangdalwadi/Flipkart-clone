@@ -278,46 +278,6 @@ function ManageAddresses({ onCancel }) {
       );
     }
   };
-
-  // --------------------------------------------------
-  // DELETE ADDRESS
-  // --------------------------------------------------
-
-  // const handleDeleteAddress = async (id) => {
-  //   const confirmDelete = window.confirm(
-  //     "Are you sure you want to delete this address?"
-  //   );
-
-  //   if (!confirmDelete) return;
-
-  //   try {
-  //     await deleteAddress(id);
-
-  //     setAddresses((prev) =>
-  //       prev.filter((item) => item._id !== id)
-  //     );
-
-  //     setOpenMenu(null);
-
-  //     // If this was the last address,
-  //     // automatically show the form
-  //     setAddresses((prev) => {
-  //       if (prev.length === 0) {
-  //         setShowForm(true);
-  //       }
-
-  //       return prev;
-  //     });
-  //   } catch (error) {
-  //     console.error("Failed to delete address:", error);
-
-  //     alert(
-  //       error.response?.data?.message ||
-  //       "Failed to delete address"
-  //     );
-  //   }
-  // };
-
   const [popup, setPopup] = useState({
     show: false,
     type: "warning",
