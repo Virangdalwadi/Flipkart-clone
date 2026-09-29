@@ -5,7 +5,8 @@ import {
   getAddresses,
   updateAddress,
   deleteAddress,
-} from "../../api/addressApi.js";
+} from "../../api/Addressapi.js";
+
 
 const indianStates = [
   "Andhra Pradesh", "Arunachal Pradesh", "Assam", "Bihar", "Chhattisgarh", "Goa",
