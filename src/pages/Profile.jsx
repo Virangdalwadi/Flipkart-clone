@@ -28,7 +28,7 @@ export {
   getAddressById,
   updateAddress,
   deleteAddress,
-} from "../api/addressApi.js";
+} from "../api/Addressapi.js";
 
 /* ---------- Sidebar nav data ---------- */
 
