@@ -25,7 +25,7 @@ import nav11 from "../assets/Navbar-svg/nav11.svg";
 import nav12 from "../assets/Navbar-svg/nav12.svg";
 import nav13 from "../assets/Navbar-svg/nav13.svg";
 import nav14 from "../assets/Navbar-svg/nav14.svg";
-import "../App.css";
+import "../style/App.css";
 import SearchBar from "./SearchBar";
 import { useAuth } from "../context/AuthContext";
 import useProductSuggestions from "../hooks/useProductSuggestions"; // add this import
@@ -43,9 +43,6 @@ const Navbar = ({ setValue, initialSearch = "" }) => {
     setSearch(initialSearch);
   }, [initialSearch]);
 
-  const handleinput = () => {
-    console.log(search);
-  }
 
   const handleFormSubmit = (value) => {
     const trimmed = (value || "").trim();
