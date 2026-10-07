@@ -126,19 +126,19 @@ const ProductDetails = () => {
 
         setIsInCart(true);
 
-        setPopup({
-          show: true,
-          type: "success",
-          title: "Added to cart",
-          message: "Added to cart",
-        });
+        // setPopup({
+        //   show: true,
+        //   type: "success",
+        //   title: "Added to cart",
+        //   message: "Added to cart",
+        // });
       } catch {
-        setPopup({
-          show: true,
-          type: "error",
-          title: "Unable to update cart.",
-          message: "Unable to update cart.",
-        });
+        // setPopup({
+        //   show: true,
+        //   type: "error",
+        //   title: "Unable to update cart.",
+        //   message: "Unable to update cart.",
+        // });
       }
       finally {
         setAddingToCart(false);
@@ -173,12 +173,12 @@ const ProductDetails = () => {
 
     setIsInCart(true);
 
-    setPopup({
-      show: true,
-      type: "success",
-      title: "Added to Cart",
-      message: "Added to Cart",
-    });
+    // setPopup({
+    //   show: true,
+    //   type: "success",
+    //   title: "Added to Cart",
+    //   message: "Added to Cart",
+    // });
   };
 
   return (
