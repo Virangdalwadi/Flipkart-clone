@@ -78,7 +78,7 @@ const Popup = ({
           <button
             type="button"
             onClick={onClose}
-            className="rounded-2xl px-2 py-1 text-2xl leading-none text-gray-400 hover:bg-gray-100 hover:text-gray-700"
+            className="rounded-2xl px-2 py-1 text-2xl leading-none text-gray-600 hover:bg-gray-100 hover:text-gray-700"
             aria-label="Close notification"
           >
             ×

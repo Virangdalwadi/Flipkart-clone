@@ -195,9 +195,10 @@ const ProductDetails = () => {
       ) : (
         <main className="mx-auto mb-10 flex max-w-6xl flex-col gap-8 px-4 pt-60 sm:pt-56 lg:pt-55 md:flex-row">
           <div className="flex w-full items-center justify-center bg-gray-100 p-3 sm:p-6 md:w-1/2">
-            <img
+            <img width="400"
+              height="400"
               src={product.images?.[0] || product.thumbnail}
-              alt={product.title}
+              alt={product?.title || "Product image"}
               className="max-h-72 w-full object-contain sm:max-h-112"
             />
           </div>
@@ -218,7 +219,7 @@ const ProductDetails = () => {
               {isInCart ? (
                 <NavLink
                   to="/pages/cart"
-                  className="w-full rounded-xl bg-green-600 px-5 py-3 text-center font-medium text-white transition-colors hover:bg-green-700 sm:w-auto"
+                  className="w-full rounded-xl bg-green-700 px-5 py-3 text-center font-medium text-white transition-colors hover:bg-green-800 sm:w-auto"
                 >
                   Go to Cart
                 </NavLink>

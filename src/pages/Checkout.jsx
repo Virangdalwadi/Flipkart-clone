@@ -124,9 +124,10 @@ const Checkout = () => {
 
                   return (
                     <div key={`${item.id || item.btn_id || item.title}-${index}`} className="flex gap-4 py-5">
-                      <img
+                      <img width="400"
+                        height="400"
                         src={getProductImage(item)}
-                        alt={item.title}
+                        alt={item?.title || "Product image"}
                         className="h-24 w-24 shrink-0 object-contain bg-gray-50"
                       />
                       <div className="min-w-0 grow">

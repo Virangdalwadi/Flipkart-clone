@@ -4,16 +4,14 @@ import axios from "axios";
 const useProductSuggestions = (query, baseUrl, limit = 6) => {
 
   const [suggestions, setSuggestions] = useState([]);
-  const [loadingSuggestions, setLoadingSuggestions] = useState(false);
 
   useEffect(() => {
     if (!query || !query.trim()) {
-      setSuggestions([]);
+      setSuggestions((current) => current.length ? [] : current);
       return;
     }
 
     const controller = new AbortController();
-    setLoadingSuggestions(true);
 
     const timer = setTimeout(async () => {
       try {
@@ -25,8 +23,6 @@ const useProductSuggestions = (query, baseUrl, limit = 6) => {
         if (err.name !== "CanceledError") {
           console.error("Suggestion fetch failed:", err);
         }
-      } finally {
-        setLoadingSuggestions(false);
       }
     }, 250); // debounce
 
@@ -36,7 +32,7 @@ const useProductSuggestions = (query, baseUrl, limit = 6) => {
     };
   }, [query, baseUrl, limit]);
 
-  return { suggestions, loadingSuggestions };
+  return { suggestions };
 };
 
 export default useProductSuggestions;

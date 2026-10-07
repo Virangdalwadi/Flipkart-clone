@@ -325,7 +325,7 @@ export default function Address({ onCancel }) {
                 <select
                   value={form.state}
                   onChange={update("state")}
-                  className={`${inputCls} ${form.state === "" ? "text-gray-400" : "text-gray-800"}`}
+                  className={`${inputCls} ${form.state === "" ? "text-gray-600" : "text-gray-800"}`}
                 >
                   <option value="">--Select State--</option>
                   {indianStates.map((state) => (

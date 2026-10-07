@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
-import logo from "../assets/Logo/logo.webp";
-import name from "../assets/Logo/name.webp";
+import logo from "../assets/images/Logo/logo.webp";
+import name from "../assets/images/Logo/name.webp";
 import SearchBar from "./SearchBar";
 import { useAuth } from "../context/AuthContext";
 import useProductSuggestions from "../hooks/useProductSuggestions";
@@ -60,8 +60,10 @@ const Navbar2 = ({ setValue }) => {
             {/* Logo Section */}
             <div className="flex flex-row gap-2 sm:gap-3 items-center w-full md:w-auto min-w-0">
               <div className="flex justify-center cursor-pointer rounded-lg items-center shrink-0 px-2 sm:px-3 py-1 sm:py-2 h-auto bg-[#ffe51f]">
-                <img className="size-5 sm:size-6 mr-1" src={logo} alt="Logo" />
-                <img className="h-4 sm:h-5 w-auto" src={name} alt="Brand Name" />
+                <img width="24"
+                  height="24" className="size-5 sm:size-6 mr-1" src={logo} alt="Flipkart logo" />
+                <img width="60"
+                  height="20" className="h-4 sm:h-5 w-auto" src={name} alt="Flipkart wordmark" />
               </div>
 
               {/* SearchBar - Full width on mobile, auto on desktop */}

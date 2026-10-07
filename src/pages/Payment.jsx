@@ -114,7 +114,7 @@ const Payment = () => {
   const paymentItems = useMemo(
     () =>
       items.map((item) => ({
-        id: item.id ?? item.productId,
+        id: item.id,
         title: item.title,
         price: Number(item.price) || 0,
         quantity:

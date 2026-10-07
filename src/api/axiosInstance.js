@@ -6,8 +6,8 @@ const api = axios.create({
 });
 
 let getAccessToken = () => null;
-let setAccessToken = () => { };
-let clearAuthState = () => { };
+let setAccessToken = () => {};
+let clearAuthState = () => {};
 
 export const registerAuthHandlers = (getter, setter, clearState) => {
   getAccessToken = getter;
@@ -42,7 +42,7 @@ api.interceptors.response.use(
       }
     }
     return Promise.reject(error);
-  }
+  },
 );
 
 export default api;

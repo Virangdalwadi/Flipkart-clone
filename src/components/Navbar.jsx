@@ -7,24 +7,24 @@ import { faLocationDot } from "@fortawesome/free-solid-svg-icons";
 
 // Images
 import { NavLink, useNavigate } from "react-router-dom";
-import logo from "../assets/Logo/logo.webp";
-import name from "../assets/Logo/name.webp";
-import Aeroplane from "../assets/Logo/Aeroplane.webp";
-import travel from "../assets/Logo/travel.webp";
-import nav1 from "../assets/Navbar-svg/nav1.svg";
-import nav2 from "../assets/Navbar-svg/nav2.svg";
-import nav3 from "../assets/Navbar-svg/nav3.svg";
-import nav4 from "../assets/Navbar-svg/nav4.svg";
-import nav5 from "../assets/Navbar-svg/nav5.svg";
-import nav6 from "../assets/Navbar-svg/nav6.svg";
-import nav7 from "../assets/Navbar-svg/nav7.svg";
-import nav8 from "../assets/Navbar-svg/nav8.svg";
-import nav9 from "../assets/Navbar-svg/nav9.svg";
-import nav10 from "../assets/Navbar-svg/nav10.svg";
-import nav11 from "../assets/Navbar-svg/nav11.svg";
-import nav12 from "../assets/Navbar-svg/nav12.svg";
-import nav13 from "../assets/Navbar-svg/nav13.svg";
-import nav14 from "../assets/Navbar-svg/nav14.svg";
+import logo from "../assets/images/Logo/logo.webp";
+import name from "../assets/images/Logo/name.webp";
+import Aeroplane from "../assets/images/Logo/Aeroplane.webp";
+import travel from "../assets/images/Logo/travel.webp";
+import nav1 from "../assets/images/Navbar-svg/nav1.svg";
+import nav2 from "../assets/images/Navbar-svg/nav2.svg";
+import nav3 from "../assets/images/Navbar-svg/nav3.svg";
+import nav4 from "../assets/images/Navbar-svg/nav4.svg";
+import nav5 from "../assets/images/Navbar-svg/nav5.svg";
+import nav6 from "../assets/images/Navbar-svg/nav6.svg";
+import nav7 from "../assets/images/Navbar-svg/nav7.svg";
+import nav8 from "../assets/images/Navbar-svg/nav8.svg";
+import nav9 from "../assets/images/Navbar-svg/nav9.svg";
+import nav10 from "../assets/images/Navbar-svg/nav10.svg";
+import nav11 from "../assets/images/Navbar-svg/nav11.svg";
+import nav12 from "../assets/images/Navbar-svg/nav12.svg";
+import nav13 from "../assets/images/Navbar-svg/nav13.svg";
+import nav14 from "../assets/images/Navbar-svg/nav14.svg";
 import "../style/App.css";
 import SearchBar from "./SearchBar";
 import { useAuth } from "../context/AuthContext";
@@ -164,12 +164,12 @@ const Navbar = ({ setValue, initialSearch = "" }) => {
           <div className="flex flex-col gap-3 py-3 sm:flex-row sm:items-center sm:justify-between ">
             <div className="flex min-w-0 flex-row gap-2 sm:gap-3">
               <div className="flex py-3 min-w-0 flex-1 cursor-pointer items-center justify-center rounded-xl bg-[#ffe51f] px-3 sm:w-40 sm:flex-none sm:px-6">
-                <img className="size-7 mr-1" src={logo} />
-                <img className="h-5 w-15" src={name} />
+                <img width="28" height="28" className="size-7 mr-1" src={logo} alt="flipkart logo" />
+                <img width="60" height="20" className="h-5 w-15" src={name} alt="flipkart logo text" />
               </div>
               <div className="flex min-w-0 flex-1 cursor-pointer items-center justify-center rounded-xl bg-slate-200 px-3 sm:w-40 sm:flex-none sm:px-6">
-                <img className="size-7 mr-1" src={Aeroplane} />
-                <img className="h-5 w-10" src={travel} />
+                <img width="28" height="28" className="size-7 mr-1" src={Aeroplane} alt="Aeroplane logo" />
+                <img width="40" height="20" className="h-5 w-10" src={travel} alt="Aeroplane logo text" />
               </div>
             </div>
             <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm sm:justify-end">
@@ -246,66 +246,122 @@ const Navbar = ({ setValue, initialSearch = "" }) => {
             </div>
           </div>
           <div>
-            <ul>
-              <div className="scrollbar-hide cursor-pointer flex gap-1 overflow-x-auto px-1 pb-2 sm:px-5">
-                <div onClick={handleForyou} className="px-2.5 flex flex-col items-center underline:none hover:underline">
-                  <img src={nav1} />
-                  <li className="">For_You</li>
-                </div>
-                <div onClick={handleFashion} className="px-2.5 flex cursor-pointer flex-col items-center underline:none hover:underline">
-                  <img src={nav2} />
-                  <li className="underline:none hover:underline">Fashion</li>
-                </div>
-                <div onClick={handleMobile} className="px-2.5 cursor-pointer flex flex-col items-center underline:none hover:underline">
-                  <img src={nav3} />
-                  <li className="underline:none hover:underline">Mobiles</li>
-                </div>
-                <div onClick={handleElectronics} className="px-2.5 cursor-pointer flex flex-col items-center underline:none hover:underline">
-                  <img src={nav4} />
-                  <li className="underline:none hover:underline">Electronics</li>
-                </div>
-                <div onClick={handleBeauty} className="px-2.5 flex cursor-pointer flex-col items-center underline:none hover:underline">
-                  <img src={nav6} />
-                  <li className="underline:none hover:underline">Beauty</li>
-                </div>
-                <div onClick={handleHome} className="px-2.5 flex cursor-pointer flex-col items-center underline:none hover:underline">
-                  <img className="size-8" src={nav5} />
-                  <li className="">Home</li>
-                </div>
-                <div onClick={handleAppliances} className="px-2.5 cursor-pointer flex flex-col items-center underline:none hover:underline">
-                  <img src={nav7} />
-                  <li className="underline:none hover:underline">Appliances</li>
-                </div>
-                <div onClick={handleToys} className="px-2.5 cursor-pointer flex flex-col items-center underline:none hover:underline">
-                  <img src={nav8} />
-                  <li className="underline:none hover:underline">Toys</li>
-                </div>
-                <div onClick={handleFood} className="px-2.5 cursor-pointer flex flex-col items-center underline:none hover:underline">
-                  <img src={nav9} />
-                  <li className="underline:none hover:underline">Food</li>
-                </div>
-                <div onClick={handlAuto} className="px-2.5 cursor-pointer flex flex-col items-center underline:none hover:underline">
-                  <img src={nav10} />
-                  <li className="underline:none hover:underline">Auto</li>
-                </div>
-                <div onClick={handleSports} className="px-2.5 cursor-pointer flex flex-col items-center underline:none hover:underline">
-                  <img src={nav11} />
-                  <li className="underline:none hover:underline">Sports</li>
-                </div>
-                <div onClick={handleFurniture} className="px-2.5 cursor-pointer flex flex-col items-center underline:none hover:underline">
-                  <img src={nav12} />
-                  <li className="underline:none hover:underline">Furniture</li>
-                </div>
-                <div onClick={handleBooks} className="px-2.5 cursor-pointer flex flex-col items-center underline:none hover:underline">
-                  <img src={nav13} />
-                  <li className="underline:none hover:underline">Books</li>
-                </div>
-                <div onClick={handleTwowheels} className="px-2.5 cursor-pointer flex flex-col items-center underline:none hover:underline">
-                  <img src={nav14} />
-                  <li className="underline:none inline-block hover:underline">2_Wheels</li>
-                </div>
-              </div>
-            </ul>
+
+            <div className="scrollbar-hide flex cursor-pointer gap-1 overflow-x-auto px-1 pb-2 sm:px-5">
+              <ul className="flex">
+                <li
+                  onClick={handleForyou}
+                  className="flex cursor-pointer flex-col items-center px-2.5 hover:underline"
+                >
+                  <img width="32" height="32" src={nav1} alt="For You" />
+                  <span>For You</span>
+                </li>
+
+                <li
+                  onClick={handleFashion}
+                  className="flex cursor-pointer flex-col items-center px-2.5 hover:underline"
+                >
+                  <img width="32" height="32" src={nav2} alt="Fashion" />
+                  <span>Fashion</span>
+                </li>
+
+                <li
+                  onClick={handleMobile}
+                  className="flex cursor-pointer flex-col items-center px-2.5 hover:underline"
+                >
+                  <img width="32" height="32" src={nav3} alt="Mobiles" />
+                  <span>Mobiles</span>
+                </li>
+
+                <li
+                  onClick={handleElectronics}
+                  className="flex cursor-pointer flex-col items-center px-2.5 hover:underline"
+                >
+                  <img width="32" height="32" src={nav4} alt="Electronics" />
+                  <span>Electronics</span>
+                </li>
+
+                <li
+                  onClick={handleBeauty}
+                  className="flex cursor-pointer flex-col items-center px-2.5 hover:underline"
+                >
+                  <img width="32" height="32" src={nav6} alt="Beauty" />
+                  <span>Beauty</span>
+                </li>
+
+                <li
+                  onClick={handleHome}
+                  className="flex cursor-pointer flex-col items-center px-2.5 hover:underline"
+                >
+                  <img width="32" height="32" src={nav5} alt="Home" />
+                  <span>Home</span>
+                </li>
+
+                <li
+                  onClick={handleAppliances}
+                  className="flex cursor-pointer flex-col items-center px-2.5 hover:underline"
+                >
+                  <img width="32" height="32" src={nav7} alt="Appliances" />
+                  <span>Appliances</span>
+                </li>
+
+                <li
+                  onClick={handleToys}
+                  className="flex cursor-pointer flex-col items-center px-2.5 hover:underline"
+                >
+                  <img width="32" height="32" src={nav8} alt="Toys" />
+                  <span>Toys</span>
+                </li>
+
+                <li
+                  onClick={handleFood}
+                  className="flex cursor-pointer flex-col items-center px-2.5 hover:underline"
+                >
+                  <img width="32" height="32" src={nav9} alt="Food" />
+                  <span>Food</span>
+                </li>
+
+                <li
+                  onClick={handlAuto}
+                  className="flex cursor-pointer flex-col items-center px-2.5 hover:underline"
+                >
+                  <img width="32" height="32" src={nav10} alt="Auto" />
+                  <span>Auto</span>
+                </li>
+
+                <li
+                  onClick={handleSports}
+                  className="flex cursor-pointer flex-col items-center px-2.5 hover:underline"
+                >
+                  <img width="32" height="32" src={nav11} alt="Sports" />
+                  <span>Sports</span>
+                </li>
+
+                <li
+                  onClick={handleFurniture}
+                  className="flex cursor-pointer flex-col items-center px-2.5 hover:underline"
+                >
+                  <img width="32" height="32" src={nav12} alt="Furniture" />
+                  <span>Furniture</span>
+                </li>
+
+                <li
+                  onClick={handleBooks}
+                  className="flex cursor-pointer flex-col items-center px-2.5 hover:underline"
+                >
+                  <img width="32" height="32" src={nav13} alt="Books" />
+                  <span>Books</span>
+                </li>
+
+                <li
+                  onClick={handleTwowheels}
+                  className="flex cursor-pointer flex-col items-center px-2.5 hover:underline"
+                >
+                  <img width="32" height="32" src={nav14} alt="2 Wheels" />
+                  <span>2 Wheels</span>
+                </li>
+              </ul>
+            </div>
           </div>
         </div>
       </div>

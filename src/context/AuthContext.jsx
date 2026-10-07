@@ -57,7 +57,6 @@ export function AuthProvider({ children }) {
 
         localStorage.removeItem("Products");
         sessionStorage.setItem(GUEST_CART_MERGE_KEY, "true");
-        await api.get("/cart");
       } catch (error) {
         console.error("Guest cart merge failed:", error);
       }

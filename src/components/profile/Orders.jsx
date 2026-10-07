@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import api from "../../api/axiosInstance.jsx";
+import api from "../../api/axiosInstance.js";
 import CopyButton from "../CopyButton.jsx"
 
 
@@ -77,7 +77,7 @@ export default function Orders() {
           {orders.map((order) => (
             <div
               key={order._id}
-              className="rounded border border-gray-200 bg-white p-2 text-sm text-gray-800"
+              className="rounded border-3 border-gray-200 bg-white p-2 text-sm text-gray-800"
             >
               {/* Order Header */}
               <div className="flex flex-col gap-2 border-b border-gray-100 pb-1 sm:flex-row sm:items-center sm:justify-between">

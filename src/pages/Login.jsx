@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import Loginimg from "../assets/Login Image/Login.png";
+import Loginimg from "../assets/images/Login Image/Login.png";
 import Footer from '../components/Footer';
 import Navbar2 from '../components/Navbar2';
-import logo from "../assets/Login Image/flipkart-logo.svg"
+import logo from "../assets/images/Login Image/flipkart-logo.svg"
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext.jsx';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -162,7 +162,8 @@ const Login = () => {
         </button>
 
         {/* Flipkart Logo */}
-        <img
+        <img width="400"
+          height="400"
           src={logo}
           alt="Flipkart"
           className="h-8 w-auto"
@@ -189,7 +190,8 @@ const Login = () => {
               </h2>
             </div>
 
-            <img src={Loginimg} alt="Login" />
+            <img width="222"
+              height="140" src={Loginimg} alt="Shopping account login illustration" />
           </div>
 
           {/* Right side - DESKTOP */}

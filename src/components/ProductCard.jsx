@@ -1,12 +1,13 @@
 import React, { useEffect, useState, useRef } from "react";
 import axios from "axios";
-import "../style/style.css";
 import Loader from "./Loader";
 import { NavLink, useNavigate } from "react-router-dom";
 import Footer from "./Footer";
 import manualCategoryProducts from "../data/manualCategoryProducts";
 import api from "../api/axiosInstance";
 import { useAuth } from "../context/AuthContext";
+
+const PRODUCTS_PER_PAGE = 20;
 
 const normalizeCart = (cart = []) => cart.reduce((normalized, cartItem) => {
   const productKey = String(cartItem.id ?? cartItem.productId ?? cartItem.btn_id);
@@ -49,30 +50,45 @@ const normalizeMongoCart = (cart) => {
 const ProductCard = ({ query }) => {
   const { user } = useAuth();
   const [loading, setLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
   const [products, setProducts] = useState([]);
+  const [totalProducts, setTotalProducts] = useState(0);
   const [addingToCart, setAddingToCart] = useState(false);
   const [item, setItem] = useState(getGuestCart);
   const navigate = useNavigate();
 
   const baseUrl = import.meta.env.VITE_API_BASE_URL;
 
-  const [itemsToShow, setItemsToShow] = useState(30);
   const observerTarget = useRef(null);
-
-  const itemsPerPage = 10;
-  const hasMore = itemsToShow < products.length;
+  const nextSkip = useRef(0);
+  const requestVersion = useRef(0);
+  const loadingMoreRef = useRef(false);
+  const initialLoadingRef = useRef(true);
+  const hasMore = products.length < totalProducts;
 
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
 
   useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      try {
-        const apiUrl = `${baseUrl}?q=${query}&limit=200`;
+    const controller = new AbortController();
+    const currentRequestVersion = requestVersion.current + 1;
+    requestVersion.current = currentRequestVersion;
+    initialLoadingRef.current = true;
+    loadingMoreRef.current = false;
+    nextSkip.current = 0;
+    setLoading(true);
+    setLoadingMore(false);
+    setProducts([]);
+    setTotalProducts(0);
 
-        const response = await axios.get(apiUrl);
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(baseUrl, {
+          params: { q: query || "", limit: PRODUCTS_PER_PAGE, skip: 0 },
+          signal: controller.signal,
+        });
+        if (currentRequestVersion !== requestVersion.current) return;
 
         const productsArray = response.data.products || [];
 
@@ -80,13 +96,26 @@ const ProductCard = ({ query }) => {
         const manualProducts = manualCategoryProducts.filter((product) =>
           product.category === normalizedQuery
         );
-        setProducts(productsArray.length ? productsArray.slice(0, 200) : manualProducts);
-        setItemsToShow(30);
+        if (productsArray.length) {
+          setProducts(productsArray);
+          setTotalProducts(Number(response.data.total) || productsArray.length);
+          nextSkip.current = productsArray.length;
+        } else {
+          setProducts(manualProducts);
+          setTotalProducts(manualProducts.length);
+          nextSkip.current = manualProducts.length;
+        }
       } catch (error) {
-        console.error("Failed to fetch products:", error);
-        setProducts([]);
+        if (error.name !== "CanceledError" && currentRequestVersion === requestVersion.current) {
+          console.error("Failed to fetch products:", error);
+          setProducts([]);
+          setTotalProducts(0);
+        }
       } finally {
-        setLoading(false);
+        if (currentRequestVersion === requestVersion.current) {
+          initialLoadingRef.current = false;
+          setLoading(false);
+        }
       }
     };
 
@@ -94,7 +123,11 @@ const ProductCard = ({ query }) => {
       fetchData();
     }, 100);
 
-    return () => clearTimeout(timer);
+    return () => {
+      clearTimeout(timer);
+      controller.abort();
+      requestVersion.current += 1;
+    };
   }, [baseUrl, query]);
 
   useEffect(() => {
@@ -120,14 +153,49 @@ const ProductCard = ({ query }) => {
     if (!currentTarget || loading || !hasMore) return;
 
     let timerId = null;
+    const controller = new AbortController();
+    const currentRequestVersion = requestVersion.current;
 
     const observer = new IntersectionObserver(
       (entries) => {
-        if (entries[0].isIntersecting) {
+        if (entries[0].isIntersecting && !loadingMoreRef.current && !initialLoadingRef.current) {
           if (timerId) clearTimeout(timerId);
 
-          timerId = setTimeout(() => {
-            setItemsToShow((prevVisible) => Math.min(prevVisible + itemsPerPage, products.length));
+          timerId = setTimeout(async () => {
+            if (loadingMoreRef.current || currentRequestVersion !== requestVersion.current) return;
+
+            loadingMoreRef.current = true;
+            setLoadingMore(true);
+            try {
+              const response = await axios.get(baseUrl, {
+                params: {
+                  q: query || "",
+                  limit: PRODUCTS_PER_PAGE,
+                  skip: nextSkip.current,
+                },
+                signal: controller.signal,
+              });
+              if (currentRequestVersion !== requestVersion.current) return;
+
+              const nextProducts = response.data.products || [];
+              if (!nextProducts.length) {
+                setTotalProducts(products.length);
+                return;
+              }
+
+              nextSkip.current += nextProducts.length;
+              setProducts((currentProducts) => [...currentProducts, ...nextProducts]);
+              setTotalProducts(Number(response.data.total) || nextSkip.current);
+            } catch (error) {
+              if (error.name !== "CanceledError") {
+                console.error("Failed to load more products:", error);
+              }
+            } finally {
+              if (currentRequestVersion === requestVersion.current) {
+                loadingMoreRef.current = false;
+                setLoadingMore(false);
+              }
+            }
           }, 500);
         }
       },
@@ -137,12 +205,11 @@ const ProductCard = ({ query }) => {
     observer.observe(currentTarget);
 
     return () => {
-      if (currentTarget) observer.unobserve(currentTarget);
+      observer.disconnect();
       if (timerId) clearTimeout(timerId);
+      controller.abort();
     };
-  }, [products.length, loading, hasMore]);
-
-  const visibleItems = products.slice(0, itemsToShow);
+  }, [baseUrl, query, products.length, loading, hasMore]);
 
   const handleAddtoCart = async (product) => {
     if (addingToCart) return;
@@ -194,17 +261,17 @@ const ProductCard = ({ query }) => {
     <>
       <div className="flex justify-center mb-4"></div>
       {loading ? (
-        <div className="flex h-screen justify-center items-center">
+        <div className="mt-65 mb-10 flex min-h-[calc(100vh-16.25rem)] items-center justify-center px-1 sm:mt-56 sm:min-h-[calc(100vh-14rem)] lg:mt-53 lg:min-h-[calc(100vh-13.25rem)]">
           <Loader />
         </div>
       ) : products.length === 0 ? (
-        <div className=" flex h-[70vh] mt-30 items-center justify-center">
+        <div className="mt-65 mb-10 flex min-h-[calc(100vh-16.25rem)] items-center justify-center px-1 sm:mt-56 sm:min-h-[calc(100vh-14rem)] lg:mt-53 lg:min-h-[calc(100vh-13.25rem)]">
           <p className="text-center text-3xl">No products found</p>
         </div>
       ) : (
-        <div className="mt-65 mb-10 flex flex-col items-center justify-center px-1 sm:mt-56 lg:mt-53">
+        <div className="mt-65 mb-10 flex min-h-[calc(100vh-16.25rem)] flex-col items-center justify-center px-1 sm:mt-56 sm:min-h-[calc(100vh-14rem)] lg:mt-53 lg:min-h-[calc(100vh-13.25rem)]">
           <div className="mx-auto grid w-full max-w-7xl grid-cols-2 gap-2 sm:grid-cols-3 sm:gap-4 lg:grid-cols-4">
-            {visibleItems.map((product) => (
+            {products.map((product, index) => (
               <div
                 key={product.id}
                 className="group min-w-0 w-full cursor-pointer overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm flex flex-col"
@@ -212,17 +279,21 @@ const ProductCard = ({ query }) => {
               >
                 <div className="relative overflow-hidden aspect-square bg-gray-100">
                   <img
-                    src={product.images?.[0] || product.thumbnail}
-                    alt={product.title}
+                    width="400"
+                    height="400"
+                    src={product.thumbnail || product.images?.[0]}
+                    alt={product?.title || "Product image"}
+                    loading={index === 0 ? "eager" : "lazy"}
+                    fetchPriority={index === 0 ? "high" : "auto"}
                     className="h-full w-full object-contain object-center transition-transform duration-300 ease-in-out group-hover:scale-105"
                   />
-                  <span className="absolute top-3 left-3 bg-red-500 text-white text-xs font-bold px-2.5 py-1 rounded-sm uppercase tracking-wider">
+                  <span className="absolute top-3 left-3 bg-red-600 text-white text-xs font-bold px-2.5 py-1 rounded-sm uppercase tracking-wider">
                     Sale
                   </span>
                 </div>
 
                 <div className="p-3 sm:p-4 flex flex-col flex-1">
-                  <p className="text-xs uppercase tracking-widest text-gray-400 font-semibold mb-1">
+                  <p className="text-xs uppercase tracking-widest text-gray-600 font-semibold mb-1">
                     {product.category}
                   </p>
 
@@ -265,7 +336,7 @@ const ProductCard = ({ query }) => {
                       <span className="text-lg font-bold text-gray-900 sm:text-xl">
                         ${product.price}
                       </span>
-                      <span className="text-sm text-gray-400 line-through">
+                      <span className="text-sm text-gray-600 line-through">
                         ${(product.price + (product.price * 0.1)).toFixed(2)}
                       </span>
                     </div>
@@ -286,7 +357,7 @@ const ProductCard = ({ query }) => {
                       <NavLink to="/pages/cart" className="w-full sm:w-auto sm:shrink-0">
                         <button
                           type="button"
-                          className="w-full rounded-xl bg-green-600 px-3 py-2 text-sm font-medium text-white transition-colors hover:bg-green-700 focus:outline-none focus:ring-4 sm:w-auto"
+                          className="w-full rounded-xl bg-green-700 px-3 py-2 text-sm font-medium text-white transition-colors hover:bg-green-800 focus:outline-none focus:ring-4 focus:ring-green-300 sm:w-auto"
                           onClick={(event) => event.stopPropagation()}
                         >
                           Go to Cart
@@ -301,7 +372,7 @@ const ProductCard = ({ query }) => {
 
           <div ref={observerTarget} className="w-full flex justify-center p-4 mt-2">
             {hasMore ? (
-              <div className="flex flex-col gap-3 animate-pulse mb-2 text-gray-500 font-medium">Hang on, loading content<Loader /></div>
+              <div className="flex flex-col gap-3 animate-pulse mb-2 text-gray-500 font-medium">{loadingMore ? "Hang on, loading content" : ""}{loadingMore && <Loader />}</div>
             ) : (
               <div className="text-gray-400 font-medium text-sm"></div>
             )}

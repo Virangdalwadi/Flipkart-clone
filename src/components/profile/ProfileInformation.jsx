@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import FooterArt from "../../assets/Profile Page Image/Footer.png";
+import FooterArt from "../../assets/images/Profile Page Image/Footer.png";
 import { useAuth } from "../../context/AuthContext";
 
 const faqs = [
@@ -203,7 +203,8 @@ export default function ProfileInformation({
 
       {/* Decorative footer */}
       <div className="mt-4 -mx-4 sm:-mx-5 overflow-hidden">
-        <img src={FooterArt} alt="" className="block w-full h-auto" />
+        <img width="848"
+          height="154" src={FooterArt} alt="" className="block w-full h-auto" />
       </div>
     </div>
   );

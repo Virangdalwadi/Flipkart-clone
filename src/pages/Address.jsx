@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import Navbar2 from "../components/Navbar2";
 import Footer from "../components/Footer";
 import { useAuth } from "../context/AuthContext";
-import axiosInstance from "../api/axiosInstance.jsx"; // use your existing axios instance path
+import axiosInstance from "../api/axiosInstance.js"; // use your existing axios instance path
 
 const initialAddress = {
   name: "",

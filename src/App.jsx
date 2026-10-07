@@ -1,32 +1,34 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import Home from "./pages/Home";
-import ProductDetails from "./pages/ProductDetails";
-import Cart from "./pages/Cart";
-import Checkout from "./pages/Checkout";
-import Address from "./pages/Address";
-import Payment from "./pages/Payment";
-import OrderSuccess from "./pages/OrderSuccess";
-import Login from "./pages/Login";
-import Profile from "./pages/Profile";
+import { lazy, Suspense } from "react";
+
 import Notfound from "./components/Notfound";
 import ProtectedRoute from "./components/ProtectedRoute";
 import PublicOnlyRoute from "./components/PublicOnlyRoute";
-import Loader from "./components/Loader";
 
+// Lazy-loaded pages
+const Home = lazy(() => import("./pages/Home"));
+const ProductDetails = lazy(() => import("./pages/ProductDetails"));
+const Cart = lazy(() => import("./pages/Cart"));
+const Checkout = lazy(() => import("./pages/Checkout"));
+const Address = lazy(() => import("./pages/Address"));
+const Payment = lazy(() => import("./pages/Payment"));
+const OrderSuccess = lazy(() => import("./pages/OrderSuccess"));
+const Login = lazy(() => import("./pages/Login"));
+const Profile = lazy(() => import("./pages/Profile"));
 
 const App = () => {
   const router = createBrowserRouter([
     {
       path: "/",
-      element: <Home />
+      element: <Home />,
     },
     {
       path: "/products/:id",
-      element: <ProductDetails />
+      element: <ProductDetails />,
     },
     {
       path: "/pages/cart",
-      element: <Cart />
+      element: <Cart />,
     },
     {
       path: "/pages/checkout",
@@ -83,11 +85,15 @@ const App = () => {
   ]);
 
   return (
-    <>
-      <div>
-        <RouterProvider router={router} />
-      </div>
-    </>
+    <Suspense
+      fallback={
+        <div className="flex min-h-screen items-center justify-center">
+          <div className="h-10 w-10 animate-spin rounded-full border-4 border-gray-200 border-t-blue-600" />
+        </div>
+      }
+    >
+      <RouterProvider router={router} />
+    </Suspense>
   );
 };
 

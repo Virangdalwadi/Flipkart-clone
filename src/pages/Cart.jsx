@@ -9,26 +9,29 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import api from "../api/axiosInstance";
 import Loader from "../components/Loader";
-import shield from "../assets/Cart Page image/shield.webp"
-import discount from "../assets/Cart Page image/discount.webp"
+import shield from "../assets/images/Cart Page image/shield.webp"
+import discount from "../assets/images/Cart Page image/discount.webp"
 
 const readCart = () => {
   try {
     const storedItems = JSON.parse(localStorage.getItem("Products")) || [];
+
     const normalizedItems = storedItems.reduce((cart, item) => {
-      const quantity = Number(item.quantity);
-      const normalizedItem = {
-        ...item,
-        quantity: Number.isInteger(quantity) && quantity > 0 ? quantity : 1,
-      };
+      const quantity = Math.max(1, Math.floor(Number(item.quantity)) || 1);
+
       const productKey = String(item.id ?? item.productId ?? item.btn_id);
       const existingItem = cart.find(
-        (cartItem) => String(cartItem.id ?? cartItem.productId ?? cartItem.btn_id) === productKey,
+        (cartItem) => String(cartItem.id ?? cartItem.productId ?? cartItem.btn_id) === productKey
       );
-      if (existingItem) existingItem.quantity += normalizedItem.quantity;
-      else cart.push(normalizedItem);
+
+      if (existingItem) {
+        existingItem.quantity += quantity;
+      } else {
+        cart.push({ ...item, quantity });
+      }
       return cart;
     }, []);
+
     localStorage.setItem("Products", JSON.stringify(normalizedItems));
     return normalizedItems;
   } catch {
@@ -36,16 +39,17 @@ const readCart = () => {
   }
 };
 
+
 const normalizeBackendCart = (cart) => {
   const items = cart?.items || [];
 
   return items.map((item) => ({
     id: item.productId,
     title: item.title,
-    price: Number(item.price) || 0,
+    price: Number(item.price),
     image: item.image || item.title,
     quantity: Number(item.quantity) || 1,
-    category: item.category || "",
+    category: item.category,
   }));
 };
 
@@ -228,16 +232,17 @@ const Cart = () => {
                   className="w-full flex flex-col sm:flex-row bg-white border border-gray-200 shadow-sm overflow-hidden group px-4 py-5 gap-4"
                 >
                   <div className="w-full sm:w-32 h-32 shrink-0 overflow-hidden rounded-lg bg-gray-100 cursor-pointer ">
-                    <img
+                    <img width="400"
+                      height="400"
                       src={product.image || product.images?.[0] || "https://placeholder.com"}
-                      alt={product.title}
+                      alt={product?.title || "Product image"}
                       className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-300"
                     />
                   </div>
 
                   <div className="flex min-w-0 grow flex-col justify-between">
                     <div>
-                      <p className="text-xs uppercase tracking-widest cursor-pointer  text-gray-400 font-semibold mb-1">
+                      <p className="text-xs uppercase tracking-widest cursor-pointer  text-gray-600 font-semibold mb-1">
                         {product.category || "Product"}
                       </p>
                       <h3 className="line-clamp-2 wrap-break-words text-lg font-bold text-gray-900 cursor-pointer transition-colors">
@@ -292,7 +297,7 @@ const Cart = () => {
                           <span className="text-xl font-bold text-gray-900">
                             ${Number(product.price).toFixed(2)}
                           </span>
-                          <span className="text-sm text-gray-400 line-through">
+                          <span className="text-sm text-gray-600 line-through">
                             ${(Number(product.price) * 1.4).toFixed(2)}
                           </span>
                         </div>
@@ -470,7 +475,8 @@ const Cart = () => {
                   {/* Saving message */}
                   <div className="mt-4 cursor-default font-['inter_regular',Roboto,Helvetica,Arial,sans-serif] flex items-center justify-center gap-2 rounded-lg bg-[#ddfbf0] px-3 py-2 text-sm text-[#0e772d]
 ">
-                    <span className="text-lg"><img className="size-5" src={discount} alt="discount" /></span>
+                    <span className="text-lg"><img width="400"
+                      height="400" className="size-5" src={discount} alt="" /></span>
 
                     <span>
                       You'll save <strong>${(totalDiscount).toFixed(2)}</strong> on this order!
@@ -484,7 +490,8 @@ const Cart = () => {
               {/* ================= SECURITY MESSAGE ================= */}
               <div className="flex flex-row sm:flex-row items-center font-sans font-semibold gap-3 sm:gap-4 px-4 sm:px-8 py-4 sm:py-2 text-center sm:text-left text-[#717478]">
                 <div className="shrink-0">
-                  <img className="size-10 sm:size-8" src={shield} alt="shield" />
+                  <img width="400"
+                    height="400" className="size-10 sm:size-8" src={shield} alt="" />
                 </div>
 
                 <p className="flex flex-col cursor-default justify-end text-sm sm:text-base font-semibold leading-normal sm:leading-6">
@@ -502,7 +509,7 @@ const Cart = () => {
 
                 {/* Price */}
                 <div className="flex flex-col cursor-pointer font-['Roboto_Medium',Roboto-Medium,'Droid_Sans',HelveticaNeue-Medium,'Helvetica_Neue_Medium',sans-serif-medium]">
-                  <span className="text-sm text-gray-400 line-through">
+                  <span className="text-sm text-gray-600 line-through">
                     ${(totalDiscount + totalAmount).toFixed(2)}
                   </span>
 
@@ -511,7 +518,7 @@ const Cart = () => {
                       ${(totalAmount + 10).toFixed(2)}
                     </span>
 
-                    <span className="text-gray-400 text-sm">
+                    <span className="text-gray-600 text-sm">
                       ⓘ
                     </span>
                   </div>
@@ -531,7 +538,7 @@ const Cart = () => {
 
                 {/* Price */}
                 <div className="flex flex-col text font-['Roboto_Medium',Roboto-Medium,'Droid_Sans',HelveticaNeue-Medium,'Helvetica_Neue_Medium',sans-serif-medium]">
-                  <span className="text-sm text-gray-400 line-through">
+                  <span className="text-sm text-gray-600 line-through">
                     ${(totalDiscount + totalAmount).toFixed(2)}
                   </span>
 
@@ -540,7 +547,7 @@ const Cart = () => {
                       ${(totalAmount + 10).toFixed(2)}
                     </span>
 
-                    <span className="text-gray-400 text-sm">
+                    <span className="text-gray-600 text-sm">
                       ⓘ
                     </span>
                   </div>

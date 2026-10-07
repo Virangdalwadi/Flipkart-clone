@@ -1,4 +1,4 @@
-import api from "./axiosInstance.jsx";
+import api from "./axiosInstance.js";
 
 export const createAddress = (data) => api.post("/addresses", data);
 

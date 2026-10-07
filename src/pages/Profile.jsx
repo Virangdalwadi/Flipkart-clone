@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
 
 // Images
-import MyOrdersIcon from "../assets/Profile Page Image/My ORDERS.svg";
-import ProfileAvatar from "../assets/Profile Page Image/ProfileAvatar.svg";
-import AccountSettingsIcon from "../assets/Profile Page Image/ACCOUNT SETTINGS.svg";
-import PaymentsIcon from "../assets/Profile Page Image/PAYMENTS.svg";
-import MyStuffIcon from "../assets/Profile Page Image/MY STUFF.svg";
-import LogoutIcon from "../assets/Profile Page Image/Logout.svg";
+import MyOrdersIcon from "../assets/images/Profile Page Image/My ORDERS.svg";
+import ProfileAvatar from "../assets/images/Profile Page Image/ProfileAvatar.svg";
+import AccountSettingsIcon from "../assets/images/Profile Page Image/ACCOUNT SETTINGS.svg";
+import PaymentsIcon from "../assets/images/Profile Page Image/PAYMENTS.svg";
+import MyStuffIcon from "../assets/images/Profile Page Image/MY STUFF.svg";
+import LogoutIcon from "../assets/images/Profile Page Image/Logout.svg";
 
 import Footer from "../components/Footer";
 import Navbar2 from "../components/Navbar2";
@@ -112,7 +112,8 @@ export default function ProfilePage() {
         </div>
 
         <div className="flex items-center gap-2">
-          <img className="size-8 rounded-full" src={ProfileAvatar} alt="Profile" />
+          <img width="400"
+            height="400" className="size-8 rounded-full" src={ProfileAvatar} alt="" />
           <span className="text-sm font-semibold text-gray-700 max-w-30 truncate">{firstName || "User"}</span>
         </div>
       </header>
@@ -135,7 +136,8 @@ export default function ProfilePage() {
         <div>
           <div className="flex items-center justify-between px-4 py-4 border-b border-gray-100 bg-gray-50">
             <div className="flex items-center gap-3">
-              <img className="size-10 rounded-full" src={ProfileAvatar} alt="Profile" />
+              <img width="400"
+                height="400" className="size-10 rounded-full" src={ProfileAvatar} alt="" />
               <div>
                 <p className="text-xs text-gray-500">Hello,</p>
                 <p className="text-sm font-semibold text-gray-800 truncate max-w-40">
@@ -180,7 +182,8 @@ export default function ProfilePage() {
                 }`}
             >
               <span className="flex items-center gap-3 text-sm font-semibold">
-                <img className="size-5" src={MyOrdersIcon} alt="" />
+                <img width="400"
+                  height="400" className="size-5" src={MyOrdersIcon} alt="" />
                 MY ORDERS
               </span>
             </button>
@@ -188,7 +191,8 @@ export default function ProfilePage() {
             {/* Account Settings */}
             <div className="border-b border-gray-100 py-3">
               <div className="flex items-center gap-3 px-5 text-sm font-semibold text-gray-800 mb-1">
-                <img className="size-5" src={AccountSettingsIcon} alt="" />
+                <img width="400"
+                  height="400" className="size-5" src={AccountSettingsIcon} alt="" />
                 ACCOUNT SETTINGS
               </div>
               <ul>
@@ -214,7 +218,8 @@ export default function ProfilePage() {
             {/* Payments */}
             <div className="border-b border-gray-100 py-3">
               <div className="flex items-center gap-3 px-5 text-sm font-semibold text-gray-800 mb-1">
-                <img className="size-5" src={PaymentsIcon} alt="" />
+                <img width="400"
+                  height="400" className="size-5" src={PaymentsIcon} alt="" />
                 PAYMENTS
               </div>
               <ul>
@@ -235,7 +240,8 @@ export default function ProfilePage() {
             {/* My Stuff */}
             <div className="border-b border-gray-100 py-3">
               <div className="flex items-center gap-3 px-5 text-sm font-semibold text-gray-800 mb-1">
-                <img className="size-5" src={MyStuffIcon} alt="" />
+                <img width="400"
+                  height="400" className="size-5" src={MyStuffIcon} alt="" />
                 MY STUFF
               </div>
               <ul>
@@ -261,7 +267,8 @@ export default function ProfilePage() {
               }}
               className="w-full flex items-center gap-3 px-5 py-3 text-sm font-semibold text-red-600 hover:bg-red-50 transition-colors cursor-pointer"
             >
-              <img className="size-5" src={LogoutIcon} alt="Logout button img" />
+              <img width="400"
+                height="400" className="size-5" src={LogoutIcon} alt="" />
               Logout
             </button>
           </div>
@@ -277,7 +284,7 @@ export default function ProfilePage() {
         </div>
       </div>
 
-      <div className="pt-16 md:pt-24">
+      <div className="pt-13 md:pt-14">
         <div className="min-h-screen bg-gray-200 py-6 px-4">
           <div className="max-w-5xl mx-auto flex flex-col md:flex-row gap-4">
             {/* ---------- Desktop Sidebar ---------- */}
@@ -285,7 +292,8 @@ export default function ProfilePage() {
               <div className="bg-white rounded shadow-sm">
                 {/* Hello, user */}
                 <div className="flex items-center gap-3 px-4 py-4 border-b border-gray-100">
-                  <img className="size-10 mr-1" src={ProfileAvatar} alt="" />
+                  <img width="400"
+                    height="400" className="size-10 mr-1" src={ProfileAvatar} alt="" />
                   <div>
                     <p className="text-xs text-gray-500">Hello,</p>
                     <p className="wrap-break-word text-sm font-semibold text-gray-800">{firstName} {lastName}</p>
@@ -299,7 +307,8 @@ export default function ProfilePage() {
                     }`}
                 >
                   <span className="flex items-center gap-3 text-sm font-semibold">
-                    <img className="size-5" src={MyOrdersIcon} alt="" />
+                    <img width="400"
+                      height="400" className="size-5" src={MyOrdersIcon} alt="" />
                     MY ORDERS
                   </span>
                 </button>
@@ -307,7 +316,8 @@ export default function ProfilePage() {
                 {/* Account Settings */}
                 <div className="border-b border-gray-100 py-3">
                   <div className="flex items-center gap-3 px-4 text-sm font-semibold text-gray-800">
-                    <img className="size-5" src={AccountSettingsIcon} alt="" />
+                    <img width="400"
+                      height="400" className="size-5" src={AccountSettingsIcon} alt="" />
                     ACCOUNT SETTINGS
                   </div>
                   <ul className="mt-2">
@@ -330,7 +340,8 @@ export default function ProfilePage() {
                 {/* Payments */}
                 <div className="border-b border-gray-100 py-3">
                   <div className="flex items-center gap-3 px-4 text-sm font-semibold text-gray-800">
-                    <img className="size-5" src={PaymentsIcon} alt="" />
+                    <img width="400"
+                      height="400" className="size-5" src={PaymentsIcon} alt="" />
                     PAYMENTS
                   </div>
                   <ul className="mt-2">
@@ -348,7 +359,8 @@ export default function ProfilePage() {
                 {/* My Stuff */}
                 <div className="py-3 border-b border-gray-100">
                   <div className="flex items-center gap-3 px-4 text-sm font-semibold text-gray-800">
-                    <img className="size-5" src={MyStuffIcon} alt="" />
+                    <img width="400"
+                      height="400" className="size-5" src={MyStuffIcon} alt="" />
                     MY STUFF
                   </div>
                   <ul className="mt-2">
@@ -370,7 +382,8 @@ export default function ProfilePage() {
                   }}
                   className="w-full flex items-center gap-3 px-4 py-3 text-base font-semibold text-gray-500 hover:text-red-400 transition-colors duration-200 cursor-pointer"
                 >
-                  <img className="size-7" src={LogoutIcon} alt="Logout button img" />
+                  <img width="400"
+                    height="400" className="size-7" src={LogoutIcon} alt="" />
                   Logout
                 </button>
               </div>
@@ -378,7 +391,7 @@ export default function ProfilePage() {
               {/* Frequently visited */}
               <div className="bg-white rounded shadow-sm px-4 py-3">
                 <p className="text-xs font-semibold text-gray-500 mb-2">Frequently Visited</p>
-                <div className="flex gap-4 text-xs text-gray-400">
+                <div className="flex gap-4 text-xs text-gray-600">
                   <span>Track Order</span>
                   <span>Help Center</span>
                 </div>
