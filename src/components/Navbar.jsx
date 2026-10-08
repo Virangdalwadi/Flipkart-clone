@@ -254,7 +254,7 @@ const Navbar = ({ setValue, initialSearch = "" }) => {
                   className="flex cursor-pointer flex-col items-center px-2.5 hover:underline"
                 >
                   <img width="32" height="32" src={nav1} alt="For You" />
-                  <span>For You</span>
+                  <span>For_You</span>
                 </li>
 
                 <li
@@ -358,7 +358,7 @@ const Navbar = ({ setValue, initialSearch = "" }) => {
                   className="flex cursor-pointer flex-col items-center px-2.5 hover:underline"
                 >
                   <img width="32" height="32" src={nav14} alt="2 Wheels" />
-                  <span>2 Wheels</span>
+                  <span>2_Wheels</span>
                 </li>
               </ul>
             </div>

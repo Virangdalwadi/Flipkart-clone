@@ -5,12 +5,13 @@ import Popup from "../components/Popup";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrashCan } from "@fortawesome/free-solid-svg-icons";
-import { useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import api from "../api/axiosInstance";
 import Loader from "../components/Loader";
 import shield from "../assets/images/Cart Page image/shield.webp"
 import discount from "../assets/images/Cart Page image/discount.webp"
+
 
 const readCart = () => {
   try {
@@ -219,9 +220,9 @@ const Cart = () => {
             <h2 className="text-4xl font-semibold text-gray-800 mb-2">
               Your cart is empty!
             </h2>
-            <p className="text-gray-500 text-lg">
-              Add some items to get started!
-            </p>
+            <Link to="/" className="mt-5 inline-block rounded-sm bg-blue-600 px-8 py-2 text-lg font-semibold text-white ">
+              Shop Now
+            </Link>
           </div>
         ) : (
           <div className="flex flex-col lg:flex-row gap-5 items-start">
