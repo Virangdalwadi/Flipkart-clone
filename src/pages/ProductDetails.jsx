@@ -4,10 +4,10 @@ import { NavLink, useParams } from "react-router-dom";
 import Footer from "../components/Footer";
 import Loader from "../components/Loader";
 import Navbar from "../components/Navbar";
-// import Popup from "../components/Popup";
 import manualCategoryProducts from "../data/manualCategoryProducts";
 import api from "../api/axiosInstance";
 import { useAuth } from "../context/AuthContext";
+import ProductSkeleton from "../components/ProductSkeleton";
 
 const normalizeCart = (cart) => cart.reduce((normalized, cartItem) => {
   const productKey = String(cartItem.id ?? cartItem.productId ?? cartItem.btn_id);
@@ -32,7 +32,6 @@ const ProductDetails = () => {
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  // const [popup, setPopup] = useState({ show: false, type: "success", title: "Added to Cart", message: "Added to Cart" });
   const [addingToCart, setAddingToCart] = useState(false);
   const [isInCart, setIsInCart] = useState(false);
 
@@ -115,34 +114,16 @@ const ProductDetails = () => {
     if (user) {
       setAddingToCart(true);
 
-      try {
-        await api.post("/cart", {
-          productId: product.id,
-          title: product.title,
-          price: product.price,
-          image: product.thumbnail || product.images?.[0],
-          quantity: 1,
-        });
-
-        setIsInCart(true);
-
-        // setPopup({
-        //   show: true,
-        //   type: "success",
-        //   title: "Added to cart",
-        //   message: "Added to cart",
-        // });
-      } catch {
-        // setPopup({
-        //   show: true,
-        //   type: "error",
-        //   title: "Unable to update cart.",
-        //   message: "Unable to update cart.",
-        // });
-      }
-      finally {
-        setAddingToCart(false);
-      }
+      await api.post("/cart", {
+        productId: product.id,
+        title: product.title,
+        price: product.price,
+        image: product.thumbnail || product.images?.[0],
+        category: product.category,
+        quantity: 1,
+      });
+      setIsInCart(true);
+      setAddingToCart(false);
 
       return;
     }
@@ -173,20 +154,17 @@ const ProductDetails = () => {
 
     setIsInCart(true);
 
-    // setPopup({
-    //   show: true,
-    //   type: "success",
-    //   title: "Added to Cart",
-    //   message: "Added to Cart",
-    // });
   };
 
   return (
     <>
       <Navbar />
       {loading ? (
-        <div className="flex h-[94vh] items-center justify-center">
-          <Loader />
+        <div className="">
+          <div>
+            {/* <Loader /> */}
+            < ProductSkeleton />
+          </div>
         </div>
       ) : error ? (
         <div className="flex h-[70vh] items-center justify-center mt-30 text-center">
@@ -238,13 +216,6 @@ const ProductDetails = () => {
         </main>
       )}
       <Footer />
-      {/* <Popup
-        show={popup.show}
-        type={popup.type}
-        title={popup.title}
-        message={popup.message}
-        onClose={() => setPopup((prev) => ({ ...prev, show: false }))}
-      /> */}
     </>
   );
 };

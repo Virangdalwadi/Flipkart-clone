@@ -79,9 +79,8 @@ export default function Address({ onCancel }) {
         setLoading(true);
 
         const response = await getAddresses();
-        const fetchedAddresses = Array.isArray(response.data?.addresses)
-          ? response.data.addresses
-          : [];
+        const fetchedAddresses = response.data.addresses;
+        console.log(fetchedAddresses[0].address);
 
         setAddresses(fetchedAddresses);
 

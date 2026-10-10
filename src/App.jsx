@@ -4,6 +4,7 @@ import { lazy, Suspense } from "react";
 import Notfound from "./components/Notfound";
 import ProtectedRoute from "./components/ProtectedRoute";
 import PublicOnlyRoute from "./components/PublicOnlyRoute";
+import Loader from "./components/Loader";
 
 // Lazy-loaded pages
 const Home = lazy(() => import("./pages/Home"));

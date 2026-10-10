@@ -6,6 +6,7 @@ import Footer from "./Footer";
 import manualCategoryProducts from "../data/manualCategoryProducts";
 import api from "../api/axiosInstance";
 import { useAuth } from "../context/AuthContext";
+import ProductCardSkeleton from "./ProductCardSkeleton";
 
 const PRODUCTS_PER_PAGE = 20;
 
@@ -65,6 +66,7 @@ const ProductCard = ({ query }) => {
   const loadingMoreRef = useRef(false);
   const initialLoadingRef = useRef(true);
   const hasMore = products.length < totalProducts;
+  const [popup, setPopup] = useState("");
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -222,12 +224,15 @@ const ProductCard = ({ query }) => {
           title: product.title,
           price: product.price,
           image: product.thumbnail || product.images?.[0],
+          category: product.category,
           quantity: 1,
         });
 
         setItem(normalizeMongoCart(response.data.cart));
         setPopup({ show: true, type: "success", title: "Added to cart", message: "Added to cart" });
-      } catch {
+      } catch (error) {
+        console.error("ADD TO CART ERROR:", error);
+        console.error("SERVER RESPONSE:", error.response?.data);
         setPopup({ show: true, type: "error", title: "Unable to update cart.", message: "Unable to update cart." });
       } finally {
         setAddingToCart(false);
@@ -262,7 +267,12 @@ const ProductCard = ({ query }) => {
       <div className="flex justify-center mb-4"></div>
       {loading ? (
         <div className="mt-65 mb-10 flex min-h-[calc(100vh-16.25rem)] items-center justify-center px-1 sm:mt-56 sm:min-h-[calc(100vh-14rem)] lg:mt-53 lg:min-h-[calc(100vh-13.25rem)]">
-          <Loader />
+          {/* <Loader /> */}
+          <div className="grid grid-cols-2 gap-3 sm:gap-6 md:grid-cols-3 lg:grid-cols-4">
+            {[...Array(8)].map((_, index) => (
+              <ProductCardSkeleton key={index} />
+            ))}
+          </div>
         </div>
       ) : products.length === 0 ? (
         <div className="mt-65 mb-10 flex min-h-[calc(100vh-16.25rem)] items-center justify-center px-1 sm:mt-56 sm:min-h-[calc(100vh-14rem)] lg:mt-53 lg:min-h-[calc(100vh-13.25rem)]">
@@ -357,7 +367,7 @@ const ProductCard = ({ query }) => {
                       <NavLink to="/pages/cart" className="w-full sm:w-auto sm:shrink-0">
                         <button
                           type="button"
-                          className="w-full rounded-xl bg-green-700 px-3 py-2 text-sm font-medium text-white transition-colors hover:bg-green-800 focus:outline-none focus:ring-4 focus:ring-green-300 sm:w-auto"
+                          className="w-full rounded-xl bg-green-700 px-3 py-2 text-sm font-medium text-white transition-colors hover:bg-green-800 focus:outline-none sm:w-auto"
                           onClick={(event) => event.stopPropagation()}
                         >
                           Go to Cart
@@ -385,4 +395,3 @@ const ProductCard = ({ query }) => {
 };
 
 export default ProductCard;
-

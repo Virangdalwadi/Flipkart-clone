@@ -27,21 +27,30 @@ const Footer = () => {
               </h1>
             </div>
             <div>
-              <ul className='text-white text-xs font-semibold'>
-                <NavLink to="/">
-                  <li className='hover:underline'>Contact US</li>
-                </NavLink>
-                <li className='hover:underline cursor-pointer
-                '>About Us</li>
-                <li className='hover:underline cursor-pointer
-                '>Careers</li>
-                <li className='hover:underline cursor-pointer
-                '>Flipkart Stories</li>
-                <li className='hover:underline cursor-pointer
-                '>Press</li>
-                <li className='hover:underline cursor-pointer
-                '>Corporate Information</li>
+              <ul className="text-white text-xs font-semibold">
+                <li className="hover:underline">
+                  <NavLink to="/">Contact US</NavLink>
+                </li>
 
+                <li className="hover:underline cursor-pointer">
+                  About Us
+                </li>
+
+                <li className="hover:underline cursor-pointer">
+                  Careers
+                </li>
+
+                <li className="hover:underline cursor-pointer">
+                  Flipkart Stories
+                </li>
+
+                <li className="hover:underline cursor-pointer">
+                  Press
+                </li>
+
+                <li className="hover:underline cursor-pointer">
+                  Corporate Information
+                </li>
               </ul>
             </div>
           </div>
@@ -152,7 +161,7 @@ const Footer = () => {
                 <li className='cursor-default'>Bengaluru, 560103,</li>
                 <li className='cursor-default'>Karnataka, India</li>
                 <li className='cursor-default'>CIN: U51109KA2012PTC066107</li>
-                <li className='cursor-default'>Telephone: <span className='text-blue-600 mb-1 text-xs cursor-pointer'>044-45614700</span> / <span className='text-blue-600 mb-1 text-sm cursor-pointer'>044-67415800</span></li>
+                <li className='cursor-default'>Telephone: <span className='text-blue-500 mb-1 text-xs cursor-pointer'>044-45614700</span> / <span className='text-blue-500 mb-1 text-xs cursor-pointer'>044-67415800</span></li>
               </ul>
             </div>
           </div>

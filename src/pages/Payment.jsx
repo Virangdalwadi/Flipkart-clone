@@ -271,7 +271,7 @@ const Payment = () => {
               type="button"
               onClick={handlePayment}
               disabled={processing || cartLoading || items.length === 0}
-              className="bg-[#ffc200] px-5 py-3 font-medium text-black hover:bg-yellow-400 disabled:cursor-not-allowed disabled:opacity-60"
+              className="bg-[#ffc200] px-5 py-3 cursor font-medium text-black hover:bg-yellow-400 disabled:opacity-60"
             >
               {processing
                 ? "Processing..."

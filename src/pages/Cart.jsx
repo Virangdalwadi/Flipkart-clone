@@ -11,6 +11,7 @@ import api from "../api/axiosInstance";
 import Loader from "../components/Loader";
 import shield from "../assets/images/Cart Page image/shield.webp"
 import discount from "../assets/images/Cart Page image/discount.webp"
+import { Fragment } from "react";
 
 
 const readCart = () => {
@@ -128,6 +129,7 @@ const Cart = () => {
     localStorage.setItem("Products", JSON.stringify(updatedArray));
   };
 
+
   const handleRemovefromCart = (product, productName) => {
     setRemoveItem({ id: product.id, name: productName || product.title || "this item" });
   };
@@ -206,109 +208,198 @@ const Cart = () => {
   );
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#f1f2f4]">
-      <Navbar2 setValue={value} />
+    <div>
+      <div className="min-h-screen flex flex-col bg-[#f1f2f4]">
+        <Navbar2 setValue={value} />
 
-      <main className="grow mx-auto w-full max-w-7xl px-4 pb-8 pt-28 md:pt-17">
-        {cartLoading ? (
-          <div className="flex justify-center items-center h-[60vh]">
-            {/* <div className="text-lg text-gray-600">Loading your cart...</div> */}
-            <Loader />
-          </div>
-        ) : items.length === 0 ? (
-          <div className="flex flex-col justify-center items-center h-[70vh] text-center">
-            <h2 className="text-4xl font-semibold text-gray-800 mb-2">
-              Your cart is empty!
-            </h2>
-            <Link to="/" className="mt-5 inline-block rounded-sm bg-blue-600 px-8 py-2 text-lg font-semibold text-white ">
-              Shop Now
-            </Link>
-          </div>
-        ) : (
-          <div className="flex flex-col lg:flex-row gap-5 items-start">
-            <div className="w-full lg:w-[65%] flex flex-col gap-4">
-              {items.map((product) => (
-                <div
-                  key={product.id}
-                  className="w-full flex flex-col sm:flex-row bg-white border border-gray-200 shadow-sm overflow-hidden group px-4 py-5 gap-4"
-                >
-                  <div className="w-full sm:w-32 h-32 shrink-0 overflow-hidden rounded-lg bg-gray-100 cursor-pointer ">
-                    <img width="400"
-                      height="400"
-                      src={product.image || product.images?.[0] || "https://placeholder.com"}
-                      alt={product?.title || "Product image"}
-                      className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-300"
-                    />
-                  </div>
+        <main className="grow mx-auto w-full max-w-7xl px-4 pb-8 pt-28 md:pt-17">
+          {cartLoading ? (
+            <div className="flex justify-center items-center h-[60vh]">
+              <Loader />
+            </div>
+          ) : items.length === 0 ? (
+            <div className="flex flex-col justify-center items-center h-[70vh] text-center">
+              <h2 className="text-4xl font-semibold text-gray-800 mb-2">
+                Your cart is empty!
+              </h2>
+              <Link to="/" className="mt-5 inline-block rounded-sm bg-blue-600 px-8 py-2 text-lg font-semibold text-white ">
+                Shop Now
+              </Link>
+            </div>
+          ) : (
+            <div className="flex flex-col lg:flex-row gap-5 items-start">
+              <div className="w-full lg:w-[65%] flex flex-col gap-4">
+                {items.map((product) => (
+                  <Fragment key={product.id}>
+                    {/* ================= DESKTOP CARD (unchanged) ================= */}
+                    <div className="w-full hidden sm:flex flex-row bg-white border border-gray-200 shadow-sm overflow-hidden group px-4 py-5 gap-4">
+                      <div className="w-full sm:w-32 h-32 shrink-0 overflow-hidden rounded-lg bg-gray-100 cursor-pointer">
+                        <img
+                          width="400"
+                          height="400"
+                          src={product.image || product.images?.[0] || "https://placeholder.com"}
+                          alt={product?.title || "Product image"}
+                          className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-300"
+                        />
+                      </div>
 
-                  <div className="flex min-w-0 grow flex-col justify-between">
-                    <div>
-                      <p className="text-xs uppercase tracking-widest cursor-pointer  text-gray-600 font-semibold mb-1">
-                        {product.category || "Product"}
-                      </p>
-                      <h3 className="line-clamp-2 wrap-break-words text-lg font-bold text-gray-900 cursor-pointer transition-colors">
-                        {product.title}
-                      </h3>
+                      <div className="flex min-w-0 grow flex-col justify-between">
+                        <div>
+                          <p className="text-xs uppercase tracking-widest cursor-pointer text-gray-600 font-semibold mb-1">
+                            {product.category}
+                          </p>
+                          <h3 className="line-clamp-2 wrap-break-words text-lg font-bold text-gray-900 cursor-pointer transition-colors">
+                            {product.title}
+                          </h3>
 
-                      <div className="flex items-center mt-1 cursor-pointer">
-                        <div className="flex text-amber-400 text-sm ">
-                          <span>★</span>
-                          <span>★</span>
-                          <span>★</span>
-                          <span>★</span>
-                          <span className="text-gray-300">★</span>
+                          <div className="flex items-center mt-1 cursor-pointer">
+                            <div className="flex text-amber-400 text-sm">
+                              <span>★</span>
+                              <span>★</span>
+                              <span>★</span>
+                              <span>★</span>
+                              <span className="text-gray-300">★</span>
+                            </div>
+                            <span className="bg-blue-50 text-blue-800 text-xs font-semibold px-2 py-0.5 rounded ml-2">
+                              4.0
+                            </span>
+                          </div>
                         </div>
-                        <span className="bg-blue-50 text-blue-800 text-xs font-semibold px-2 py-0.5 rounded ml-2">
-                          4.0
-                        </span>
+
+                        <div className="mt-4 flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:justify-between">
+                          <div className="flex flex-row justify-between gap-8">
+                            <div className="flex flex-col gap-2">
+                              <div className="flex items-center gap-2">
+                                <button
+                                  type="button"
+                                  onClick={() => updateQuantity(product.id, -1)}
+                                  disabled={product.quantity === 1 || Boolean(actionLoading[product.id])}
+                                  className="h-8 w-8 border border-gray-400 text-lg disabled:cursor-not-allowed disabled:opacity-40"
+                                  aria-label={`Decrease quantity of ${product.title}`}
+                                >
+                                  -
+                                </button>
+                                <span className="min-w-8 text-center font-medium">{product.quantity}</span>
+                                <button
+                                  type="button"
+                                  onClick={() => updateQuantity(product.id, 1)}
+                                  disabled={Boolean(actionLoading[product.id])}
+                                  className="h-8 w-8 border border-gray-400 text-lg disabled:cursor-not-allowed disabled:opacity-40"
+                                  aria-label={`Increase quantity of ${product.title}`}
+                                >
+                                  +
+                                </button>
+                              </div>
+                              <span className="text-sm text-gray-600">
+                                Subtotal: ${(Number(product.price) * product.quantity).toFixed(2)}
+                              </span>
+                            </div>
+
+                            <div className="flex flex-wrap items-baseline gap-2 cursor-pointer">
+                              <span className="text-xl font-bold text-gray-900">
+                                ${Number(product.price).toFixed(2)}
+                              </span>
+                              <span className="text-sm text-gray-600 line-through">
+                                ${(Number(product.price) * 1.4).toFixed(2)}
+                              </span>
+                            </div>
+                          </div>
+
+                          <button
+                            type="button"
+                            className="w-full border-2 border-gray-500 px-3 py-1.5 text-base font-medium text-gray-500 transition-colors focus:outline-none cursor-pointer disabled:opacity-60 sm:w-auto"
+                            disabled={Boolean(actionLoading[product.id])}
+                            onClick={() => handleRemovefromCart(product, product.title)}
+                          >
+                            <span className="mr-1">
+                              <FontAwesomeIcon icon={faTrashCan} />
+                            </span>
+                            Remove
+                          </button>
+                        </div>
                       </div>
                     </div>
 
-                    <div className="mt-4 flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:justify-between">
+                    {/* ================= MOBILE CARD ================= */}
+                    <div className="sm:hidden w-full bg-white border border-gray-200 shadow-sm p-4">
+                      <div className="flex gap-4">
+                        {/* Left: image + quantity controls under it */}
+                        <div className="w-28 shrink-0 overflow-hidden rounded-xl border border-gray-200 bg-white">
+                          <div className="h-32 w-full bg-gray-100 overflow-hidden">
+                            <img
+                              width="400"
+                              height="400"
+                              src={product.image || product.images?.[0] || "https://placeholder.com"}
+                              alt={product?.title || "Product image"}
+                              className="w-full h-full object-cover object-center"
+                            />
+                          </div>
 
-                      <div className="flex flex-row justify-between gap-8">
-                        <div className="flex flex-col gap-2">
-                          <div className="flex items-center gap-2">
+                          <div className="flex items-center justify-between px-2 py-1.5">
                             <button
                               type="button"
                               onClick={() => updateQuantity(product.id, -1)}
                               disabled={product.quantity === 1 || Boolean(actionLoading[product.id])}
-                              className="h-8 w-8 border border-gray-400 text-lg disabled:cursor-not-allowed disabled:opacity-40"
+                              className="h-7 w-7 text-xl leading-none text-gray-900 disabled:cursor-not-allowed disabled:opacity-30"
                               aria-label={`Decrease quantity of ${product.title}`}
                             >
-                              -
+                              −
                             </button>
-                            <span className="min-w-8 text-center font-medium">{product.quantity}</span>
+                            <span className="text-base font-medium text-gray-900">{product.quantity}</span>
                             <button
                               type="button"
                               onClick={() => updateQuantity(product.id, 1)}
                               disabled={Boolean(actionLoading[product.id])}
-                              className="h-8 w-8 border border-gray-400 text-lg disabled:cursor-not-allowed disabled:opacity-40"
+                              className="h-7 w-7 text-xl leading-none text-gray-900 disabled:cursor-not-allowed disabled:opacity-30"
                               aria-label={`Increase quantity of ${product.title}`}
                             >
                               +
                             </button>
                           </div>
-                          <span className="text-sm text-gray-600">
+                        </div>
+
+                        {/* Right: product info */}
+                        <div className="flex min-w-0 grow flex-col">
+                          <p className="text-xs uppercase tracking-widest text-gray-600 font-semibold mb-1">
+                            {product.category}
+                          </p>
+
+                          <h3 className="line-clamp-2 wrap-break-words text-base font-bold text-gray-900">
+                            {product.title}
+                          </h3>
+
+                          <div className="flex items-center mt-2">
+                            <div className="flex text-amber-400 text-sm">
+                              <span>★</span>
+                              <span>★</span>
+                              <span>★</span>
+                              <span>★</span>
+                              <span className="text-gray-300">★</span>
+                            </div>
+                            <span className="bg-blue-50 text-blue-800 text-xs font-semibold px-2 py-0.5 rounded ml-2">
+                              4.0
+                            </span>
+                          </div>
+
+                          <div className="mt-3 flex flex-wrap items-baseline gap-2">
+                            <span className="text-lg font-bold text-gray-900">
+                              ${Number(product.price).toFixed(2)}
+                            </span>
+                            <span className="text-sm text-gray-600 line-through">
+                              ${(Number(product.price) * 1.4).toFixed(2)}
+                            </span>
+                          </div>
+
+                          <span className="mt-1 text-sm text-gray-600">
                             Subtotal: ${(Number(product.price) * product.quantity).toFixed(2)}
                           </span>
                         </div>
-
-                        <div className="flex flex-wrap items-baseline gap-2 cursor-pointer">
-                          <span className="text-xl font-bold text-gray-900">
-                            ${Number(product.price).toFixed(2)}
-                          </span>
-                          <span className="text-sm text-gray-600 line-through">
-                            ${(Number(product.price) * 1.4).toFixed(2)}
-                          </span>
-                        </div>
-
                       </div>
 
-
+                      {/* Bottom: Remove button, full width */}
                       <button
                         type="button"
-                        className="w-full border-2 border-gray-500 px-3 py-1.5 text-base font-medium text-gray-500 transition-colors focus:outline-none cursor-pointer disabled:opacity-60 sm:w-auto"
+                        className="mt-4 w-full rounded-xl border border-gray-300 py-2.5 text-base font-semibold text-gray-900 disabled:opacity-60"
                         disabled={Boolean(actionLoading[product.id])}
                         onClick={() => handleRemovefromCart(product, product.title)}
                       >
@@ -318,298 +409,301 @@ const Cart = () => {
                         Remove
                       </button>
                     </div>
-                  </div>
-                </div>
-              ))}
-            </div>
+                  </Fragment>
+                ))}
+              </div>
 
-            <div className="w-full lg:w-[35%] lg:sticky lg:top-17">
+              <div className="w-full lg:w-[35%] lg:sticky lg:top-17">
 
-              {/* ================= PRICE DETAILS ================= */}
-              <div className="bg-white border border-gray-200 shadow-sm">
+                {/* ================= PRICE DETAILS ================= */}
+                <div className="bg-white border border-gray-200 shadow-sm">
 
-                {/* Header */}
-                <div className="bg-[#f1f2f4] pb-4">
-                  <h2 className="text-lg font-semibold text-gray-900">
-                    Price Details
-                  </h2>
-                </div>
-
-                <div className="px-5 py-5">
-
-                  {/* MRP */}
-                  <div className="flex justify-between items-center text-base text-gray-800">
-                    <span className="underline cursor-pointer decoration-dotted">
-                      MRP (incl. of all taxes)
-                    </span>
-
-                    <span className="cursor-pointer">
-                      ${(totalDiscount + totalAmount).toFixed(2)}
-                    </span>
+                  {/* Header */}
+                  <div className="bg-[#f1f2f4] pb-4">
+                    <h2 className="text-lg font-semibold text-gray-900">
+                      Price Details
+                    </h2>
                   </div>
 
-                  {/* ================= FEES ================= */}
-                  <div className="mt-5">
-                    <button
-                      type="button"
-                      onClick={() => setShowFees((prev) => !prev)}
-                      className="flex w-full items-center justify-between text-base text-gray-800"
-                    >
-                      <span className="flex items-center cursor-pointer gap-2">
-                        Fees
+                  <div className="px-5 py-5">
 
-                        <span className="flex items-center">
-                          <svg
-                            width="16"
-                            height="16"
-                            fill="none"
-                            viewBox="0 0 17 17"
-                            className={`transition-transform duration-200 ${showFees ? "-rotate-90" : "rotate-90"
-                              }`}
-                          >
-                            <path
-                              d="m6.627 3.749 5 5-5 5"
-                              stroke="#111112"
-                              strokeWidth="1.2"
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                            />
-                          </svg>
-                        </span>
+                    {/* MRP */}
+                    <div className="flex justify-between items-center text-base text-gray-800">
+                      <span className="underline cursor-pointer decoration-dotted">
+                        MRP (incl. of all taxes)
                       </span>
 
-                      {!showFees && (
-                        <span className="cursor-pointer">
-                          $10
-                        </span>
-                      )}
-                    </button>
+                      <span className="cursor-pointer">
+                        ${(totalDiscount + totalAmount).toFixed(2)}
+                      </span>
+                    </div>
 
-                    {showFees && (
-                      <div className="mt-3 border-b border-dashed border-gray-200 pb-3">
-                        <div className="flex justify-between text-base text-gray-500">
-                          <span className="underline cursor-pointer decoration-dotted">
-                            Platform Fee
+                    {/* ================= FEES ================= */}
+                    <div className="mt-5">
+                      <button
+                        type="button"
+                        onClick={() => setShowFees((prev) => !prev)}
+                        className="flex w-full items-center justify-between text-base text-gray-800"
+                      >
+                        <span className="flex items-center cursor-pointer gap-2">
+                          Fees
+
+                          <span className="flex items-center">
+                            <svg
+                              width="16"
+                              height="16"
+                              fill="none"
+                              viewBox="0 0 17 17"
+                              className={`transition-transform duration-200 ${showFees ? "-rotate-90" : "rotate-90"
+                                }`}
+                            >
+                              <path
+                                d="m6.627 3.749 5 5-5 5"
+                                stroke="#111112"
+                                strokeWidth="1.2"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                              />
+                            </svg>
                           </span>
+                        </span>
 
+                        {!showFees && (
                           <span className="cursor-pointer">
                             $10
                           </span>
+                        )}
+                      </button>
+
+                      {showFees && (
+                        <div className="mt-3 border-b border-dashed border-gray-200 pb-3">
+                          <div className="flex justify-between text-base text-gray-500">
+                            <span className="underline cursor-pointer decoration-dotted">
+                              Platform Fee
+                            </span>
+
+                            <span className="cursor-pointer">
+                              $10
+                            </span>
+                          </div>
                         </div>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* ================= DISCOUNTS ================= */}
-                  <div className="mt-5">
-                    <button
-                      type="button"
-                      onClick={() => setShowDiscounts((prev) => !prev)}
-                      className="flex w-full items-center justify-between text-base text-gray-800"
-                    >
-                      <span className="flex items-center cursor-pointer gap-2">
-                        Discounts
-
-                        <span className="flex items-center">
-                          <svg
-                            width="16"
-                            height="16"
-                            fill="none"
-                            viewBox="0 0 17 17"
-                            className={`transition-transform duration-200 ${showDiscounts ? "-rotate-90" : "rotate-90"
-                              }`}
-                          >
-                            <path
-                              d="m6.627 3.749 5 5-5 5"
-                              stroke="#111112"
-                              strokeWidth="1.2"
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                            />
-                          </svg>
-                        </span>
-                      </span>
-
-                      {!showDiscounts && (
-                        <span className="text-green-600 cursor-pointer">
-                          - ${totalDiscount.toFixed(2)}
-                        </span>
                       )}
-                    </button>
+                    </div>
 
-                    {showDiscounts && (
-                      <div className="mt-3 space-y-3 border-b border-gray-200 pb-3">
-                        <div className="flex justify-between text-base text-gray-500">
-                          <span className="underline cursor-pointer decoration-dotted">
-                            Discount on MRP
+                    {/* ================= DISCOUNTS ================= */}
+                    <div className="mt-5">
+                      <button
+                        type="button"
+                        onClick={() => setShowDiscounts((prev) => !prev)}
+                        className="flex w-full items-center justify-between text-base text-gray-800"
+                      >
+                        <span className="flex items-center cursor-pointer gap-2">
+                          Discounts
+
+                          <span className="flex items-center">
+                            <svg
+                              width="16"
+                              height="16"
+                              fill="none"
+                              viewBox="0 0 17 17"
+                              className={`transition-transform duration-200 ${showDiscounts ? "-rotate-90" : "rotate-90"
+                                }`}
+                            >
+                              <path
+                                d="m6.627 3.749 5 5-5 5"
+                                stroke="#111112"
+                                strokeWidth="1.2"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                              />
+                            </svg>
                           </span>
+                        </span>
 
+                        {!showDiscounts && (
                           <span className="text-green-600 cursor-pointer">
                             - ${totalDiscount.toFixed(2)}
                           </span>
+                        )}
+                      </button>
+
+                      {showDiscounts && (
+                        <div className="mt-3 space-y-3 border-b border-gray-200 pb-3">
+                          <div className="flex justify-between text-base text-gray-500">
+                            <span className="underline cursor-pointer decoration-dotted">
+                              Discount on MRP
+                            </span>
+
+                            <span className="text-green-600 cursor-pointer">
+                              - ${totalDiscount.toFixed(2)}
+                            </span>
+                          </div>
+
+                          <div className="flex justify-between text-base text-gray-500">
+                            <span className="underline cursor-pointer decoration-dotted">
+                              Coupons Applied (0)
+                            </span>
+
+                            <span className="text-green-600 cursor-pointer">
+                              - $0.00
+                            </span>
+                          </div>
                         </div>
+                      )}
+                    </div>
 
-                        <div className="flex justify-between text-base text-gray-500">
-                          <span className="underline cursor-pointer decoration-dotted">
-                            Coupons Applied (0)
-                          </span>
+                    {/* ================= TOTAL ================= */}
+                    <div className="flex cursor-default font-['Roboto_Medium',Roboto-Medium,'Droid_Sans',HelveticaNeue-Medium,'Helvetica_Neue_Medium',sans-serif-medium] justify-between items-center border-t border-gray-200 pt-5 mt-4 text-base text-gray-900">
+                      <span>
+                        Total Amount
+                      </span>
 
-                          <span className="text-green-600 cursor-pointer">
-                            - $0.00
-                          </span>
-                        </div>
-                      </div>
-                    )}
+                      <span>
+                        ${(totalAmount + 10).toFixed(2)}
+                      </span>
+                    </div>
+
+                    {/* Saving message */}
+                    <div className="mt-4 cursor-default font-['inter_regular',Roboto,Helvetica,Arial,sans-serif] flex items-center justify-center gap-2 rounded-lg bg-[#ddfbf0] px-3 py-2 text-sm text-[#0e772d]
+          ">
+                      <span className="text-lg"><img width="400"
+                        height="400" className="size-5" src={discount} alt="" /></span>
+
+                      <span>
+                        You'll save <strong>${(totalDiscount).toFixed(2)}</strong> on this order!
+                      </span>
+                    </div>
+
+                  </div>
+                </div>
+
+
+                {/* ================= SECURITY MESSAGE ================= */}
+                <div className="flex flex-row sm:flex-row items-center font-sans font-semibold gap-3 sm:gap-4 px-4 sm:px-8 py-4 sm:py-2 text-center sm:text-left text-[#717478]">
+                  <div className="shrink-0">
+                    <img width="400"
+                      height="400" className="size-10 sm:size-8" src={shield} alt="" />
                   </div>
 
-                  {/* ================= TOTAL ================= */}
-                  <div className="flex cursor-default font-['Roboto_Medium',Roboto-Medium,'Droid_Sans',HelveticaNeue-Medium,'Helvetica_Neue_Medium',sans-serif-medium] justify-between items-center border-t border-gray-200 pt-5 mt-4 text-base text-gray-900">
+                  <p className="flex flex-col cursor-default justify-end text-sm sm:text-base font-semibold leading-normal sm:leading-6">
                     <span>
-                      Total Amount
+                      Safe and secure payments. Easy<br className="hidden sm:inline" /> returns.
+                      100% Authentic products.
                     </span>
-
-                    <span>
-                      ${(totalAmount + 10).toFixed(2)}
-                    </span>
-                  </div>
-
-                  {/* Saving message */}
-                  <div className="mt-4 cursor-default font-['inter_regular',Roboto,Helvetica,Arial,sans-serif] flex items-center justify-center gap-2 rounded-lg bg-[#ddfbf0] px-3 py-2 text-sm text-[#0e772d]
-">
-                    <span className="text-lg"><img width="400"
-                      height="400" className="size-5" src={discount} alt="" /></span>
-
-                    <span>
-                      You'll save <strong>${(totalDiscount).toFixed(2)}</strong> on this order!
-                    </span>
-                  </div>
-
-                </div>
-              </div>
-
-
-              {/* ================= SECURITY MESSAGE ================= */}
-              <div className="flex flex-row sm:flex-row items-center font-sans font-semibold gap-3 sm:gap-4 px-4 sm:px-8 py-4 sm:py-2 text-center sm:text-left text-[#717478]">
-                <div className="shrink-0">
-                  <img width="400"
-                    height="400" className="size-10 sm:size-8" src={shield} alt="" />
+                  </p>
                 </div>
 
-                <p className="flex flex-col cursor-default justify-end text-sm sm:text-base font-semibold leading-normal sm:leading-6">
-                  <span>
-                    Safe and secure payments. Easy<br className="hidden sm:inline" /> returns.
-                    100% Authentic products.
-                  </span>
-                </p>
-              </div>
 
 
+                {/* ================= DESKTOP BOTTOM BAR ================= */}
+                <div className="hidden lg:flex items-center justify-between border border-gray-200 bg-white px-4 py-2 shadow-sm">
 
-              {/* ================= DESKTOP BOTTOM BAR ================= */}
-              <div className="hidden lg:flex items-center justify-between border border-gray-200 bg-white px-4 py-2 shadow-sm">
-
-                {/* Price */}
-                <div className="flex flex-col cursor-pointer font-['Roboto_Medium',Roboto-Medium,'Droid_Sans',HelveticaNeue-Medium,'Helvetica_Neue_Medium',sans-serif-medium]">
-                  <span className="text-sm text-gray-600 line-through">
-                    ${(totalDiscount + totalAmount).toFixed(2)}
-                  </span>
-
-                  <div className="flex items-center gap-2">
-                    <span className="text-xl text-gray-900">
-                      ${(totalAmount + 10).toFixed(2)}
+                  {/* Price */}
+                  <div className="flex flex-col cursor-pointer font-['Roboto_Medium',Roboto-Medium,'Droid_Sans',HelveticaNeue-Medium,'Helvetica_Neue_Medium',sans-serif-medium]">
+                    <span className="text-sm text-gray-600 line-through">
+                      ${(totalDiscount + totalAmount).toFixed(2)}
                     </span>
 
-                    <span className="text-gray-600 text-sm">
-                      ⓘ
-                    </span>
+                    <div className="flex items-center gap-2">
+                      <span className="text-xl text-gray-900">
+                        ${(totalAmount + 10).toFixed(2)}
+                      </span>
+
+                      <span className="text-gray-600 text-sm">
+                        ⓘ
+                      </span>
+                    </div>
                   </div>
+
+                  {/* Place Order */}
+                  <button
+                    type="button"
+                    onClick={handlePlaceorder}
+                    className="w-[45%] bg-[#ffc200] py-3 font-['Roboto_Medium',Roboto-Medium,'Droid_Sans',HelveticaNeue-Medium,'Helvetica_Neue_Medium',sans-serif-medium] text-lg font-medium text-black shadow-sm cursor-pointer"
+                  >
+                    Place Order
+                  </button>
                 </div>
+                {/* ================= MOBILE BOTTOM BAR ================= */}
+                <div className="fixed bottom-0 left-0 right-0 z-50 flex items-center justify-between border-t border-gray-200 bg-white px-4 py-2 shadow-lg lg:hidden">
 
-                {/* Place Order */}
-                <button
-                  type="button"
-                  onClick={handlePlaceorder}
-                  className="w-[45%] bg-[#ffc200] py-3 font-['Roboto_Medium',Roboto-Medium,'Droid_Sans',HelveticaNeue-Medium,'Helvetica_Neue_Medium',sans-serif-medium] text-lg font-medium text-black shadow-sm cursor-pointer"
-                >
-                  Place Order
-                </button>
-              </div>
-              {/* ================= MOBILE BOTTOM BAR ================= */}
-              <div className="fixed bottom-0 left-0 right-0 z-50 flex items-center justify-between border-t border-gray-200 bg-white px-4 py-2 shadow-lg lg:hidden">
-
-                {/* Price */}
-                <div className="flex flex-col text font-['Roboto_Medium',Roboto-Medium,'Droid_Sans',HelveticaNeue-Medium,'Helvetica_Neue_Medium',sans-serif-medium]">
-                  <span className="text-sm text-gray-600 line-through">
-                    ${(totalDiscount + totalAmount).toFixed(2)}
-                  </span>
-
-                  <div className="flex items-center gap-2">
-                    <span className="text-xl text-gray-900">
-                      ${(totalAmount + 10).toFixed(2)}
+                  {/* Price */}
+                  <div className="flex flex-col text font-['Roboto_Medium',Roboto-Medium,'Droid_Sans',HelveticaNeue-Medium,'Helvetica_Neue_Medium',sans-serif-medium]">
+                    <span className="text-sm text-gray-600 line-through">
+                      ${(totalDiscount + totalAmount).toFixed(2)}
                     </span>
 
-                    <span className="text-gray-600 text-sm">
-                      ⓘ
-                    </span>
+                    <div className="flex items-center gap-2">
+                      <span className="text-xl text-gray-900">
+                        ${(totalAmount + 10).toFixed(2)}
+                      </span>
+
+                      <span className="text-gray-600 text-sm">
+                        ⓘ
+                      </span>
+                    </div>
                   </div>
-                </div>
 
-                {/* Place Order */}
-                <button
-                  type="button"
-                  onClick={handlePlaceorder}
-                  className="w-[45%] font-['Roboto_Medium',Roboto-Medium,'Droid_Sans',HelveticaNeue-Medium,'Helvetica_Neue_Medium',sans-serif-medium] bg-[#ffc200] py-3 text-base font-medium text-black shadow-sm"
-                >
-                  Place Order
-                </button>
+                  {/* Place Order */}
+                  <button
+                    type="button"
+                    onClick={handlePlaceorder}
+                    className="w-[45%] font-['Roboto_Medium',Roboto-Medium,'Droid_Sans',HelveticaNeue-Medium,'Helvetica_Neue_Medium',sans-serif-medium] bg-[#ffc200] py-3 text-base font-medium text-black shadow-sm"
+                  >
+                    Place Order
+                  </button>
+                </div>
               </div>
             </div>
-          </div>
-        )
-        }
-      </main >
+          )
+          }
 
-      <Footer />
-      <Popup
-        show={showLoginPopup}
-        type="warning"
-        title="Login Required"
-        message="Please log in before placing an order."
-        onClose={() => {
-          setShowLoginPopup(false);
-          navigate("/pages/login", { state: { from: location } });
-        }}
-      />
-      <Popup
-        show={Boolean(removeItem)}
-        type="warning"
-        title="Remove item?"
-        message={
-          <>
-            Are you sure you want to remove <strong>{removeItem?.name || "this item"}</strong> from your cart?
-          </>
-        }
-        onClose={() => setRemoveItem(null)}
-        onConfirm={confirmRemove}
-        confirmButtonText="Remove"
-      />
-      <Popup
-        show={showClearCartPopup}
-        type="warning"
-        title="Clear cart?"
-        message="Are you sure you want to clear your cart?"
-        onClose={() => setShowClearCartPopup(false)}
-        onConfirm={handleClearCart}
-        confirmButtonText="Clear cart"
-      />
-      <Popup
-        show={cartPopup.show}
-        type={cartPopup.type}
-        title={cartPopup.title}
-        message={cartPopup.message}
-        onClose={() => setCartPopup((prev) => ({ ...prev, show: false }))}
-      />
-    </div >
+        </main >
+        <Footer />
+
+
+        <Popup
+          show={showLoginPopup}
+          type="warning"
+          title="Login Required"
+          message="Please log in before placing an order."
+          onClose={() => {
+            setShowLoginPopup(false);
+            navigate("/pages/login", { state: { from: location } });
+          }}
+        />
+        <Popup
+          show={Boolean(removeItem)}
+          type="warning"
+          title="Remove item?"
+          message={
+            <>
+              Are you sure you want to remove <strong>{removeItem?.name || "this item"}</strong> from your cart?
+            </>
+          }
+          onClose={() => setRemoveItem(null)}
+          onConfirm={confirmRemove}
+          confirmButtonText="Remove"
+        />
+        <Popup
+          show={showClearCartPopup}
+          type="warning"
+          title="Clear cart?"
+          message="Are you sure you want to clear your cart?"
+          onClose={() => setShowClearCartPopup(false)}
+          onConfirm={handleClearCart}
+          confirmButtonText="Clear cart"
+        />
+        <Popup
+          show={cartPopup.show}
+          type={cartPopup.type}
+          title={cartPopup.title}
+          message={cartPopup.message}
+          onClose={() => setCartPopup((prev) => ({ ...prev, show: false }))}
+        />
+      </div>
+
+    </div>
   );
 };
 

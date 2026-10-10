@@ -29,6 +29,7 @@ import "../style/App.css";
 import SearchBar from "./SearchBar";
 import { useAuth } from "../context/AuthContext";
 import useProductSuggestions from "../hooks/useProductSuggestions"; // add this import
+// import api from "../api/Addressapi.js";
 
 
 const Navbar = ({ setValue, initialSearch = "" }) => {
@@ -54,6 +55,9 @@ const Navbar = ({ setValue, initialSearch = "" }) => {
     setSearch("");
     if (setValue) setValue("");
   };
+
+
+  // console.log()
 
   // ForYou Navigation
   const handleForyou = () => {
@@ -219,28 +223,28 @@ const Navbar = ({ setValue, initialSearch = "" }) => {
               <div className="flex w-full sm:w-auto">
 
                 <NavLink to="/">
-                  <button className="ml-1 cursor-pointer rounded-md bg-blue-600 px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-blue-700 focus:outline-none focus:ring-4" onClick={handleHomenavigation}>Home</button>
+                  <button className="ml-2 cursor-pointer rounded-md bg-blue-600 px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-blue-700 focus:outline-none focus:ring-4" onClick={handleHomenavigation}>Home</button>
                 </NavLink>
                 {user ? (
                   <>
                     <NavLink to="/pages/profile">
-                      <button className="ml-1 cursor-pointer rounded-md bg-blue-600 px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-blue-700 focus:outline-none focus:ring-4">Profile</button>
+                      <button className="ml-2 cursor-pointer rounded-md bg-blue-600 px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-blue-700 focus:outline-none focus:ring-4">Profile</button>
                     </NavLink>
-                    <button onClick={async () => { await logout(); navigate("/"); }} className="ml-1 cursor-pointer rounded-md bg-blue-600 px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-blue-700 focus:outline-none focus:ring-4">Logout</button>
+                    <button onClick={async () => { await logout(); navigate("/"); }} className="ml-2 cursor-pointer rounded-md bg-blue-600 px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-blue-700 focus:outline-none focus:ring-4">Logout</button>
                   </>
                 ) : (
                   <>
                     <NavLink to="/pages/login" state={{ mode: "login" }}>
-                      <button className="ml-1 cursor-pointer rounded-md bg-blue-600 px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-blue-700 focus:outline-none focus:ring-4">Login</button>
+                      <button className="ml-2 cursor-pointer rounded-md bg-blue-600 px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-blue-700 focus:outline-none focus:ring-4">Login</button>
                     </NavLink>
                     <NavLink to="/pages/login" state={{ mode: "register" }}>
-                      <button className="ml-1 cursor-pointer rounded-md bg-blue-600 px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-blue-700 focus:outline-none focus:ring-4">Register</button>
+                      <button className="ml-2 cursor-pointer rounded-md bg-blue-600 px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-blue-700 focus:outline-none focus:ring-4">Register</button>
                     </NavLink>
                   </>
                 )}
 
                 <NavLink to="/pages/Cart">
-                  <button className="ml-1 cursor-pointer rounded-md bg-blue-600 px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-blue-700 focus:outline-none focus:ring-4">Cart</button>
+                  <button className="ml-2 cursor-pointer rounded-md bg-blue-600 px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-blue-700 focus:outline-none focus:ring-4">Cart</button>
                 </NavLink>
               </div>
             </div>
