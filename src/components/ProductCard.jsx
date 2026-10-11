@@ -8,7 +8,7 @@ import api from "../api/axiosInstance";
 import { useAuth } from "../context/AuthContext";
 import ProductCardSkeleton from "./ProductCardSkeleton";
 
-const PRODUCTS_PER_PAGE = 20;
+const PRODUCTS_PER_PAGE = 21;
 
 const normalizeCart = (cart = []) => cart.reduce((normalized, cartItem) => {
   const productKey = String(cartItem.id ?? cartItem.productId ?? cartItem.btn_id);
@@ -95,11 +95,14 @@ const ProductCard = ({ query }) => {
         const productsArray = response.data.products || [];
 
         const normalizedQuery = (query || "").toLowerCase();
+        const visibleProducts = normalizedQuery
+          ? productsArray
+          : productsArray.filter((product) => product.category?.toLowerCase() !== "beauty");
         const manualProducts = manualCategoryProducts.filter((product) =>
           product.category === normalizedQuery
         );
-        if (productsArray.length) {
-          setProducts(productsArray);
+        if (visibleProducts.length) {
+          setProducts(visibleProducts);
           setTotalProducts(Number(response.data.total) || productsArray.length);
           nextSkip.current = productsArray.length;
         } else {
@@ -185,8 +188,11 @@ const ProductCard = ({ query }) => {
                 return;
               }
 
+              const visibleProducts = query?.trim()
+                ? nextProducts
+                : nextProducts.filter((product) => product.category?.toLowerCase() !== "beauty");
               nextSkip.current += nextProducts.length;
-              setProducts((currentProducts) => [...currentProducts, ...nextProducts]);
+              setProducts((currentProducts) => [...currentProducts, ...visibleProducts]);
               setTotalProducts(Number(response.data.total) || nextSkip.current);
             } catch (error) {
               if (error.name !== "CanceledError") {
@@ -293,10 +299,12 @@ const ProductCard = ({ query }) => {
                     height="400"
                     src={product.thumbnail || product.images?.[0]}
                     alt={product?.title || "Product image"}
-                    loading={index === 0 ? "eager" : "lazy"}
+                    // If it's the first image, pass undefined to completely strip the attribute
+                    loading={index === 0 ? undefined : "lazy"}
                     fetchPriority={index === 0 ? "high" : "auto"}
                     className="h-full w-full object-contain object-center transition-transform duration-300 ease-in-out group-hover:scale-105"
                   />
+
                   <span className="absolute top-3 left-3 bg-red-600 text-white text-xs font-bold px-2.5 py-1 rounded-sm uppercase tracking-wider">
                     Sale
                   </span>

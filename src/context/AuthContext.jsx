@@ -73,7 +73,9 @@ export function AuthProvider({ children }) {
 
     const tryRefresh = async () => {
       try {
-        const res = await api.get("/auth/refresh-token");
+        const res = await api.get("/auth/refresh-token", {
+          _trackBackendAvailability: true,
+        });
         setAccessToken(res.data.accesstoken);
         const meRes = await api.get("/auth/get-me", {
           headers: { Authorization: `Bearer ${res.data.accesstoken}` },
