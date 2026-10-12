@@ -372,14 +372,12 @@ const ProductCard = ({ query }) => {
                         Add to Cart
                       </button>
                     ) : (
-                      <NavLink to="/pages/cart" className="w-full sm:w-auto sm:shrink-0">
-                        <button
-                          type="button"
-                          className="w-full rounded-xl bg-green-700 px-3 py-2 text-sm font-medium text-white transition-colors hover:bg-green-800 focus:outline-none sm:w-auto"
-                          onClick={(event) => event.stopPropagation()}
-                        >
-                          Go to Cart
-                        </button>
+                      <NavLink
+                        to="/pages/cart"
+                        className="w-full rounded-xl bg-green-700 px-3 py-2 text-center text-sm font-medium text-white transition-colors hover:bg-green-800 focus:outline-none sm:w-auto sm:shrink-0"
+                        onClick={(event) => event.stopPropagation()}
+                      >
+                        Go to Cart
                       </NavLink>
                     )}
                   </div>
