@@ -5,6 +5,7 @@ import Footer from "../components/Footer";
 import { useAuth } from "../context/AuthContext";
 import api from "../api/axiosInstance";
 import Loader from "../components/Loader";
+import { getImageCrossOrigin } from "../utils/image";
 
 const readCart = () => {
   try {
@@ -31,15 +32,13 @@ const readCart = () => {
 };
 
 
-
-
 const normalizeBackendCart = (cart) => {
   const items = cart?.items || [];
   return items.map((item) => ({
     id: item.productId,
     title: item.title,
     price: Number(item.price) || 0,
-    image: item.image || "https://placeholder.com",
+    image: item.image || item.title,
     quantity: Number(item.quantity) || 1,
     category: item.category || "",
   }));
@@ -51,8 +50,6 @@ const getProductImage = (item) => {
   if (typeof item?.thumbnail === "string" && item.thumbnail) return item.thumbnail;
   return "https://placeholder.com";
 };
-
-
 
 
 const Checkout = () => {
@@ -127,6 +124,7 @@ const Checkout = () => {
                       <img width="400"
                         height="400"
                         src={getProductImage(item)}
+                        crossOrigin={getImageCrossOrigin(getProductImage(item))}
                         alt={item?.title || "Product image"}
                         className="h-24 w-24 shrink-0 object-contain bg-gray-50"
                       />

@@ -38,22 +38,76 @@ export default function ProfileInformation({
   lastName,
   setLastName,
 }) {
-  const { user } = useAuth();
+  const { user, updateProfile } = useAuth();
 
-  const [gender, setGender] = useState("male");
+  const [gender, setGender] = useState(user?.gender || "");
   const [email, setEmail] = useState(user?.email || "");
-  const [mobile, setMobile] = useState("+91");
+  const [mobile, setMobile] = useState(user?.mobile || "");
 
   const [editingPersonal, setEditingPersonal] = useState(false);
   const [editingEmail, setEditingEmail] = useState(false);
   const [editingMobile, setEditingMobile] = useState(false);
+  const [savingPersonal, setSavingPersonal] = useState(false);
+  const [savingMobile, setSavingMobile] = useState(false);
+  const [personalError, setPersonalError] = useState("");
+  const [mobileError, setMobileError] = useState("");
 
   useEffect(() => {
     setEmail(user?.email || "");
+    setGender(user?.gender || "");
+    setMobile(user?.mobile || "");
   }, [user]);
 
+  const cancelPersonalEdit = () => {
+    setFirstName(user?.username || "");
+    setLastName(user?.lastName || "");
+    setGender(user?.gender || "");
+    setPersonalError("");
+    setEditingPersonal(false);
+  };
+
+  const savePersonalInformation = async () => {
+    setSavingPersonal(true);
+    setPersonalError("");
+    try {
+      await updateProfile({
+        username: firstName,
+        lastName,
+        ...(gender ? { gender } : {}),
+      });
+      setEditingPersonal(false);
+    } catch (error) {
+      setPersonalError(
+        error.response?.data?.message || "Unable to save personal information.",
+      );
+    } finally {
+      setSavingPersonal(false);
+    }
+  };
+
+  const cancelMobileEdit = () => {
+    setMobile(user?.mobile || "");
+    setMobileError("");
+    setEditingMobile(false);
+  };
+
+  const saveMobile = async () => {
+    setSavingMobile(true);
+    setMobileError("");
+    try {
+      await updateProfile({ mobile: mobile.trim() });
+      setEditingMobile(false);
+    } catch (error) {
+      setMobileError(
+        error.response?.data?.message || "Unable to save mobile number.",
+      );
+    } finally {
+      setSavingMobile(false);
+    }
+  };
+
   return (
-    <div className="p-4 pb-0 sm:p-5 sm:pb-0">
+    <div className="p-4 pb-0 sm:p-8 sm:pb-0">
       {/* Personal Information */}
       <div className="flex items-center gap-2 mb-4">
         <h2 className="text-base font-semibold text-gray-800">
@@ -61,7 +115,9 @@ export default function ProfileInformation({
         </h2>
 
         <button
-          onClick={() => setEditingPersonal((v) => !v)}
+          onClick={() =>
+            editingPersonal ? cancelPersonalEdit() : setEditingPersonal(true)
+          }
           className="text-sm cursor-pointer text-blue-600 font-medium"
         >
           {editingPersonal ? "Cancel" : "Edit"}
@@ -74,7 +130,7 @@ export default function ProfileInformation({
           onChange={(e) => setFirstName(e.target.value)}
           disabled={!editingPersonal}
           placeholder="First Name"
-          className={`min-w-0 flex-1 ${inputClass(editingPersonal)}`}
+          className={`w-full sm:w-60 ${inputClass(editingPersonal)}`}
         />
 
         <input
@@ -82,15 +138,25 @@ export default function ProfileInformation({
           onChange={(e) => setLastName(e.target.value)}
           disabled={!editingPersonal}
           placeholder="Last Name"
-          className={`min-w-0 flex-1 ${inputClass(editingPersonal)}`}
+          className={`w-full sm:w-60 ${inputClass(editingPersonal)}`}
         />
 
         {editingPersonal && (
-          <button onClick={() => setEditingPersonal(false)} className={saveBtnCls}>
-            SAVE
+          <button
+            type="button"
+            onClick={savePersonalInformation}
+            disabled={savingPersonal}
+            className={`${saveBtnCls} disabled:cursor-not-allowed disabled:opacity-60`}
+          >
+            {savingPersonal ? "SAVING..." : "SAVE"}
           </button>
         )}
       </div>
+      {personalError && (
+        <p role="alert" className="mb-4 text-sm text-red-600">
+          {personalError}
+        </p>
+      )}
 
       {/* Gender */}
       <div className="mb-6">
@@ -135,7 +201,7 @@ export default function ProfileInformation({
             onChange={(e) => setEmail(e.target.value)}
             disabled={!editingEmail}
             placeholder="Email Address"
-            className={`min-w-0 flex-1 ${inputClass(editingEmail)}`}
+            className={`w-full sm:w-60 ${inputClass(editingEmail)}`}
           />
 
           {editingEmail && (
@@ -152,7 +218,9 @@ export default function ProfileInformation({
           <h3 className="text-sm font-semibold text-gray-800">Mobile Number</h3>
 
           <button
-            onClick={() => setEditingMobile((v) => !v)}
+            onClick={() =>
+              editingMobile ? cancelMobileEdit() : setEditingMobile(true)
+            }
             className="text-sm cursor-pointer text-blue-600 font-medium"
           >
             {editingMobile ? "Cancel" : "Edit"}
@@ -165,15 +233,27 @@ export default function ProfileInformation({
             onChange={(e) => setMobile(e.target.value)}
             disabled={!editingMobile}
             placeholder="Mobile Number"
-            className={`min-w-0 flex-1 ${inputClass(editingMobile)}`}
+            inputMode="numeric"
+            maxLength={10}
+            className={`w-full sm:w-60 ${inputClass(editingMobile)}`}
           />
 
           {editingMobile && (
-            <button onClick={() => setEditingMobile(false)} className={saveBtnCls}>
-              SAVE
+            <button
+              type="button"
+              onClick={saveMobile}
+              disabled={savingMobile}
+              className={`${saveBtnCls} disabled:cursor-not-allowed disabled:opacity-60`}
+            >
+              {savingMobile ? "SAVING..." : "SAVE"}
             </button>
           )}
         </div>
+        {mobileError && (
+          <p role="alert" className="mt-2 text-sm text-red-600">
+            {mobileError}
+          </p>
+        )}
       </div>
 
       {/* FAQs */}

@@ -10,8 +10,11 @@ const Navbar2 = ({ setValue }) => {
   const [search, setSearch] = useState("");
   const navigate = useNavigate();
   const { user, logout } = useAuth();
-  const baseUrl = import.meta.env.VITE_API_BASE_URL;
-  const { suggestions } = useProductSuggestions(search, baseUrl);
+  const {
+    suggestions,
+    loading: suggestionsLoading,
+    error: suggestionsError,
+  } = useProductSuggestions(search);
 
   const handleSuggestionClick = (item) => {
     setSearch("");
@@ -75,6 +78,8 @@ const Navbar2 = ({ setValue }) => {
                   onClear={handleBack}
                   onSuggestionClick={handleSuggestionClick}
                   suggestions={suggestions}
+                  suggestionsLoading={suggestionsLoading}
+                  suggestionsError={suggestionsError}
                 />
               </div>
             </div>

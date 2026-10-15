@@ -1,30 +1,18 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import { NavLink, useParams } from "react-router-dom";
 import Footer from "../components/Footer";
-import Loader from "../components/Loader";
 import Navbar from "../components/Navbar";
-import manualCategoryProducts from "../data/manualCategoryProducts";
+import Popup from "../components/Popup";
 import api from "../api/axiosInstance";
+import { getProductById } from "../api/Productapi.js";
 import { useAuth } from "../context/AuthContext";
 import ProductSkeleton from "../components/ProductSkeleton";
-
-const normalizeCart = (cart) => cart.reduce((normalized, cartItem) => {
-  const productKey = String(cartItem.id ?? cartItem.productId ?? cartItem.btn_id);
-  const quantity = Number.isInteger(Number(cartItem.quantity)) && Number(cartItem.quantity) > 0
-    ? Number(cartItem.quantity)
-    : 1;
-  const existingItem = normalized.find(
-    (item) => String(item.id ?? item.productId ?? item.btn_id) === productKey,
-  );
-
-  if (existingItem) {
-    existingItem.quantity += quantity;
-    return normalized;
-  }
-
-  return [...normalized, { ...cartItem, quantity }];
-}, []);
+import {
+  addProductToCart,
+  isProductInCart,
+  readGuestCart,
+} from "../utils/cart";
+import { getImageCrossOrigin } from "../utils/image";
 
 const ProductDetails = () => {
   const { id } = useParams();
@@ -34,6 +22,7 @@ const ProductDetails = () => {
   const [error, setError] = useState("");
   const [addingToCart, setAddingToCart] = useState(false);
   const [isInCart, setIsInCart] = useState(false);
+  const [cartPopup, setCartPopup] = useState({ show: false, type: "error", title: "", message: "" });
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -47,30 +36,18 @@ const ProductDetails = () => {
         if (user) {
           const response = await api.get("/cart");
 
-          const cartItems = response.data?.cart?.items || [];
-
-          const exists = cartItems.some(
-            (item) => String(item.productId) === String(product.id)
-          );
-
-          setIsInCart(exists);
+          setIsInCart(isProductInCart(response.data?.cart?.items || [], product));
         } else {
-          const storedCart = JSON.parse(
-            localStorage.getItem("Products") || "[]"
-          );
-
-          const cartItems = normalizeCart(storedCart);
-
-          const exists = cartItems.some(
-            (item) =>
-              String(item.id ?? item.productId ?? item.btn_id) ===
-              String(product.id)
-          );
-
-          setIsInCart(exists);
+          setIsInCart(isProductInCart(readGuestCart(), product));
         }
       } catch (error) {
         console.error("Failed to check cart:", error);
+        setCartPopup({
+          show: true,
+          type: "error",
+          title: "Unable to check your cart.",
+          message: "Please try again before adding this product.",
+        });
       }
     };
 
@@ -78,31 +55,29 @@ const ProductDetails = () => {
   }, [product, user]);
 
   useEffect(() => {
+    const controller = new AbortController();
     const fetchProduct = async () => {
       setLoading(true);
       setError("");
 
       try {
-        const baseUrl = import.meta.env.VITE_API_BASE_URL;
-        const productsUrl = baseUrl.replace(/\/search\/?$/, "");
-        const response = await axios.get(`${productsUrl}/${id}`);
-        setProduct(response.data);
-      } catch {
-        const manualProduct = manualCategoryProducts.find(
-          (item) => String(item.id) === String(id),
-        );
-
-        if (manualProduct) {
-          setProduct(manualProduct);
-        } else {
-          setError("Product could not be loaded.");
+        const product = await getProductById(id, { signal: controller.signal });
+        setProduct(product);
+      } catch (requestError) {
+        if (requestError.name !== "CanceledError" && requestError.code !== "ERR_CANCELED") {
+          console.error("Failed to fetch product:", requestError);
+          setError(
+            requestError.response?.data?.message ||
+            "Product could not be loaded. Please try again.",
+          );
         }
       } finally {
-        setLoading(false);
+        if (!controller.signal.aborted) setLoading(false);
       }
     };
 
     fetchProduct();
+    return () => controller.abort();
   }, [id]);
 
   const handleAddToCart = async () => {
@@ -111,49 +86,22 @@ const ProductDetails = () => {
     // Already in cart → don't add again
     if (isInCart) return;
 
-    if (user) {
-      setAddingToCart(true);
-
-      await api.post("/cart", {
-        productId: product.id,
-        title: product.title,
-        price: product.price,
-        image: product.thumbnail || product.images?.[0],
-        category: product.category,
-        quantity: 1,
+    setAddingToCart(true);
+    try {
+      await addProductToCart(product, Boolean(user));
+      setIsInCart(true);
+    } catch (error) {
+      console.error("Failed to add product to cart:", error);
+      console.error("SERVER RESPONSE:", error.response?.data);
+      setCartPopup({
+        show: true,
+        type: "error",
+        title: "Unable to update cart.",
+        message: "Please try again.",
       });
-      setIsInCart(true);
+    } finally {
       setAddingToCart(false);
-
-      return;
     }
-
-    const currentCart = normalizeCart(
-      JSON.parse(localStorage.getItem("Products") || "[]")
-    );
-
-    const existingItem = currentCart.find(
-      (item) => String(item.id) === String(product.id)
-    );
-
-    if (existingItem) {
-      setIsInCart(true);
-      return;
-    }
-
-    const updatedCart = [
-      ...currentCart,
-      {
-        ...product,
-        btn_id: product.id,
-        quantity: 1,
-      },
-    ];
-
-    localStorage.setItem("Products", JSON.stringify(updatedCart));
-
-    setIsInCart(true);
-
   };
 
   return (
@@ -162,7 +110,6 @@ const ProductDetails = () => {
       {loading ? (
         <div className="">
           <div>
-            {/* <Loader /> */}
             < ProductSkeleton />
           </div>
         </div>
@@ -175,7 +122,10 @@ const ProductDetails = () => {
           <div className="flex w-full items-center justify-center bg-gray-100 p-3 sm:p-6 md:w-1/2">
             <img width="400"
               height="400"
-              src={product.images?.[0] || product.thumbnail}
+              src={product.thumbnail || product.images?.[0]}
+              crossOrigin={getImageCrossOrigin(
+                product.thumbnail || product.images?.[0],
+              )}
               alt={product?.title || "Product image"}
               className="max-h-72 w-full object-contain sm:max-h-112"
             />
@@ -208,7 +158,7 @@ const ProductDetails = () => {
                   disabled={addingToCart}
                   className="w-full rounded-xl bg-blue-600 px-5 py-3 font-medium text-white transition-colors hover:bg-blue-700 disabled:opacity-60 sm:w-auto"
                 >
-                  Add to Cart
+                  {addingToCart ? "Add to Cart" : "Add to Cart"}
                 </button>
               )}
             </div>
@@ -216,6 +166,13 @@ const ProductDetails = () => {
         </main>
       )}
       <Footer />
+      <Popup
+        show={cartPopup.show}
+        type={cartPopup.type}
+        title={cartPopup.title}
+        message={cartPopup.message}
+        onClose={() => setCartPopup((current) => ({ ...current, show: false }))}
+      />
     </>
   );
 };

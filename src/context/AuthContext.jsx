@@ -1,17 +1,9 @@
 import { createContext, useContext, useState, useEffect, useRef } from "react";
 import api, { registerAuthHandlers } from "../api/axiosInstance";
+import { readGuestCart } from "../utils/cart";
 
 const AuthContext = createContext();
 const GUEST_CART_MERGE_KEY = "guestCartMergeHandled";
-
-const readGuestCart = () => {
-  try {
-    const storedItems = JSON.parse(localStorage.getItem("Products") || "[]");
-    return Array.isArray(storedItems) ? storedItems : [];
-  } catch {
-    return [];
-  }
-};
 
 export function AuthProvider({ children }) {
   const [accessToken, setAccessToken] = useState(null);
@@ -37,7 +29,14 @@ export function AuthProvider({ children }) {
     const alreadyHandled = sessionStorage.getItem(GUEST_CART_MERGE_KEY) === "true";
     if (alreadyHandled) return;
 
-    const guestCartItems = readGuestCart();
+    let guestCartItems;
+    try {
+      guestCartItems = readGuestCart();
+    } catch (error) {
+      console.error("Unable to read guest cart before merge:", error);
+      return;
+    }
+
     if (!guestCartItems.length) {
       sessionStorage.setItem(GUEST_CART_MERGE_KEY, "true");
       return;
@@ -103,6 +102,12 @@ export function AuthProvider({ children }) {
     setUser(res.data.user);
   };
 
+  const updateProfile = async (profile) => {
+    const res = await api.patch("/auth/profile", profile);
+    setUser(res.data.user);
+    return res.data.user;
+  };
+
   const logout = async () => {
     try {
       await api.get("/auth/logout");
@@ -116,7 +121,9 @@ export function AuthProvider({ children }) {
   };
 
   return (
-    <AuthContext.Provider value={{ accessToken, user, loading, login, register, logout }}>
+    <AuthContext.Provider
+      value={{ accessToken, user, loading, login, register, updateProfile, logout }}
+    >
       {children}
     </AuthContext.Provider>
   );

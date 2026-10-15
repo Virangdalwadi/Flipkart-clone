@@ -68,6 +68,7 @@ export default function ProfilePage() {
   useEffect(() => {
     window.scrollTo(0, 0);
     setFirstName(user?.username || "");
+    setLastName(user?.lastName || "");
   }, [user]);
 
   const renderContent = () => {
@@ -286,9 +287,9 @@ export default function ProfilePage() {
 
       <div className="pt-13 md:pt-14">
         <div className="min-h-screen bg-gray-200 py-6 px-4">
-          <div className="max-w-5xl mx-auto flex flex-col md:flex-row gap-4">
+          <div className="max-w-6xl mx-auto flex flex-col md:flex-row gap-4">
             {/* ---------- Desktop Sidebar ---------- */}
-            <aside className="hidden md:block md:w-64 shrink-0 space-y-3">
+            <aside className="hidden md:block md:w-70 shrink-0 space-y-3">
               <div className="bg-white rounded shadow-sm">
                 {/* Hello, user */}
                 <div className="flex items-center gap-3 px-4 py-4 border-b border-gray-100">

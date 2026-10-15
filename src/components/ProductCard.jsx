@@ -1,52 +1,26 @@
 import React, { useEffect, useState, useRef } from "react";
-import axios from "axios";
 import Loader from "./Loader";
 import { NavLink, useNavigate } from "react-router-dom";
 import Footer from "./Footer";
-import manualCategoryProducts from "../data/manualCategoryProducts";
+import Popup from "./Popup";
 import api from "../api/axiosInstance";
+import { getProducts, getProductsByCategory } from "../api/Productapi.js";
 import { useAuth } from "../context/AuthContext";
 import ProductCardSkeleton from "./ProductCardSkeleton";
-
+import {
+  addProductToCart,
+  isProductInCart,
+  normalizeBackendCart,
+  readGuestCart,
+} from "../utils/cart";
+import { getImageCrossOrigin } from "../utils/image";
 const PRODUCTS_PER_PAGE = 21;
-
-const normalizeCart = (cart = []) => cart.reduce((normalized, cartItem) => {
-  const productKey = String(cartItem.id ?? cartItem.productId ?? cartItem.btn_id);
-  const quantity = Number.isInteger(Number(cartItem.quantity)) && Number(cartItem.quantity) > 0
-    ? Number(cartItem.quantity)
-    : 1;
-  const existingItem = normalized.find(
-    (item) => String(item.id ?? item.productId ?? item.btn_id) === productKey,
-  );
-
-  if (existingItem) {
-    existingItem.quantity += quantity;
-    return normalized;
-  }
-  return [...normalized, { ...cartItem, quantity }];
-}, []);
-
-const getGuestCart = () => {
-  try {
-    const normalizedCart = normalizeCart(JSON.parse(localStorage.getItem("Products")) || []);
-    localStorage.setItem("Products", JSON.stringify(normalizedCart));
-    return normalizedCart;
-  } catch {
-    return [];
-  }
-};
-
-const normalizeMongoCart = (cart) => {
-  const items = cart?.items || [];
-
-  return items.map((cartItem) => ({
-    ...cartItem,
-    id: Number(cartItem.productId),
-    productId: Number(cartItem.productId),
-    quantity: Number(cartItem.quantity) || 1,
-    price: Number(cartItem.price) || 0,
-  }));
-};
+const CATEGORY_FILTERS = new Map([
+  ["sports-accessories", "sports-accessories"],
+  ["groceries", "groceries"],
+  ["kitchen", "kitchen-accessories"],
+  ["kitchen-accessories", "kitchen-accessories"],
+]);
 
 const ProductCard = ({ query }) => {
   const { user } = useAuth();
@@ -54,19 +28,18 @@ const ProductCard = ({ query }) => {
   const [loadingMore, setLoadingMore] = useState(false);
   const [products, setProducts] = useState([]);
   const [totalProducts, setTotalProducts] = useState(0);
+  const [error, setError] = useState("");
   const [addingToCart, setAddingToCart] = useState(false);
-  const [item, setItem] = useState(getGuestCart);
+  const [item, setItem] = useState([]);
   const navigate = useNavigate();
 
-  const baseUrl = import.meta.env.VITE_API_BASE_URL;
-
   const observerTarget = useRef(null);
-  const nextSkip = useRef(0);
+  const nextPage = useRef(2);
   const requestVersion = useRef(0);
   const loadingMoreRef = useRef(false);
   const initialLoadingRef = useRef(true);
   const hasMore = products.length < totalProducts;
-  const [popup, setPopup] = useState("");
+  const [popup, setPopup] = useState({ show: false, type: "info", title: "", message: "" });
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -78,43 +51,45 @@ const ProductCard = ({ query }) => {
     requestVersion.current = currentRequestVersion;
     initialLoadingRef.current = true;
     loadingMoreRef.current = false;
-    nextSkip.current = 0;
+    nextPage.current = 2;
     setLoading(true);
     setLoadingMore(false);
     setProducts([]);
     setTotalProducts(0);
+    setError("");
 
     const fetchData = async () => {
       try {
-        const response = await axios.get(baseUrl, {
-          params: { q: query || "", limit: PRODUCTS_PER_PAGE, skip: 0 },
-          signal: controller.signal,
-        });
+        const normalizedQuery = (query || "").trim();
+        const normalizedCategory = normalizedQuery.toLowerCase();
+        const category = CATEGORY_FILTERS.get(normalizedCategory);
+        const response = await (category
+          ? getProductsByCategory(category, {
+            page: 1,
+            limit: PRODUCTS_PER_PAGE,
+            signal: controller.signal,
+          })
+          : getProducts({
+            page: 1,
+            limit: PRODUCTS_PER_PAGE,
+            search: normalizedQuery || undefined,
+            signal: controller.signal,
+          }));
         if (currentRequestVersion !== requestVersion.current) return;
 
-        const productsArray = response.data.products || [];
+        const productsArray = response.products;
 
-        const normalizedQuery = (query || "").toLowerCase();
         const visibleProducts = normalizedQuery
           ? productsArray
           : productsArray.filter((product) => product.category?.toLowerCase() !== "beauty");
-        const manualProducts = manualCategoryProducts.filter((product) =>
-          product.category === normalizedQuery
-        );
-        if (visibleProducts.length) {
-          setProducts(visibleProducts);
-          setTotalProducts(Number(response.data.total) || productsArray.length);
-          nextSkip.current = productsArray.length;
-        } else {
-          setProducts(manualProducts);
-          setTotalProducts(manualProducts.length);
-          nextSkip.current = manualProducts.length;
-        }
+        setProducts(visibleProducts);
+        setTotalProducts(response.total);
       } catch (error) {
         if (error.name !== "CanceledError" && currentRequestVersion === requestVersion.current) {
           console.error("Failed to fetch products:", error);
           setProducts([]);
           setTotalProducts(0);
+          setError(error.response?.data?.message || "Unable to load products. Please try again.");
         }
       } finally {
         if (currentRequestVersion === requestVersion.current) {
@@ -133,15 +108,16 @@ const ProductCard = ({ query }) => {
       controller.abort();
       requestVersion.current += 1;
     };
-  }, [baseUrl, query]);
+  }, [query]);
 
   useEffect(() => {
     if (user) {
       const fetchCart = async () => {
         try {
           const response = await api.get("/cart");
-          setItem(normalizeMongoCart(response.data.cart));
-        } catch {
+          setItem(normalizeBackendCart(response.data.cart));
+        } catch (error) {
+          console.error("Failed to load cart:", error);
           setItem([]);
         }
       };
@@ -150,7 +126,18 @@ const ProductCard = ({ query }) => {
       return;
     }
 
-    setItem(getGuestCart());
+    try {
+      setItem(readGuestCart());
+    } catch (error) {
+      console.error("Failed to read guest cart:", error);
+      setItem([]);
+      setPopup({
+        show: true,
+        type: "error",
+        title: "Unable to load your cart.",
+        message: "Your saved cart could not be read. The stored cart has been left unchanged.",
+      });
+    }
   }, [user]);
 
   useEffect(() => {
@@ -172,17 +159,25 @@ const ProductCard = ({ query }) => {
             loadingMoreRef.current = true;
             setLoadingMore(true);
             try {
-              const response = await axios.get(baseUrl, {
-                params: {
-                  q: query || "",
+              const normalizedQuery = (query || "").trim();
+              const normalizedCategory = normalizedQuery.toLowerCase();
+              const category = CATEGORY_FILTERS.get(normalizedCategory);
+              const response = await (category
+                ? getProductsByCategory(category, {
+                  page: nextPage.current,
                   limit: PRODUCTS_PER_PAGE,
-                  skip: nextSkip.current,
-                },
-                signal: controller.signal,
-              });
+                  signal: controller.signal,
+                })
+                : getProducts({
+                  page: nextPage.current,
+                  limit: PRODUCTS_PER_PAGE,
+                  search: normalizedQuery || undefined,
+                  signal: controller.signal,
+                }));
               if (currentRequestVersion !== requestVersion.current) return;
 
-              const nextProducts = response.data.products || [];
+              const nextProducts = response.products;
+              nextPage.current = response.page + 1;
               if (!nextProducts.length) {
                 setTotalProducts(products.length);
                 return;
@@ -191,12 +186,17 @@ const ProductCard = ({ query }) => {
               const visibleProducts = query?.trim()
                 ? nextProducts
                 : nextProducts.filter((product) => product.category?.toLowerCase() !== "beauty");
-              nextSkip.current += nextProducts.length;
               setProducts((currentProducts) => [...currentProducts, ...visibleProducts]);
-              setTotalProducts(Number(response.data.total) || nextSkip.current);
+              setTotalProducts(response.total);
             } catch (error) {
               if (error.name !== "CanceledError") {
                 console.error("Failed to load more products:", error);
+                setPopup({
+                  show: true,
+                  type: "error",
+                  title: "Unable to load more products.",
+                  message: error.response?.data?.message || "Please try again.",
+                });
               }
             } finally {
               if (currentRequestVersion === requestVersion.current) {
@@ -217,56 +217,27 @@ const ProductCard = ({ query }) => {
       if (timerId) clearTimeout(timerId);
       controller.abort();
     };
-  }, [baseUrl, query, products.length, loading, hasMore]);
+  }, [query, products.length, loading, hasMore]);
 
   const handleAddtoCart = async (product) => {
     if (addingToCart) return;
 
-    if (user) {
-      setAddingToCart(true);
-      try {
-        const response = await api.post("/cart", {
-          productId: product.id,
-          title: product.title,
-          price: product.price,
-          image: product.thumbnail || product.images?.[0],
-          category: product.category,
-          quantity: 1,
-        });
-
-        setItem(normalizeMongoCart(response.data.cart));
-        setPopup({ show: true, type: "success", title: "Added to cart", message: "Added to cart" });
-      } catch (error) {
-        console.error("ADD TO CART ERROR:", error);
-        console.error("SERVER RESPONSE:", error.response?.data);
-        setPopup({ show: true, type: "error", title: "Unable to update cart.", message: "Unable to update cart." });
-      } finally {
-        setAddingToCart(false);
-      }
-      return;
+    setAddingToCart(true);
+    try {
+      const updatedCart = await addProductToCart(product, Boolean(user));
+      setItem(updatedCart);
+    } catch (error) {
+      console.error("Failed to add product to cart:", error);
+      console.error("SERVER RESPONSE:", error.response?.data);
+      setPopup({ show: true, type: "error", title: "Unable to update cart.", message: "Unable to update cart." });
+    } finally {
+      setAddingToCart(false);
     }
-
-    const existingItem = item.find((cartItem) => Number(cartItem.id ?? cartItem.productId ?? cartItem.btn_id) === Number(product.id));
-    const updatedCart = existingItem
-      ? item.map((cartItem) =>
-        Number(cartItem.id ?? cartItem.productId ?? cartItem.btn_id) === Number(product.id)
-          ? { ...cartItem, quantity: (Number(cartItem.quantity) || 1) + 1 }
-          : cartItem,
-      )
-      : [...item, { ...product, btn_id: product.id, quantity: 1 }];
-
-    setItem(updatedCart);
-    localStorage.setItem("Products", JSON.stringify(updatedCart));
-    setPopup({ show: true, type: "success", title: "Added to Cart", message: "Added to Cart" });
   };
 
   const handleViewProduct = (product) => {
     navigate(`/products/${product.id}`);
   };
-
-  const isProductInCart = (product) => item.some(
-    (cartItem) => Number(cartItem.id ?? cartItem.productId ?? cartItem.btn_id) === Number(product.id),
-  );
 
   return (
     <>
@@ -279,6 +250,10 @@ const ProductCard = ({ query }) => {
               <ProductCardSkeleton key={index} />
             ))}
           </div>
+        </div>
+      ) : error ? (
+        <div className="mt-65 mb-10 flex min-h-[calc(100vh-16.25rem)] items-center justify-center px-4 text-center sm:mt-56 sm:min-h-[calc(100vh-14rem)] lg:mt-53 lg:min-h-[calc(100vh-13.25rem)]">
+          <p className="text-xl text-red-600">{error}</p>
         </div>
       ) : products.length === 0 ? (
         <div className="mt-65 mb-10 flex min-h-[calc(100vh-16.25rem)] items-center justify-center px-1 sm:mt-56 sm:min-h-[calc(100vh-14rem)] lg:mt-53 lg:min-h-[calc(100vh-13.25rem)]">
@@ -298,6 +273,9 @@ const ProductCard = ({ query }) => {
                     width="400"
                     height="400"
                     src={product.thumbnail || product.images?.[0]}
+                    crossOrigin={getImageCrossOrigin(
+                      product.thumbnail || product.images?.[0],
+                    )}
                     alt={product?.title || "Product image"}
                     // If it's the first image, pass undefined to completely strip the attribute
                     loading={index === 0 ? undefined : "lazy"}
@@ -359,7 +337,7 @@ const ProductCard = ({ query }) => {
                       </span>
                     </div>
 
-                    {!isProductInCart(product) ? (
+                    {!isProductInCart(item, product) ? (
                       <button
                         type="button"
                         className="w-full rounded-xl bg-blue-600 px-3 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-700 focus:outline-none focus:ring-4 disabled:opacity-60 sm:w-auto sm:shrink-0"
@@ -369,7 +347,7 @@ const ProductCard = ({ query }) => {
                           handleAddtoCart(product);
                         }}
                       >
-                        Add to Cart
+                        {addingToCart ? "Add to Cart" : "Add to Cart"}
                       </button>
                     ) : (
                       <NavLink
@@ -386,16 +364,27 @@ const ProductCard = ({ query }) => {
             ))}
           </div>
 
-          <div ref={observerTarget} className="w-full flex justify-center p-4 mt-2">
-            {hasMore ? (
-              <div className="flex flex-col gap-3 animate-pulse mb-2 text-gray-500 font-medium">{loadingMore ? "Hang on, loading content" : ""}{loadingMore && <Loader />}</div>
-            ) : (
-              <div className="text-gray-400 font-medium text-sm"></div>
+          <div
+            ref={observerTarget}
+            className={`flex w-full justify-center ${loadingMore ? "py-2" : "h-2"}`}
+          >
+            {loadingMore && (
+              <div className="flex flex-col items-center gap-2 text-sm font-medium text-gray-500">
+                <span>Hang on, loading content</span>
+                <Loader fullScreen={false} />
+              </div>
             )}
           </div>
         </div>
       )}
       <Footer />
+      <Popup
+        show={popup.show}
+        type={popup.type}
+        title={popup.title}
+        message={popup.message}
+        onClose={() => setPopup((current) => ({ ...current, show: false }))}
+      />
     </>
   );
 };

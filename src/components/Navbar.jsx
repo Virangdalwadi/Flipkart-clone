@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 
-// Pages
 // Font Icons
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faLocationDot } from "@fortawesome/free-solid-svg-icons";
@@ -28,7 +27,7 @@ import nav14 from "../assets/images/Navbar-svg/nav14.svg";
 import "../style/App.css";
 import SearchBar from "./SearchBar";
 import { useAuth } from "../context/AuthContext";
-import useProductSuggestions from "../hooks/useProductSuggestions"; // add this import
+import useProductSuggestions from "../hooks/useProductSuggestions";
 // import api from "../api/Addressapi.js";
 
 
@@ -36,8 +35,11 @@ const Navbar = ({ setValue, initialSearch = "" }) => {
 
   const [search, setSearch] = useState(initialSearch);
   const { user, logout } = useAuth();
-  const baseUrl = import.meta.env.VITE_API_BASE_URL;
-  const { suggestions } = useProductSuggestions(search, baseUrl);
+  const {
+    suggestions,
+    loading: suggestionsLoading,
+    error: suggestionsError,
+  } = useProductSuggestions(search);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -70,7 +72,7 @@ const Navbar = ({ setValue, initialSearch = "" }) => {
   // Fashon Navigation
   const handleFashion = () => {
     window.scrollTo(0, 0);
-    const value = "shirt"
+    const value = "Fashion"
     handleFormSubmit(value)
   }
 
@@ -91,7 +93,7 @@ const Navbar = ({ setValue, initialSearch = "" }) => {
   // Beauty Navigation
   const handleBeauty = () => {
     window.scrollTo(0, 0);
-    const value = "makeup";
+    const value = "Beauty";
     handleFormSubmit(value)
   }
 
@@ -116,7 +118,7 @@ const Navbar = ({ setValue, initialSearch = "" }) => {
   // Furniture Navigation
   const handleFurniture = () => {
     window.scrollTo(0, 0);
-    const value = "Sofa";
+    const value = "Furniture";
     handleFormSubmit(value);
   }
 
@@ -214,6 +216,8 @@ const Navbar = ({ setValue, initialSearch = "" }) => {
                 onSubmitSuccess={handleFormSubmit}
                 onClear={handleSearchClear}
                 suggestions={suggestions}
+                suggestionsLoading={suggestionsLoading}
+                suggestionsError={suggestionsError}
               />
 
             </div>
