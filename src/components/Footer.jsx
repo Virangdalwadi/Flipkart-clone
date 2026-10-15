@@ -107,7 +107,7 @@ const Footer = () => {
             </div>
           </div>
 
-          <div className='flex min-w-0 flex-col border-l border-gray-600 pl-4 sm:col-span-2 sm:border-l-0 sm:pl-0 lg:col-span-1 lg:border-l lg:pl-6'>
+          <div className='flex min-w-0 flex-col border-gray-600 sm:col-span-2 sm:border-l-0 sm:pl-0 lg:col-span-1 lg:border-l lg:pl-6'>
             <div>
               <h1 className='text-gray-300 mb-2 text-xs font-light cursor-default'>
                 Mail Us:
