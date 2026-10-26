@@ -38,7 +38,7 @@ const useProductSuggestions = (query, limit = 6) => {
       } finally {
         if (!controller.signal.aborted) setLoading(false);
       }
-    }, 250); // debounce
+    }, 300); // debounce
 
     return () => {
       clearTimeout(timer);

@@ -1,5 +1,6 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import FooterArt from "../../assets/images/Profile Page Image/Footer.png";
+import ProfileAvatarFallback from "../../assets/images/Profile Page Image/ProfileAvatar.svg";
 import { useAuth } from "../../context/AuthContext";
 
 const faqs = [
@@ -29,6 +30,8 @@ const inputClass = (editing) =>
 
 const saveBtnCls =
   "bg-blue-600 hover:bg-blue-700 cursor-pointer text-white text-sm font-semibold px-8 py-2 rounded";
+const PROFILE_IMAGE_MAX_BYTES = 5 * 1024 * 1024;
+const PROFILE_IMAGE_TYPES = new Set(["image/jpeg", "image/png", "image/webp"]);
 
 // firstName / lastName live in the parent because the sidebar and
 // mobile header also display them.
@@ -38,7 +41,8 @@ export default function ProfileInformation({
   lastName,
   setLastName,
 }) {
-  const { user, updateProfile } = useAuth();
+  const { user, updateProfile, updateProfileImage, removeProfileImage } = useAuth();
+  const imageInputRef = useRef(null);
 
   const [gender, setGender] = useState(user?.gender || "");
   const [email, setEmail] = useState(user?.email || "");
@@ -51,6 +55,20 @@ export default function ProfileInformation({
   const [savingMobile, setSavingMobile] = useState(false);
   const [personalError, setPersonalError] = useState("");
   const [mobileError, setMobileError] = useState("");
+  const [selectedPhoto, setSelectedPhoto] = useState(null);
+  const [photoPreviewUrl, setPhotoPreviewUrl] = useState("");
+  const [photoFailed, setPhotoFailed] = useState(false);
+  const [photoBusy, setPhotoBusy] = useState(false);
+  const [photoOperation, setPhotoOperation] = useState("");
+  const [photoError, setPhotoError] = useState("");
+  const [photoMessage, setPhotoMessage] = useState("");
+
+  useEffect(
+    () => () => {
+      if (photoPreviewUrl) URL.revokeObjectURL(photoPreviewUrl);
+    },
+    [photoPreviewUrl],
+  );
 
   useEffect(() => {
     setEmail(user?.email || "");
@@ -106,8 +124,169 @@ export default function ProfileInformation({
     }
   };
 
+  const selectPhoto = (event) => {
+    const file = event.target.files?.[0];
+    event.target.value = "";
+    if (!file) return;
+
+    setPhotoError("");
+    setPhotoMessage("");
+    if (!PROFILE_IMAGE_TYPES.has(file.type)) {
+      setPhotoError("Choose a JPG, JPEG, PNG, or WebP image.");
+      return;
+    }
+    if (file.size > PROFILE_IMAGE_MAX_BYTES) {
+      setPhotoError("Choose an image that is 5 MB or smaller.");
+      return;
+    }
+
+    setPhotoFailed(false);
+    setSelectedPhoto(file);
+    setPhotoPreviewUrl(URL.createObjectURL(file));
+  };
+
+  const cancelPhotoPreview = () => {
+    setSelectedPhoto(null);
+    setPhotoPreviewUrl("");
+    setPhotoError("");
+    setPhotoMessage("");
+    setPhotoFailed(false);
+  };
+
+  const uploadPhoto = async () => {
+    if (!selectedPhoto) return;
+    setPhotoBusy(true);
+    setPhotoOperation("upload");
+    setPhotoError("");
+    setPhotoMessage("");
+    try {
+      const result = await updateProfileImage(selectedPhoto);
+      setSelectedPhoto(null);
+      setPhotoPreviewUrl("");
+      setPhotoFailed(false);
+      setPhotoMessage(
+        result.warning
+          ? `Profile photo updated. ${result.warning}`
+          : "Profile photo updated successfully.",
+      );
+    } catch (error) {
+      setPhotoError(
+        error.response?.data?.message || "Unable to upload profile photo.",
+      );
+    } finally {
+      setPhotoBusy(false);
+      setPhotoOperation("");
+    }
+  };
+
+  const removePhoto = async () => {
+    setPhotoBusy(true);
+    setPhotoOperation("remove");
+    setPhotoError("");
+    setPhotoMessage("");
+    try {
+      const result = await removeProfileImage();
+      cancelPhotoPreview();
+      setPhotoMessage(
+        result.warning
+          ? `Profile photo removed. ${result.warning}`
+          : "Profile photo removed successfully.",
+      );
+    } catch (error) {
+      setPhotoError(
+        error.response?.data?.message || "Unable to remove profile photo.",
+      );
+    } finally {
+      setPhotoBusy(false);
+      setPhotoOperation("");
+    }
+  };
+
   return (
     <div className="p-4 pb-0 sm:p-8 sm:pb-0">
+      {/* Profile Photo */}
+      <section className="mb-8" aria-labelledby="profile-photo-heading">
+        <h2
+          id="profile-photo-heading"
+          className="mb-4 text-base font-semibold text-gray-800"
+        >
+          Profile Photo
+        </h2>
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
+          <img
+            src={
+              (photoPreviewUrl || user?.profileImage) && !photoFailed
+                ? photoPreviewUrl || user.profileImage
+                : ProfileAvatarFallback
+            }
+            alt="Profile photo preview"
+            className="size-20 rounded-full border border-gray-200 object-cover"
+            onError={() => setPhotoFailed(true)}
+          />
+          <div className="flex flex-wrap gap-3">
+            <input
+              ref={imageInputRef}
+              type="file"
+              accept="image/jpeg,image/png,image/webp,.jpg,.jpeg,.png,.webp"
+              onChange={selectPhoto}
+              className="sr-only"
+              aria-label="Choose a profile photo"
+            />
+            {!selectedPhoto && (
+              <button
+                type="button"
+                onClick={() => imageInputRef.current?.click()}
+                disabled={photoBusy}
+                className={`${saveBtnCls} disabled:cursor-not-allowed disabled:opacity-60`}
+              >
+                {user?.profileImage ? "Change Photo" : "Upload Photo"}
+              </button>
+            )}
+            {selectedPhoto && (
+              <>
+                <button
+                  type="button"
+                  onClick={uploadPhoto}
+                  disabled={photoBusy}
+                  className={`${saveBtnCls} disabled:cursor-not-allowed disabled:opacity-60`}
+                >
+                  {photoOperation === "upload" ? "UPLOADING..." : "Save Photo"}
+                </button>
+                <button
+                  type="button"
+                  onClick={cancelPhotoPreview}
+                  disabled={photoBusy}
+                  className="cursor-pointer rounded border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-700 disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  Cancel
+                </button>
+              </>
+            )}
+            <button
+              type="button"
+              onClick={removePhoto}
+              disabled={photoBusy || !user?.profileImage}
+              className="cursor-pointer rounded border-2 border-red-300 px-4 py-2 text-sm font-semibold text-red-600 disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              {photoOperation === "remove" ? "REMOVING..." : "Remove Photo"}
+            </button>
+          </div>
+        </div>
+        <p className="mt-2 text-xs text-gray-500">
+          JPG, PNG, or WebP. Maximum file size: 5 MB.
+        </p>
+        {photoError && (
+          <p role="alert" className="mt-2 text-sm text-red-600">
+            {photoError}
+          </p>
+        )}
+        {photoMessage && (
+          <p role="status" className="mt-2 text-sm text-green-700">
+            {photoMessage}
+          </p>
+        )}
+      </section>
+
       {/* Personal Information */}
       <div className="flex items-center gap-2 mb-4">
         <h2 className="text-base font-semibold text-gray-800">

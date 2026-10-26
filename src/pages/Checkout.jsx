@@ -112,7 +112,7 @@ const Checkout = () => {
           </div>
         ) : (
           <div className="grid gap-5 lg:grid-cols-[1fr_22rem]">
-            <section className="bg-white border border-gray-200 p-5 shadow-sm">
+            <section className="bg-white border border-gray-200 p-4 shadow-sm">
               <h1 className="border-b pb-4 text-2xl font-bold text-gray-900">Checkout</h1>
 
               <div className="divide-y">
@@ -120,7 +120,7 @@ const Checkout = () => {
                   const unitPrice = Number(item.price) || 0;
 
                   return (
-                    <div key={`${item.id || item.btn_id || item.title}-${index}`} className="flex gap-4 py-5">
+                    <div key={`${item.id || item.btn_id || item.title}-${index}`} className="flex gap-4 py-3">
                       <img width="400"
                         height="400"
                         src={getProductImage(item)}
@@ -130,7 +130,7 @@ const Checkout = () => {
                       />
                       <div className="min-w-0 grow">
                         <h2 className="line-clamp-2 wrap-break-word font-semibold text-gray-900">{item.title}</h2>
-                        <div className="mt-2 grid grid-cols-1 gap-1 text-sm text-gray-600 sm:grid-cols-3 sm:gap-2">
+                        <div className="mt-2 grid grid-cols-1 gap-1 text-base text-gray-600 sm:grid-cols-3 sm:gap-2">
                           <span>Qty: {item.quantity}</span>
                           <span>Unit: ${unitPrice.toFixed(2)}</span>
                           <span className="text-right font-medium text-gray-900">

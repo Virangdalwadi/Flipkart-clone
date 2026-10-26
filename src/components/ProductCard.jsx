@@ -29,7 +29,8 @@ const ProductCard = ({ query }) => {
   const [products, setProducts] = useState([]);
   const [totalProducts, setTotalProducts] = useState(0);
   const [error, setError] = useState("");
-  const [addingToCart, setAddingToCart] = useState(false);
+  const [addingId, setAddingId] = useState(null);
+  const addingRef = useRef(false);
   const [item, setItem] = useState([]);
   const navigate = useNavigate();
 
@@ -220,18 +221,25 @@ const ProductCard = ({ query }) => {
   }, [query, products.length, loading, hasMore]);
 
   const handleAddtoCart = async (product) => {
-    if (addingToCart) return;
+    if (addingRef.current) return;   // still blocks overlapping requests
+    addingRef.current = true;
+    setAddingId(product.id);
 
-    setAddingToCart(true);
     try {
       const updatedCart = await addProductToCart(product, Boolean(user));
       setItem(updatedCart);
     } catch (error) {
       console.error("Failed to add product to cart:", error);
       console.error("SERVER RESPONSE:", error.response?.data);
-      setPopup({ show: true, type: "error", title: "Unable to update cart.", message: "Unable to update cart." });
+      setPopup({
+        show: true,
+        type: "error",
+        title: "Unable to update cart.",
+        message: error.response?.data?.message || "Unable to update cart.",
+      });
     } finally {
-      setAddingToCart(false);
+      addingRef.current = false;
+      setAddingId(null);
     }
   };
 
@@ -272,7 +280,7 @@ const ProductCard = ({ query }) => {
                   <img
                     width="400"
                     height="400"
-                    src={product.thumbnail || product.images?.[0]}
+                    src={product.images?.[1]}
                     crossOrigin={getImageCrossOrigin(
                       product.thumbnail || product.images?.[0],
                     )}
@@ -340,14 +348,14 @@ const ProductCard = ({ query }) => {
                     {!isProductInCart(item, product) ? (
                       <button
                         type="button"
-                        className="w-full rounded-xl bg-blue-600 px-3 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-700 focus:outline-none focus:ring-4 disabled:opacity-60 sm:w-auto sm:shrink-0"
-                        disabled={addingToCart}
+                        className="w-full rounded-xl bg-blue-600 px-3 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-700 focus:outline-none focus:ring-4 disabled:cursor-wait disabled:opacity-60 sm:w-auto sm:shrink-0"
+                        disabled={addingId === product.id}
                         onClick={(event) => {
                           event.stopPropagation();
                           handleAddtoCart(product);
                         }}
                       >
-                        {addingToCart ? "Add to Cart" : "Add to Cart"}
+                        Add to Cart
                       </button>
                     ) : (
                       <NavLink

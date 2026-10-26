@@ -90,3 +90,23 @@ export const deactivateAdminProduct = async (id) => {
   const response = await api.delete(`/admin/products/${id}`);
   return response.data.product;
 };
+
+export const getSellerProducts = async (params = {}, { signal } = {}) => {
+  const response = await api.get("/seller/products", { params, signal });
+  return response.data;
+};
+
+export const createSellerProduct = async (product) => {
+  const response = await api.post("/seller/products", product);
+  return response.data.product;
+};
+
+export const updateSellerProduct = async (id, product) => {
+  const response = await api.patch(`/seller/products/${id}`, product);
+  return response.data.product;
+};
+
+export const deleteSellerProduct = async (id) => {
+  const response = await api.delete(`/seller/products/${id}`);
+  return response.data;
+};

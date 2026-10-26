@@ -1,9 +1,5 @@
 import React, { useState, useEffect } from "react";
 
-// Font Icons
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faLocationDot } from "@fortawesome/free-solid-svg-icons";
-
 // Images
 import { NavLink, useNavigate } from "react-router-dom";
 import logo from "../assets/images/Logo/logo.webp";
@@ -181,7 +177,20 @@ const Navbar = ({ setValue, initialSearch = "" }) => {
             <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm sm:justify-end">
               <h2 className="font-semibold">
                 <span>
-                  <FontAwesomeIcon icon={faLocationDot} />
+                  <svg
+                    aria-hidden="true"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    className="inline size-4"
+                  >
+                    <path
+                      d="M20 10c0 5-8 12-8 12S4 15 4 10a8 8 0 1 1 16 0Z"
+                      strokeLinejoin="round"
+                    />
+                    <circle cx="12" cy="10" r="2.5" />
+                  </svg>
                 </span>
                 Location Not on set
               </h2>
@@ -205,6 +214,8 @@ const Navbar = ({ setValue, initialSearch = "" }) => {
                   </svg>
                 </span>
               </span>
+
+
             </div>
           </div>
 
@@ -234,6 +245,14 @@ const Navbar = ({ setValue, initialSearch = "" }) => {
                     <NavLink to="/pages/profile">
                       <button className="ml-2 cursor-pointer rounded-md bg-blue-600 px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-blue-700 focus:outline-none focus:ring-4">Profile</button>
                     </NavLink>
+                    {/* {user.role === "admin" && (
+                      <NavLink
+                        to="/admin"
+                        className="ml-2 inline-flex items-center gap-2 cursor-pointer rounded-md bg-green-700 px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-green-800 focus:outline-none focus:ring-4"
+                      >
+                        <span>Admin</span>
+                      </NavLink>
+                    )} */}
                     <button onClick={async () => { await logout(); navigate("/"); }} className="ml-2 cursor-pointer rounded-md bg-blue-600 px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-blue-700 focus:outline-none focus:ring-4">Logout</button>
                   </>
                 ) : (
@@ -250,6 +269,7 @@ const Navbar = ({ setValue, initialSearch = "" }) => {
                 <NavLink to="/pages/Cart">
                   <button className="ml-2 cursor-pointer rounded-md bg-blue-600 px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-blue-700 focus:outline-none focus:ring-4">Cart</button>
                 </NavLink>
+
               </div>
             </div>
           </div>

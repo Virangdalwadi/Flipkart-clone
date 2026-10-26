@@ -7,6 +7,8 @@ const OrderSuccess = () => {
   const { state } = useLocation();
   const order = state?.order;
 
+  console.log("ORDER:-", order);
+
   return (
     <div className="min-h-screen flex flex-col bg-[#f1f2f4]">
       <Navbar2 />

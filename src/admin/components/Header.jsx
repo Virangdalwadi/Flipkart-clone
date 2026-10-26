@@ -1,32 +1,3 @@
-// import { useNavigate } from "react-router-dom";
-// import { useAuth } from "../../context/AuthContext";
-
-// export default function Header() {
-//   const { user, logout } = useAuth();
-//   const navigate = useNavigate();
-
-//   const handleLogout = async () => {
-//     await logout();
-//     navigate("/pages/login", { replace: true });
-//   };
-
-//   return (
-//     <header className="sticky top-0 z-10 flex items-center justify-between gap-4 border-b border-gray-200 bg-white px-4 py-4 shadow-sm sm:px-6">
-//       <p className="truncate text-sm font-medium text-gray-600">
-//         Admin{user?.username ? ` · ${user.username}` : ""}
-//       </p>
-//       <button
-//         type="button"
-//         onClick={handleLogout}
-//         className="rounded-lg border border-gray-300 px-3 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50"
-//       >
-//         Sign out
-//       </button>
-//     </header>
-//   );
-// }
-
-
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -45,7 +16,8 @@ export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef(null);
 
-  const username = user?.username || "Admin";
+  const roleLabel = user?.role === "seller" ? "Seller" : "Administrator";
+  const username = user?.username || roleLabel;
   const initial = username.charAt(0).toUpperCase();
 
   // Close dropdown on outside click or Escape
@@ -80,11 +52,9 @@ export default function Header() {
         />
         <input
           type="search"
-          placeholder="Search orders, products, users..."
+          placeholder={user?.role === "seller" ? "Search your products..." : "Search orders, products, users..."}
           className="w-full rounded-full border border-gray-200 bg-gray-50 py-2 pl-10 pr-4 text-sm text-gray-700 placeholder-gray-400 outline-none transition focus:border-[#1a8cf0] focus:bg-white focus:ring-2 focus:ring-[#1a8cf0]/20"
         />
-
-
       </div>
 
       {/* Right side */}
@@ -117,7 +87,7 @@ export default function Header() {
               <span className="block max-w-30 truncate text-sm font-semibold text-gray-800">
                 {username}
               </span>
-              <span className="block text-xs text-gray-500">Administrator</span>
+              <span className="block text-xs text-gray-500">{roleLabel}</span>
             </span>
             <FontAwesomeIcon
               icon={faChevronDown}
@@ -135,7 +105,7 @@ export default function Header() {
                 <p className="truncate text-sm font-semibold text-gray-800">
                   {username}
                 </p>
-                <p className="text-xs text-gray-500">Administrator</p>
+                <p className="text-xs text-gray-500">{roleLabel}</p>
               </div>
               <button
                 type="button"
@@ -152,7 +122,7 @@ export default function Header() {
                 className="flex w-full items-center gap-3 px-4 py-2.5 text-sm text-red-600 transition hover:bg-red-50"
               >
                 <FontAwesomeIcon icon={faRightFromBracket} className="w-4" />
-                Sign out
+                Log out
               </button>
             </div>
           )}

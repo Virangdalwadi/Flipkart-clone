@@ -122,7 +122,7 @@ const ProductDetails = () => {
           <div className="flex w-full items-center justify-center bg-gray-100 p-3 sm:p-6 md:w-1/2">
             <img width="400"
               height="400"
-              src={product.thumbnail || product.images?.[0]}
+              src={product.images?.[1] || product.thumbnail}
               crossOrigin={getImageCrossOrigin(
                 product.thumbnail || product.images?.[0],
               )}
@@ -158,8 +158,16 @@ const ProductDetails = () => {
                   disabled={addingToCart}
                   className="w-full rounded-xl bg-blue-600 px-5 py-3 font-medium text-white transition-colors hover:bg-blue-700 disabled:opacity-60 sm:w-auto"
                 >
-                  {addingToCart ? "Add to Cart" : "Add to Cart"}
+                  Add to Cart
                 </button>
+              )}
+              {user?.role === "user" && (
+                <NavLink
+                  to={`/pages/messages?productId=${product.id}`}
+                  className="w-full rounded-xl border border-blue-600 px-5 py-3 text-center font-medium text-blue-700 transition-colors hover:bg-blue-50 sm:w-auto"
+                >
+                  Message seller
+                </NavLink>
               )}
             </div>
           </div>

@@ -51,17 +51,8 @@ const validateRegistrationPassword = (password, username, email) => {
   ];
 
   if (commonPasswords.has(normalizedPassword)) {
-    return "This password is too common. Please choose a stronger password.";
+    return "This password is too common or easy to guess.";
   }
-  // if (predictablePatterns.some((pattern) => normalizedPassword.includes(pattern))) {
-  //   return "Password must not contain predictable sequences.";
-  // }
-  // if (normalizedUsername && normalizedPassword.includes(normalizedUsername)) {
-  //   return "Password must not contain your name.";
-  // }
-  // if (normalizedEmail && normalizedPassword.includes(normalizedEmail)) {
-  //   return "Password must not contain your email.";
-  // }
   return "";
 };
 
@@ -312,7 +303,7 @@ const Login = () => {
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="mt-1 w-full cursor-pointer border-none bg-[#fb641b] py-3 font-semibold text-white shadow-sm disabled:opacity-60"
+                  className="mt-1 w-full cursor-pointer border-none bg-[#fb641b] py-3 font-semibold text-white shadow-sm"
                 >
                   {isLogin ? 'Login' : 'Register'}
                 </button>

@@ -1,8 +1,8 @@
-import { useEffect, useState } from "react";
+import { lazy, Suspense, useEffect, useState } from "react";
 
 // Images
 import MyOrdersIcon from "../assets/images/Profile Page Image/My ORDERS.svg";
-import ProfileAvatar from "../assets/images/Profile Page Image/ProfileAvatar.svg";
+import ProfileAvatarFallback from "../assets/images/Profile Page Image/ProfileAvatar.svg";
 import AccountSettingsIcon from "../assets/images/Profile Page Image/ACCOUNT SETTINGS.svg";
 import PaymentsIcon from "../assets/images/Profile Page Image/PAYMENTS.svg";
 import MyStuffIcon from "../assets/images/Profile Page Image/MY STUFF.svg";
@@ -13,9 +13,11 @@ import Navbar2 from "../components/Navbar2";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 
-import Orders from "../components/profile/Orders";
-import Address from "../components/profile/Address";
-import ProfileInformation from "../components/profile/ProfileInformation";
+import Loader from "../components/Loader";
+
+const Orders = lazy(() => import("../components/profile/Orders"));
+const Address = lazy(() => import("../components/profile/Address"));
+const ProfileInformation = lazy(() => import("../components/profile/ProfileInformation"));
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHouse } from "@fortawesome/free-solid-svg-icons";
@@ -43,6 +45,25 @@ const paymentsLinks = [
   { label: "Saved Cards" },
 ];
 const stuffLinks = ["My Coupons", "My Reviews & Ratings", "All Notifications", "My Wishlist"];
+
+function ProfileAvatarImage({ className, profileImage, alt = "" }) {
+  const [imageFailed, setImageFailed] = useState(false);
+
+  useEffect(() => {
+    setImageFailed(false);
+  }, [profileImage]);
+
+  return (
+    <img
+      width="400"
+      height="400"
+      className={className}
+      src={!imageFailed && profileImage ? profileImage : ProfileAvatarFallback}
+      alt={alt}
+      onError={() => setImageFailed(true)}
+    />
+  );
+}
 
 /* ---------- Page ---------- */
 
@@ -76,7 +97,7 @@ export default function ProfilePage() {
       case ORDERS:
         return <Orders />;
       case ADDRESSES:
-        return <Address onCancel={() => setActiveLink(PROFILE_INFO)} />;
+        return <Address />;
       default:
         return (
           <ProfileInformation
@@ -113,8 +134,10 @@ export default function ProfilePage() {
         </div>
 
         <div className="flex items-center gap-2">
-          <img width="400"
-            height="400" className="size-8 rounded-full" src={ProfileAvatar} alt="" />
+          <ProfileAvatarImage
+            className="size-8 rounded-full object-cover"
+            profileImage={user?.profileImage}
+          />
           <span className="text-sm font-semibold text-gray-700 max-w-30 truncate">{firstName || "User"}</span>
         </div>
       </header>
@@ -137,8 +160,10 @@ export default function ProfilePage() {
         <div>
           <div className="flex items-center justify-between px-4 py-4 border-b border-gray-100 bg-gray-50">
             <div className="flex items-center gap-3">
-              <img width="400"
-                height="400" className="size-10 rounded-full" src={ProfileAvatar} alt="" />
+              <ProfileAvatarImage
+                className="size-10 rounded-full object-cover"
+                profileImage={user?.profileImage}
+              />
               <div>
                 <p className="text-xs text-gray-500">Hello,</p>
                 <p className="text-sm font-semibold text-gray-800 truncate max-w-40">
@@ -293,8 +318,10 @@ export default function ProfilePage() {
               <div className="bg-white rounded shadow-sm">
                 {/* Hello, user */}
                 <div className="flex items-center gap-3 px-4 py-4 border-b border-gray-100">
-                  <img width="400"
-                    height="400" className="size-10 mr-1" src={ProfileAvatar} alt="" />
+                  <ProfileAvatarImage
+                    className="size-10 mr-1 rounded-full object-cover"
+                    profileImage={user?.profileImage}
+                  />
                   <div>
                     <p className="text-xs text-gray-500">Hello,</p>
                     <p className="wrap-break-word text-sm font-semibold text-gray-800">{firstName} {lastName}</p>
@@ -401,7 +428,9 @@ export default function ProfilePage() {
 
             {/* ---------- Main content ---------- */}
             <main className="min-w-0 flex-1 rounded bg-white shadow-sm relative">
-              {renderContent()}
+              <Suspense fallback={<Loader fullScreen={false} />}>
+                {renderContent()}
+              </Suspense>
             </main>
           </div>
         </div>

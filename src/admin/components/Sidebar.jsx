@@ -6,14 +6,19 @@ import {
   faChartLine,
   faBoxOpen,
   faUsers,
-  faRightFromBracket,
+  faMessage,
 } from "@fortawesome/free-solid-svg-icons";
+import { useAuth } from "../../context/AuthContext";
 
 export default function Sidebar({ isOpen, setIsOpen }) {
+  const { user } = useAuth();
+  const basePath = user?.role === "seller" ? "/seller" : "/admin";
   const menuItems = [
-    { name: "Dashboard", icon: faChartLine, path: "/admin" },
-    { name: "Products", icon: faBoxOpen, path: "/admin/products" },
-    { name: "Users", icon: faUsers, path: "/admin/users" },
+    { name: "Dashboard", icon: faChartLine, path: basePath },
+    { name: "Products", icon: faBoxOpen, path: `${basePath}/products` },
+    ...(user?.role === "seller"
+      ? [{ name: "Messages", icon: faMessage, path: `${basePath}/messages` }]
+      : [{ name: "Users", icon: faUsers, path: `${basePath}/users` }]),
   ];
 
   return (
@@ -49,7 +54,7 @@ export default function Sidebar({ isOpen, setIsOpen }) {
       </div>
 
       {/* Navigation */}
-      <nav aria-label="Admin navigation" className="flex-1 space-y-1 py-4">
+      <nav aria-label={`${user?.role === "seller" ? "Seller" : "Admin"} navigation`} className="flex-1 space-y-1 py-4">
         {isOpen && (
           <p className="px-5 pb-2 text-[11px] font-semibold uppercase tracking-widest text-white/50">
             Menu
@@ -59,7 +64,7 @@ export default function Sidebar({ isOpen, setIsOpen }) {
           <NavLink
             key={item.path}
             to={item.path}
-            end={item.path === "/admin"}
+            end={item.path === "/admin" || item.path === "/seller"}
             title={!isOpen ? item.name : undefined}
             className={({ isActive }) =>
               `group relative flex items-center gap-4 py-3 transition-colors ${isOpen ? "mx-3 rounded-lg px-4" : "justify-center px-0"
@@ -71,7 +76,6 @@ export default function Sidebar({ isOpen, setIsOpen }) {
           >
             {({ isActive }) => (
               <>
-                {/* Lime accent bar like the screenshot */}
                 {isActive && (
                   <span className="absolute left-0 top-1/2 h-8 w-1 -translate-y-1/2 rounded-r bg-yellow-400" />
                 )}

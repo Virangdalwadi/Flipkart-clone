@@ -22,6 +22,7 @@ function renderAdminRoute() {
           }
         />
         <Route path="/" element={<h1>Storefront</h1>} />
+        <Route path="/seller" element={<h1>Seller dashboard</h1>} />
         <Route path="/pages/login" element={<h1>Login page</h1>} />
       </Routes>
     </MemoryRouter>,
@@ -46,6 +47,15 @@ describe("admin route access", () => {
     });
     renderAdminRoute();
     expect(screen.getByRole("heading", { name: "Storefront" })).toBeInTheDocument();
+  });
+
+  test("redirects a seller from admin routes to the seller dashboard", () => {
+    useAuth.mockReturnValue({
+      user: { email: "seller@example.com", role: "seller" },
+      loading: false,
+    });
+    renderAdminRoute();
+    expect(screen.getByRole("heading", { name: "Seller dashboard" })).toBeInTheDocument();
   });
 
   test("allows a database-role admin user", () => {
@@ -89,5 +99,32 @@ describe("admin route access", () => {
     expect(
       screen.getByRole("heading", { name: "Users route content" }),
     ).toBeInTheDocument();
+  });
+
+  test("renders only seller dashboard links in the shared layout", () => {
+    useAuth.mockReturnValue({
+      user: { username: "Seller User", role: "seller" },
+      logout: vi.fn(),
+      loading: false,
+    });
+
+    render(
+      <MemoryRouter initialEntries={["/seller"]}>
+        <Routes>
+          <Route path="/seller" element={<DashboardLayout />}>
+            <Route index element={<h1>Seller dashboard content</h1>} />
+            <Route path="products" element={<h1>Seller products content</h1>} />
+            <Route path="messages" element={<h1>Seller messages content</h1>} />
+          </Route>
+        </Routes>
+      </MemoryRouter>,
+    );
+
+    expect(screen.getByRole("heading", { name: "Seller dashboard content" })).toBeInTheDocument();
+    expect(screen.getByRole("navigation", { name: "Seller navigation" })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: /Dashboard/ })).toHaveAttribute("href", "/seller");
+    expect(screen.getByRole("link", { name: /Products/ })).toHaveAttribute("href", "/seller/products");
+    expect(screen.getByRole("link", { name: /Messages/ })).toHaveAttribute("href", "/seller/messages");
+    expect(screen.queryByRole("link", { name: /Users/ })).not.toBeInTheDocument();
   });
 });

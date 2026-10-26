@@ -101,6 +101,14 @@ const Navbar2 = ({ setValue }) => {
                       Profile
                     </button>
                   </NavLink>
+                  {/* {user.role === "admin" && (
+                    <NavLink
+                      to="/admin"
+                      className="text-white cursor-pointer text-xs sm:text-sm bg-blue-600 hover:bg-blue-700 focus:ring-4 font-medium rounded-md px-2 sm:px-3 py-1 sm:py-1.5 transition-colors focus:outline-none whitespace-nowrap"
+                    >
+                      Admin
+                    </NavLink>
+                  )} */}
                   <button
                     onClick={async () => { await logout(); navigate("/"); }}
                     className="text-white cursor-pointer text-xs sm:text-sm bg-blue-600 hover:bg-blue-700 focus:ring-4 font-medium rounded-md px-2 sm:px-3 py-1 sm:py-1.5 transition-colors focus:outline-none whitespace-nowrap"

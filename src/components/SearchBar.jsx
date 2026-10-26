@@ -1,6 +1,4 @@
 import React, { useState, useRef, useEffect } from 'react'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
 
 const SearchBar = ({
   value = "",
@@ -82,7 +80,17 @@ const SearchBar = ({
       <div className="flex h-9 sm:h-10 md:h-11 justify-center items-center w-full min-w-0">
         <div className="flex items-center w-full min-w-0 border-2 border-blue-500 p-1 sm:p-1.5 rounded-lg sm:rounded-xl gap-1 sm:gap-2">
           <span className="shrink-0 text-blue-500">
-            <FontAwesomeIcon icon={faMagnifyingGlass} size="sm" className="sm:text-base md:text-lg stroke-[0.1px] stroke-current" />
+            <svg
+              aria-hidden="true"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              className="size-4 sm:size-5 md:size-6"
+            >
+              <circle cx="11" cy="11" r="7" />
+              <path d="m20 20-4-4" strokeLinecap="round" />
+            </svg>
           </span>
 
           <form className="flex-1 min-w-0" onSubmit={handleSubmit}>
@@ -145,7 +153,17 @@ const SearchBar = ({
                 activeIndex === index ? "bg-blue-50" : "hover:bg-blue-50"
               }`}
             >
-              <FontAwesomeIcon icon={faMagnifyingGlass} size="xs" className="text-gray-400" />
+              <svg
+                aria-hidden="true"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                className="size-3 text-gray-400"
+              >
+                <circle cx="11" cy="11" r="7" />
+                <path d="m20 20-4-4" strokeLinecap="round" />
+              </svg>
               <span>{item.title}</span>
             </li>
           ))}

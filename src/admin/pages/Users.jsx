@@ -30,11 +30,10 @@ function fullName(user) {
 function StatusBadge({ isActive }) {
   return (
     <span
-      className={`inline-flex rounded-full px-2.5 py-1 text-xs font-semibold ${
-        isActive
-          ? "bg-green-100 text-green-800"
-          : "bg-gray-100 text-gray-700"
-      }`}
+      className={`inline-flex rounded-full px-2.5 py-1 text-xs font-semibold ${isActive
+        ? "bg-green-100 text-green-800"
+        : "bg-gray-100 text-gray-700"
+        }`}
     >
       {isActive ? "Active" : "Inactive"}
     </span>
@@ -65,14 +64,15 @@ function UserDetailsDialog({ user, loading, error, onClose }) {
               <p className="mt-1 break-all text-sm text-gray-500">{user.email}</p>
             )}
           </div>
-          <button
-            type="button"
-            onClick={onClose}
-            className="rounded p-1 text-2xl leading-none text-gray-500 hover:bg-gray-100"
-            aria-label="Close user details"
-          >
-            ×
-          </button>
+          <div className="mt-2 flex justify-end">
+            <button
+              type="button"
+              onClick={onClose}
+              className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50"
+            >
+              Close
+            </button>
+          </div>
         </div>
         {loading ? (
           <div className="space-y-3" aria-label="Loading user details">
@@ -118,7 +118,7 @@ function UserDetailsDialog({ user, loading, error, onClose }) {
             </div>
           </dl>
         ) : null}
-        <div className="mt-6 flex justify-end">
+        {/* <div className="mt-6 flex justify-end">
           <button
             type="button"
             onClick={onClose}
@@ -126,7 +126,7 @@ function UserDetailsDialog({ user, loading, error, onClose }) {
           >
             Close
           </button>
-        </div>
+        </div> */}
       </section>
     </div>
   );
@@ -168,7 +168,7 @@ function StatusConfirmation({ user, saving, error, onCancel, onConfirm }) {
             type="button"
             onClick={onCancel}
             disabled={saving}
-            className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50 disabled:opacity-60"
+            className="rounded-lg border cursor-pointer border-gray-300 px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50 disabled:opacity-60"
           >
             Cancel
           </button>
@@ -176,9 +176,8 @@ function StatusConfirmation({ user, saving, error, onCancel, onConfirm }) {
             type="button"
             onClick={onConfirm}
             disabled={saving}
-            className={`rounded-lg px-4 py-2 text-sm font-semibold text-white disabled:opacity-60 ${
-              nextActive ? "bg-green-600 hover:bg-green-700" : "bg-red-600 hover:bg-red-700"
-            }`}
+            className={`rounded-lg px-4 py-2 text-sm cursor-pointer font-semibold text-white disabled:opacity-60 ${nextActive ? "bg-green-600 hover:bg-green-700" : "bg-red-500 hover:bg-red-400"
+              }`}
           >
             {saving ? "Saving..." : nextActive ? "Activate account" : "Deactivate account"}
           </button>
@@ -277,8 +276,7 @@ export default function Users() {
     try {
       await updateAdminUserStatus(pendingUser.id, !pendingUser.isActive);
       setNotice(
-        `${fullName(pendingUser)}'s account is now ${
-          pendingUser.isActive ? "inactive" : "active"
+        `${fullName(pendingUser)}'s account is now ${pendingUser.isActive ? "inactive" : "active"
         }.`,
       );
       setPendingUser(null);
@@ -370,7 +368,7 @@ export default function Users() {
           )}
         </div>
         <div className="overflow-x-auto">
-          <table className="min-w-[760px] w-full text-left text-sm">
+          <table className="min-w-190 w-full text-left text-sm">
             <thead className="bg-gray-50 text-xs uppercase tracking-wide text-gray-500">
               <tr>
                 <th scope="col" className="px-4 py-3">User</th>
@@ -414,7 +412,7 @@ export default function Users() {
                         <button
                           type="button"
                           onClick={() => setSelectedUserId(user.id)}
-                          className="font-semibold text-blue-700 hover:underline"
+                          className="font-semibold text-blue-700 cursor-pointer"
                         >
                           View
                         </button>
@@ -429,9 +427,8 @@ export default function Users() {
                               setStatusError("");
                               setPendingUser(user);
                             }}
-                            className={`font-semibold hover:underline ${
-                              user.isActive ? "text-red-600" : "text-green-700"
-                            }`}
+                            className={`font-semibold cursor-pointer ${user.isActive ? "text-red-600" : "text-green-700"
+                              }`}
                           >
                             {user.isActive ? "Deactivate" : "Activate"}
                           </button>

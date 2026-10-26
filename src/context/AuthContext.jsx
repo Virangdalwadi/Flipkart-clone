@@ -108,6 +108,24 @@ export function AuthProvider({ children }) {
     return res.data.user;
   };
 
+  const updateProfileImage = async (file) => {
+    const res = await api.put("/auth/profile/image", file, {
+      headers: { "Content-Type": file.type },
+    });
+    setUser((currentUser) =>
+      currentUser ? { ...currentUser, ...res.data.user } : currentUser,
+    );
+    return res.data;
+  };
+
+  const removeProfileImage = async () => {
+    const res = await api.delete("/auth/profile/image");
+    setUser((currentUser) =>
+      currentUser ? { ...currentUser, ...res.data.user } : currentUser,
+    );
+    return res.data;
+  };
+
   const logout = async () => {
     try {
       await api.get("/auth/logout");
@@ -122,7 +140,17 @@ export function AuthProvider({ children }) {
 
   return (
     <AuthContext.Provider
-      value={{ accessToken, user, loading, login, register, updateProfile, logout }}
+      value={{
+        accessToken,
+        user,
+        loading,
+        login,
+        register,
+        updateProfile,
+        updateProfileImage,
+        removeProfileImage,
+        logout,
+      }}
     >
       {children}
     </AuthContext.Provider>

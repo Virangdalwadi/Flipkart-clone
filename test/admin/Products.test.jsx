@@ -3,19 +3,31 @@ import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 import {
   createAdminProduct,
+  createSellerProduct,
+  deleteSellerProduct,
   deactivateAdminProduct,
   getAdminProducts,
+  getSellerProducts,
   updateAdminProduct,
+  updateSellerProduct,
   updateAdminProductStatus,
 } from "../../src/api/Productapi";
+import { useAuth } from "../../src/context/AuthContext";
 import Products from "../../src/admin/pages/Products";
 
 vi.mock("../../src/api/Productapi", () => ({
   createAdminProduct: vi.fn(),
+  createSellerProduct: vi.fn(),
+  deleteSellerProduct: vi.fn(),
   deactivateAdminProduct: vi.fn(),
   getAdminProducts: vi.fn(),
+  getSellerProducts: vi.fn(),
   updateAdminProduct: vi.fn(),
+  updateSellerProduct: vi.fn(),
   updateAdminProductStatus: vi.fn(),
+}));
+vi.mock("../../src/context/AuthContext", () => ({
+  useAuth: vi.fn(),
 }));
 
 const product = {
@@ -47,9 +59,14 @@ const renderPage = () => render(<Products />);
 describe("admin product management page", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    useAuth.mockReturnValue({ user: { role: "admin" } });
     getAdminProducts.mockResolvedValue(listing());
+    getSellerProducts.mockResolvedValue(listing());
     createAdminProduct.mockResolvedValue({ ...product, id: 43 });
+    createSellerProduct.mockResolvedValue({ ...product, id: 43 });
     updateAdminProduct.mockResolvedValue(product);
+    updateSellerProduct.mockResolvedValue(product);
+    deleteSellerProduct.mockResolvedValue({ message: "Product deleted successfully" });
     updateAdminProductStatus.mockResolvedValue({ ...product, isActive: false });
     deactivateAdminProduct.mockResolvedValue({ ...product, isActive: false });
   });
@@ -103,6 +120,26 @@ describe("admin product management page", () => {
           sortBy: "price",
           order: "desc",
         }),
+        expect.objectContaining({ signal: expect.any(AbortSignal) }),
+      );
+    });
+  });
+
+  test("debounces product search requests while keeping the input responsive", async () => {
+    renderPage();
+    await screen.findAllByText("Example phone");
+
+    const searchInput = screen.getByRole("searchbox", { name: /search title/i });
+    fireEvent.change(searchInput, { target: { value: "ph" } });
+    fireEvent.change(searchInput, { target: { value: "phone" } });
+
+    expect(searchInput).toHaveValue("phone");
+    expect(getAdminProducts).toHaveBeenCalledTimes(1);
+
+    await waitFor(() => {
+      expect(getAdminProducts).toHaveBeenCalledTimes(2);
+      expect(getAdminProducts).toHaveBeenLastCalledWith(
+        expect.objectContaining({ search: "phone" }),
         expect.objectContaining({ signal: expect.any(AbortSignal) }),
       );
     });
@@ -240,5 +277,28 @@ describe("admin product management page", () => {
     });
     renderPage();
     expect(await screen.findByRole("alert")).toHaveTextContent("Catalog unavailable");
+  });
+
+  test("uses seller-scoped listing and delete endpoints for seller-owned products", async () => {
+    useAuth.mockReturnValue({ user: { role: "seller" } });
+    const user = userEvent.setup();
+    renderPage();
+
+    expect(await screen.findAllByText("Example phone")).toHaveLength(2);
+    expect(getSellerProducts).toHaveBeenCalledWith(
+      expect.objectContaining({ page: 1, limit: 20 }),
+      expect.objectContaining({ signal: expect.any(AbortSignal) }),
+    );
+    expect(getAdminProducts).not.toHaveBeenCalled();
+
+    await user.click(screen.getAllByRole("button", { name: "Delete" })[0]);
+    const confirmation = screen.getByRole("alertdialog");
+    expect(confirmation).toHaveTextContent("permanently deleted from your products");
+    await user.click(
+      within(confirmation).getByRole("button", { name: "Delete product" }),
+    );
+
+    await waitFor(() => expect(deleteSellerProduct).toHaveBeenCalledWith(42));
+    expect(deactivateAdminProduct).not.toHaveBeenCalled();
   });
 });

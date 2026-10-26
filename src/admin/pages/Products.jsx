@@ -1,11 +1,16 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   createAdminProduct,
+  createSellerProduct,
+  deleteSellerProduct,
   deactivateAdminProduct,
   getAdminProducts,
+  getSellerProducts,
   updateAdminProduct,
+  updateSellerProduct,
   updateAdminProductStatus,
 } from "../../api/Productapi";
+import { useAuth } from "../../context/AuthContext";
 
 const EMPTY_FORM = {
   title: "",
@@ -22,12 +27,16 @@ const EMPTY_FORM = {
 };
 
 const fieldClass =
-  "w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100";
+  "w-full rounded-lg border border-gray-300 cursor-pointer bg-white px-3 py-2 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100";
 
-function getRequestError(error) {
+function getRequestError(error, isSeller = false) {
   const status = error.response?.status;
   if (status === 401) return "Your session has expired. Sign in again to continue.";
-  if (status === 403) return "Your account does not have administrator access.";
+  if (status === 403) {
+    return isSeller
+      ? "Your account does not have seller access."
+      : "Your account does not have administrator access.";
+  }
   return (
     error.response?.data?.message ||
     error.message ||
@@ -70,7 +79,7 @@ function productPayload(form) {
   };
 }
 
-function ProductForm({ initialValue, saving, onClose, onSubmit }) {
+function ProductForm({ initialValue, saving, isSeller, onClose, onSubmit }) {
   const [form, setForm] = useState(initialValue);
   const [formError, setFormError] = useState("");
   const isEditing = Boolean(initialValue.id);
@@ -101,7 +110,7 @@ function ProductForm({ initialValue, saving, onClose, onSubmit }) {
     try {
       await onSubmit(payload);
     } catch (error) {
-      setFormError(getRequestError(error));
+      setFormError(getRequestError(error, isSeller));
     }
   };
 
@@ -132,7 +141,7 @@ function ProductForm({ initialValue, saving, onClose, onSubmit }) {
             type="button"
             onClick={onClose}
             disabled={saving}
-            className="rounded p-1 text-2xl leading-none text-gray-500 hover:bg-gray-100"
+            className="rounded p-1 cursor-pointer text-2xl leading-none text-gray-500 hover:bg-gray-100"
             aria-label="Close product form"
           >
             ×
@@ -201,14 +210,14 @@ function ProductForm({ initialValue, saving, onClose, onSubmit }) {
               type="button"
               onClick={onClose}
               disabled={saving}
-              className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+              className="rounded-lg border cursor-pointer border-gray-300 px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50 disabled:opacity-50"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={saving}
-              className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700 disabled:cursor-wait disabled:opacity-60"
+              className="rounded-lg bg-blue-600 cursor-pointer px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700 disabled:cursor-wait disabled:opacity-60"
             >
               {saving ? "Saving…" : isEditing ? "Save changes" : "Create product"}
             </button>
@@ -243,6 +252,8 @@ function ProductImage({ product }) {
 }
 
 export default function Products() {
+  const { user } = useAuth();
+  const isSeller = user?.role === "seller";
   const [products, setProducts] = useState([]);
   const [pagination, setPagination] = useState({
     total: 0,
@@ -257,6 +268,8 @@ export default function Products() {
     sortBy: "id",
     order: "asc",
   });
+  const [debouncedSearch, setDebouncedSearch] = useState("");
+  const [debouncedCategory, setDebouncedCategory] = useState("");
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(true);
   const [listError, setListError] = useState("");
@@ -274,11 +287,19 @@ export default function Products() {
       sortBy: filters.sortBy,
       order: filters.order,
     };
-    if (filters.search.trim()) params.search = filters.search.trim();
-    if (filters.category.trim()) params.category = filters.category.trim();
+    if (debouncedSearch.trim()) params.search = debouncedSearch.trim();
+    if (debouncedCategory.trim()) params.category = debouncedCategory.trim();
     if (filters.isActive) params.isActive = filters.isActive;
     return params;
-  }, [filters, page, pagination.limit]);
+  }, [
+    debouncedSearch,
+    debouncedCategory,
+    filters.isActive,
+    filters.order,
+    filters.sortBy,
+    page,
+    pagination.limit,
+  ]);
 
   const refreshProducts = useCallback(() => {
     setReloadKey((key) => key + 1);
@@ -289,7 +310,8 @@ export default function Products() {
     setLoading(true);
     setListError("");
 
-    getAdminProducts(query, { signal: controller.signal })
+    const getProducts = isSeller ? getSellerProducts : getAdminProducts;
+    getProducts(query, { signal: controller.signal })
       .then((response) => {
         setProducts(response.products);
         setPagination({
@@ -301,7 +323,7 @@ export default function Products() {
       })
       .catch((error) => {
         if (error.code !== "ERR_CANCELED" && error.name !== "CanceledError") {
-          setListError(getRequestError(error));
+          setListError(getRequestError(error, isSeller));
         }
       })
       .finally(() => {
@@ -309,7 +331,7 @@ export default function Products() {
       });
 
     return () => controller.abort();
-  }, [query, reloadKey]);
+  }, [isSeller, query, reloadKey]);
 
   useEffect(() => {
     if (!notice) return undefined;
@@ -317,19 +339,36 @@ export default function Products() {
     return () => window.clearTimeout(timeout);
   }, [notice]);
 
+
   const changeFilter = (name, value) => {
     setFilters((current) => ({ ...current, [name]: value }));
-    setPage(1);
+    if (name !== "search" && name !== "category") setPage(1);
   };
+
+  useEffect(() => {
+    const timeout = window.setTimeout(() => {
+      setDebouncedSearch(filters.search);
+      setPage(1);
+    }, 300);
+    return () => window.clearTimeout(timeout);
+  }, [filters.search]);
+
+  useEffect(() => {
+    const timeout = window.setTimeout(() => {
+      setDebouncedCategory(filters.category);
+      setPage(1);
+    }, 300);
+    return () => window.clearTimeout(timeout);
+  }, [filters.category]);
 
   const saveProduct = async (payload) => {
     setSaving(true);
     try {
       if (formState.id) {
-        await updateAdminProduct(formState.id, payload);
+        await (isSeller ? updateSellerProduct : updateAdminProduct)(formState.id, payload);
         setNotice("Product updated successfully.");
       } else {
-        await createAdminProduct(payload);
+        await (isSeller ? createSellerProduct : createAdminProduct)(payload);
         setNotice("Product created successfully.");
       }
       setFormState(null);
@@ -353,17 +392,21 @@ export default function Products() {
     }
   };
 
-  const deactivateProduct = async () => {
+  const confirmDeactivation = async () => {
     if (!confirmProduct) return;
     setWorkingId(confirmProduct.id);
     setListError("");
     try {
-      await deactivateAdminProduct(confirmProduct.id);
+      if (isSeller) {
+        await deleteSellerProduct(confirmProduct.id);
+      } else {
+        await deactivateAdminProduct(confirmProduct.id);
+      }
       setConfirmProduct(null);
-      setNotice("Product deactivated successfully.");
+      setNotice(isSeller ? "Product deleted successfully." : "Product deactivated successfully.");
       refreshProducts();
     } catch (error) {
-      setListError(getRequestError(error));
+      setListError(getRequestError(error, isSeller));
     } finally {
       setWorkingId(null);
     }
@@ -383,10 +426,10 @@ export default function Products() {
           <div>
             <h1 className="text-2xl font-bold text-gray-900">Products</h1>
             <p className="mt-0.5 text-sm text-gray-600">
-              {loading ? "Loading catalog…" : (
+              {loading ? "Loading products…" : (
                 <>
                   <span className="font-semibold text-gray-900">{pagination.total}</span>{" "}
-                  product{pagination.total === 1 ? "" : "s"} in the catalog
+                  product{pagination.total === 1 ? "" : "s"} {isSeller ? "in your store" : "in the catalog"}
                 </>
               )}
             </p>
@@ -396,7 +439,7 @@ export default function Products() {
         <button
           type="button"
           onClick={() => setFormState({ ...EMPTY_FORM })}
-          className="inline-flex items-center justify-center gap-2 rounded-lg bg-[#2874f0] px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-600 focus:outline-none focus:ring-4 focus:ring-blue-200 active:scale-[0.98]"
+          className="inline-flex items-center justify-center cursor-pointer gap-2 rounded-lg bg-[#2874f0] px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-600 focus:outline-none focus:ring-4 focus:ring-blue-200 active:scale-[0.98]"
         >
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
             <path d="M12 5v14M5 12h14" />
@@ -420,8 +463,8 @@ export default function Products() {
         </div>
       )}
 
-      <div className="grid gap-3 rounded-xl border border-gray-200 bg-white p-4 shadow-sm sm:grid-cols-2 lg:grid-cols-5">
-        <label className="space-y-1 text-xs font-semibold uppercase tracking-wide text-gray-500 lg:col-span-2">
+      <div className="flex flex-wrap items-end gap-3 rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
+        <label className="min-w-55 flex-2 space-y-1 text-xs font-semibold uppercase tracking-wide text-gray-500">
           Search title
           <input
             type="search"
@@ -431,7 +474,7 @@ export default function Products() {
             className={fieldClass}
           />
         </label>
-        <label className="space-y-1 text-xs font-semibold uppercase tracking-wide text-gray-500">
+        <label className="min-w-35 flex-1 space-y-1 text-xs font-semibold uppercase tracking-wide text-gray-500">
           Category
           <input
             value={filters.category}
@@ -486,7 +529,7 @@ export default function Products() {
 
       {loading ? (
         <div aria-label="Loading products" className="space-y-3">
-          {Array.from({ length: 5 }, (_, index) => (
+          {Array.from({ length: 7 }, (_, index) => (
             <div key={index} className="h-20 animate-pulse rounded-xl bg-gray-200" />
           ))}
         </div>
@@ -494,7 +537,7 @@ export default function Products() {
         <div className="rounded-xl border border-dashed border-gray-300 bg-white px-5 py-14 text-center">
           <h2 className="font-semibold text-gray-900">No products found</h2>
           <p className="mt-1 text-sm text-gray-600">
-            Try changing the search or filters, or add a product to the catalog.
+            Try changing the search or filters, or add a product {isSeller ? "to your store" : "to the catalog"}.
           </p>
         </div>
       ) : (
@@ -533,6 +576,7 @@ export default function Products() {
                       <td className="px-4 py-3">
                         <ProductActions
                           product={product}
+                          isSeller={isSeller}
                           busy={workingId === product.id}
                           onEdit={() => setFormState({ ...formFromProduct(product), id: product.id })}
                           onToggle={() => changeProductStatus(product)}
@@ -563,6 +607,7 @@ export default function Products() {
                 <div className="mt-4 border-t border-gray-100 pt-3">
                   <ProductActions
                     product={product}
+                    isSeller={isSeller}
                     busy={workingId === product.id}
                     onEdit={() => setFormState({ ...formFromProduct(product), id: product.id })}
                     onToggle={() => changeProductStatus(product)}
@@ -608,6 +653,7 @@ export default function Products() {
           key={formState.id ?? "new"}
           initialValue={formState}
           saving={saving}
+          isSeller={isSeller}
           onClose={() => setFormState(null)}
           onSubmit={saveProduct}
         />
@@ -621,10 +667,12 @@ export default function Products() {
             className="w-full max-w-md rounded-xl bg-white p-6 shadow-xl"
           >
             <h2 id="deactivate-title" className="text-lg font-bold text-gray-900">
-              Deactivate product?
+              {isSeller ? "Delete product?" : "Deactivate product?"}
             </h2>
             <p className="mt-2 text-sm text-gray-600">
-              “{confirmProduct.title}” will be hidden from the public storefront. Its product ID and order history remain unchanged.
+              {isSeller
+                ? `“${confirmProduct.title}” will be permanently deleted from your products.`
+                : `“${confirmProduct.title}” will be hidden from the public storefront. Its product ID and order history remain unchanged.`}
             </p>
             <div className="mt-6 flex justify-end gap-2">
               <button
@@ -637,11 +685,13 @@ export default function Products() {
               </button>
               <button
                 type="button"
-                onClick={deactivateProduct}
+                onClick={confirmDeactivation}
                 disabled={workingId === confirmProduct.id}
                 className="rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white disabled:opacity-50"
               >
-                {workingId === confirmProduct.id ? "Deactivating…" : "Deactivate"}
+                {workingId === confirmProduct.id
+                  ? isSeller ? "Deleting…" : "Deactivating…"
+                  : isSeller ? "Delete product" : "Deactivate"}
               </button>
             </div>
           </section>
@@ -662,18 +712,26 @@ function StatusBadge({ active }) {
   );
 }
 
-function ProductActions({ product, busy, onEdit, onToggle, onDelete }) {
+function ProductActions({ product, isSeller, busy, onEdit, onToggle, onDelete }) {
   return (
     <div className="flex flex-wrap items-center justify-end gap-2">
-      <button type="button" onClick={onEdit} disabled={busy} className="rounded px-2 py-1 font-semibold text-blue-700 hover:bg-blue-50 disabled:opacity-50">
+      <button type="button" onClick={onEdit} disabled={busy} className="rounded px-2 cursor-pointer py-1 font-semibold text-blue-700 hover:bg-blue-50 disabled:opacity-50">
         Edit
       </button>
-      <button type="button" onClick={onToggle} disabled={busy} className="rounded px-2 py-1 font-semibold text-gray-700 hover:bg-gray-100 disabled:opacity-50">
-        {busy ? "Updating…" : product.isActive ? "Deactivate" : "Activate"}
-      </button>
-      <button type="button" onClick={onDelete} disabled={busy || !product.isActive} className="rounded px-2 py-1 font-semibold text-red-700 hover:bg-red-50 disabled:opacity-50">
-        Delete
-      </button>
+      {isSeller ? (
+        <button type="button" onClick={onDelete} disabled={busy} className="rounded px-2 cursor-pointer py-1 font-semibold text-red-700 hover:bg-red-50 disabled:opacity-50">
+          {busy ? "Deleting…" : "Delete"}
+        </button>
+      ) : (
+        <>
+          <button type="button" onClick={onToggle} disabled={busy} className="rounded px-2 cursor-pointer py-1 font-semibold text-gray-700 hover:bg-gray-100 disabled:opacity-50">
+            {busy ? "Updating…" : product.isActive ? "Deactivate" : "Activate"}
+          </button>
+          <button type="button" onClick={onDelete} disabled={busy} className="rounded px-2 cursor-pointer py-1 font-semibold text-red-700 hover:bg-red-50 disabled:opacity-50">
+            Delete
+          </button>
+        </>
+      )}
     </div>
   );
 }
