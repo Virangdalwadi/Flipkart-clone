@@ -1,5 +1,5 @@
 import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
-import { MemoryRouter } from "react-router-dom";
+import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 import api from "../../src/api/axiosInstance";
 import { useAuth } from "../../src/context/AuthContext";
@@ -141,5 +141,21 @@ describe("real-time messages", () => {
       ),
     );
     expect(api.post).not.toHaveBeenCalled();
+  });
+
+  test("returns users to the previous page from messages", async () => {
+    render(
+      <MemoryRouter initialEntries={["/products/phone", "/pages/messages"]} initialIndex={1}>
+        <Routes>
+          <Route path="/products/phone" element={<p>Previous page</p>} />
+          <Route path="/pages/messages" element={<Messages />} />
+        </Routes>
+      </MemoryRouter>,
+    );
+
+    await screen.findByText("Seller");
+    fireEvent.click(screen.getByRole("button", { name: /back/i }));
+
+    expect(await screen.findByText("Previous page")).toBeInTheDocument();
   });
 });

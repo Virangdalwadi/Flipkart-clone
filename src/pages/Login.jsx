@@ -34,21 +34,6 @@ const validateRegistrationPassword = (password, username, email) => {
   }
 
   const normalizedPassword = password.toLowerCase();
-  const normalizedUsername = username.trim().toLowerCase();
-  const normalizedEmail = email.trim().toLowerCase();
-  const predictablePatterns = [
-    "012",
-    "123",
-    "234",
-    "345",
-    "456",
-    "567",
-    "678",
-    "789",
-    "987",
-    "qwerty",
-    "asdf",
-  ];
 
   if (commonPasswords.has(normalizedPassword)) {
     return "This password is too common or easy to guess.";

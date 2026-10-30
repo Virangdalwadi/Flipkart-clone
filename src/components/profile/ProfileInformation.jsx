@@ -47,7 +47,7 @@ export default function ProfileInformation({
   const [gender, setGender] = useState(user?.gender || "");
   const [email, setEmail] = useState(user?.email || "");
   const [mobile, setMobile] = useState(user?.mobile || "");
-
+  
   const [editingPersonal, setEditingPersonal] = useState(false);
   const [editingEmail, setEditingEmail] = useState(false);
   const [editingMobile, setEditingMobile] = useState(false);
@@ -55,6 +55,7 @@ export default function ProfileInformation({
   const [savingMobile, setSavingMobile] = useState(false);
   const [personalError, setPersonalError] = useState("");
   const [mobileError, setMobileError] = useState("");
+
   const [selectedPhoto, setSelectedPhoto] = useState(null);
   const [photoPreviewUrl, setPhotoPreviewUrl] = useState("");
   const [photoFailed, setPhotoFailed] = useState(false);

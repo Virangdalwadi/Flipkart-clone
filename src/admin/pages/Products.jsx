@@ -1,9 +1,9 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   createAdminProduct,
   createSellerProduct,
   deleteSellerProduct,
-  deactivateAdminProduct,
+  deleteAdminProduct,
   getAdminProducts,
   getSellerProducts,
   updateAdminProduct,
@@ -278,6 +278,7 @@ export default function Products() {
   const [confirmProduct, setConfirmProduct] = useState(null);
   const [saving, setSaving] = useState(false);
   const [workingId, setWorkingId] = useState(null);
+  const workingProductIds = useRef(new Set());
   const [reloadKey, setReloadKey] = useState(0);
 
   const query = useMemo(() => {
@@ -378,36 +379,42 @@ export default function Products() {
     }
   };
 
-  const changeProductStatus = async (product) => {
+  const changeProductStatus = async (product, isActive) => {
+    if (workingProductIds.current.has(product.id)) return;
+    workingProductIds.current.add(product.id);
     setWorkingId(product.id);
     setListError("");
     try {
-      await updateAdminProductStatus(product.id, !product.isActive);
-      setNotice(`Product ${product.isActive ? "deactivated" : "activated"} successfully.`);
+      await updateAdminProductStatus(product.id, isActive);
+      setNotice(`Product ${isActive ? "activated" : "deactivated"} successfully.`);
       refreshProducts();
     } catch (error) {
       setListError(getRequestError(error));
     } finally {
+      workingProductIds.current.delete(product.id);
       setWorkingId(null);
     }
   };
 
-  const confirmDeactivation = async () => {
+  const confirmDelete = async () => {
     if (!confirmProduct) return;
+    if (workingProductIds.current.has(confirmProduct.id)) return;
+    workingProductIds.current.add(confirmProduct.id);
     setWorkingId(confirmProduct.id);
     setListError("");
     try {
       if (isSeller) {
         await deleteSellerProduct(confirmProduct.id);
       } else {
-        await deactivateAdminProduct(confirmProduct.id);
+        await deleteAdminProduct(confirmProduct.id);
       }
       setConfirmProduct(null);
-      setNotice(isSeller ? "Product deleted successfully." : "Product deactivated successfully.");
+      setNotice("Product deleted successfully.");
       refreshProducts();
     } catch (error) {
       setListError(getRequestError(error, isSeller));
     } finally {
+      workingProductIds.current.delete(confirmProduct.id);
       setWorkingId(null);
     }
   };
@@ -579,7 +586,7 @@ export default function Products() {
                           isSeller={isSeller}
                           busy={workingId === product.id}
                           onEdit={() => setFormState({ ...formFromProduct(product), id: product.id })}
-                          onToggle={() => changeProductStatus(product)}
+                          onToggle={() => changeProductStatus(product, !product.isActive)}
                           onDelete={() => setConfirmProduct(product)}
                         />
                       </td>
@@ -610,7 +617,7 @@ export default function Products() {
                     isSeller={isSeller}
                     busy={workingId === product.id}
                     onEdit={() => setFormState({ ...formFromProduct(product), id: product.id })}
-                    onToggle={() => changeProductStatus(product)}
+                    onToggle={() => changeProductStatus(product, !product.isActive)}
                     onDelete={() => setConfirmProduct(product)}
                   />
                 </div>
@@ -663,16 +670,16 @@ export default function Products() {
           <section
             role="alertdialog"
             aria-modal="true"
-            aria-labelledby="deactivate-title"
+            aria-labelledby="delete-title"
             className="w-full max-w-md rounded-xl bg-white p-6 shadow-xl"
           >
-            <h2 id="deactivate-title" className="text-lg font-bold text-gray-900">
-              {isSeller ? "Delete product?" : "Deactivate product?"}
+            <h2 id="delete-title" className="text-lg font-bold text-gray-900">
+              Delete product?
             </h2>
             <p className="mt-2 text-sm text-gray-600">
               {isSeller
                 ? `“${confirmProduct.title}” will be permanently deleted from your products.`
-                : `“${confirmProduct.title}” will be hidden from the public storefront. Its product ID and order history remain unchanged.`}
+                : `“${confirmProduct.title}” will be removed from the admin catalog and public storefront. Its product record and linked cart, order, and conversation history will be retained.`}
             </p>
             <div className="mt-6 flex justify-end gap-2">
               <button
@@ -685,13 +692,13 @@ export default function Products() {
               </button>
               <button
                 type="button"
-                onClick={confirmDeactivation}
+                onClick={confirmDelete}
                 disabled={workingId === confirmProduct.id}
                 className="rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white disabled:opacity-50"
               >
                 {workingId === confirmProduct.id
-                  ? isSeller ? "Deleting…" : "Deactivating…"
-                  : isSeller ? "Delete product" : "Deactivate"}
+                  ? "Deleting…"
+                  : "Delete product"}
               </button>
             </div>
           </section>

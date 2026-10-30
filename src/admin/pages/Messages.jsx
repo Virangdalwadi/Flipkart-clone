@@ -47,6 +47,7 @@ export default function Messages() {
   const [joinedConversationId, setJoinedConversationId] = useState("");
   const [error, setError] = useState("");
   const [socketStatus, setSocketStatus] = useState("connecting");
+  
   const socketRef = useRef(null);
   const activeConversationRef = useRef("");
   const pendingMessageRef = useRef(null);
@@ -322,6 +323,16 @@ export default function Messages() {
   return (
     <section className="space-y-5">
       <div className="ml-5">
+        {user?.role === "user" && (
+          <button
+            type="button"
+            onClick={() => navigate(-1)}
+            className="mb-3 inline-flex items-center gap-2 rounded-lg border border-gray-300 px-3 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50"
+          >
+            <span aria-hidden="true">←</span>
+            Back
+          </button>
+        )}
         <h1 className="text-2xl font-bold text-gray-900">{pageTitle}</h1>
         <p className="mt-1 text-sm text-gray-600">
           {user?.role === "seller"
@@ -369,15 +380,15 @@ export default function Messages() {
         </form>
       )}
 
-      <div className="grid min-h-112 overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm md:grid-cols-[minmax(14rem,0.8fr)_2fr]">
-        <aside className="border-b border-gray-200 md:border-b-0 md:border-r">
+      <div className="grid overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm md:h-130 md:grid-cols-[minmax(14rem,0.8fr)_2fr] md:grid-rows-1">
+        <aside className="flex min-h-0 flex-col border-b border-gray-200 md:border-b-0 md:border-r">
           <h2 className="border-b border-gray-100 px-4 py-3 text-sm font-semibold text-gray-800">
             Conversations
           </h2>
           {loading ? (
             <p className="px-4 py-5 text-sm text-gray-500">Loading conversations…</p>
           ) : conversations.length ? (
-            <ul className="max-h-96 overflow-y-auto md:max-h-112">
+            <ul className="max-h-96 overflow-y-auto md:max-h-none md:flex-1">
               {conversations.map((conversation) => {
                 const participant =
                   user?.role === "seller" ? conversation.customer : conversation.seller;
@@ -410,7 +421,7 @@ export default function Messages() {
           )}
         </aside>
 
-        <div className="flex min-h-80 flex-col">
+        <div className="flex h-128 min-h-0 flex-col md:h-auto">
           {selectedConversation ? (
             <>
               <header className="border-b border-gray-100 px-4 py-3">
@@ -421,7 +432,7 @@ export default function Messages() {
                   {selectedConversation.product?.title || "Product conversation"}
                 </p>
               </header>
-              <div id="conversation-messages" className="flex-1 space-y-3 overflow-y-auto p-4">
+              <div id="conversation-messages" className="min-h-0 flex-1 space-y-3 overflow-y-auto p-4">
                 {messagesLoading && (
                   <p className="text-sm text-gray-500">Loading messages…</p>
                 )}

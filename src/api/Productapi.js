@@ -86,10 +86,13 @@ export const updateAdminProductStatus = async (id, isActive) => {
   return response.data.product;
 };
 
-export const deactivateAdminProduct = async (id) => {
+export const deleteAdminProduct = async (id) => {
   const response = await api.delete(`/admin/products/${id}`);
   return response.data.product;
 };
+
+/** @deprecated Use deleteAdminProduct; DELETE archives an admin product. */
+export const deactivateAdminProduct = deleteAdminProduct;
 
 export const getSellerProducts = async (params = {}, { signal } = {}) => {
   const response = await api.get("/seller/products", { params, signal });

@@ -37,6 +37,7 @@ const Navbar = ({ setValue, initialSearch = "" }) => {
     error: suggestionsError,
   } = useProductSuggestions(search);
   const navigate = useNavigate();
+  const [activeCategory, setActiveCategory] = useState("For You");
 
   useEffect(() => {
     setSearch(initialSearch);
@@ -159,6 +160,25 @@ const Navbar = ({ setValue, initialSearch = "" }) => {
     window.scrollTo(0, 0);
     handleFormSubmit("books");
   }
+
+
+  const categories = [
+    { name: "For You", image: nav1, action: handleForyou },
+    { name: "Fashion", image: nav2, action: handleFashion },
+    { name: "Mobiles", image: nav3, action: handleMobile },
+    { name: "Electronics", image: nav4, action: handleElectronics },
+    { name: "Beauty", image: nav6, action: handleBeauty },
+    { name: "Home", image: nav5, action: handleHome },
+    { name: "Appliances", image: nav7, action: handleAppliances },
+    { name: "Toys", image: nav8, action: handleToys },
+    { name: "Food", image: nav9, action: handleFood },
+    { name: "Auto", image: nav10, action: handlAuto },
+    { name: "Sports", image: nav11, action: handleSports },
+    { name: "Furniture", image: nav12, action: handleFurniture },
+    { name: "Books", image: nav13, action: handleBooks },
+    { name: "2 Wheelers", image: nav14, action: handleTwowheels },
+  ];
+
   return (
     <>
       <div className="fixed inset-x-0 top-0 z-10 w-full bg-white shadow-sm">
@@ -219,7 +239,7 @@ const Navbar = ({ setValue, initialSearch = "" }) => {
             </div>
           </div>
 
-          <div className="flex flex-col gap-2 pb-2 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
             <div className="w-full min-w-0 sm:flex-1">
               <SearchBar
                 value={search}
@@ -275,119 +295,57 @@ const Navbar = ({ setValue, initialSearch = "" }) => {
           </div>
           <div>
 
-            <div className="scrollbar-hide flex cursor-pointer gap-1 overflow-x-auto px-1 pb-2 sm:px-5">
-              <ul className="flex">
-                <li
-                  onClick={handleForyou}
-                  className="flex cursor-pointer flex-col items-center px-2.5 hover:underline"
-                >
-                  <img width="32" height="32" src={nav1} alt="For You" />
-                  <span>For_You</span>
-                </li>
 
-                <li
-                  onClick={handleFashion}
-                  className="flex cursor-pointer flex-col items-center px-2.5 hover:underline"
-                >
-                  <img width="32" height="32" src={nav2} alt="Fashion" />
-                  <span>Fashion</span>
-                </li>
 
-                <li
-                  onClick={handleMobile}
-                  className="flex cursor-pointer flex-col items-center px-2.5 hover:underline"
-                >
-                  <img width="32" height="32" src={nav3} alt="Mobiles" />
-                  <span>Mobiles</span>
-                </li>
+            <div className="w-full overflow-x-auto overscroll-x-contain scrollbar-hide">
+              <ul className="flex w-max min-w-full items-center gap-0 justify-start sm:justify-between">
 
-                <li
-                  onClick={handleElectronics}
-                  className="flex cursor-pointer flex-col items-center px-2.5 hover:underline"
-                >
-                  <img width="32" height="32" src={nav4} alt="Electronics" />
-                  <span>Electronics</span>
-                </li>
+                {categories.map((category) => {
+                  const isActive = activeCategory === category.name;
 
-                <li
-                  onClick={handleBeauty}
-                  className="flex cursor-pointer flex-col items-center px-2.5 hover:underline"
-                >
-                  <img width="32" height="32" src={nav6} alt="Beauty" />
-                  <span>Beauty</span>
-                </li>
+                  return (
+                    <li
+                      key={category.name}
+                      className="w-18  flex-none sm:w-auto sm:flex-1"
+                    >
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setActiveCategory(category.name);
+                          category.action();
+                        }}
+                        aria-pressed={isActive}
+                        className={`group relative flex w-full cursor-pointer flex-col items-center justify-center gap-0 px-0 pt-1.5 pb-2 text-center transition-all duration-200 ${isActive
+                          ? "font-semibold text-gray-900"
+                          : "text-gray-700 hover:text-gray-900"
+                          }`}
+                      >
+                        <div
+                          className={`flex h-11 w-12 items-center justify-center rounded-xl transition-all duration-200 ${isActive
+                            ? "bg-[#e5f3ff]"
+                            : "bg-transparent"
+                            }`}
+                        >
+                          <img
+                            src={category.image}
+                            alt={category.name}
+                            className="h-9 w-9 object-contain transition-transform duration-200"
+                          />
+                        </div>
 
-                <li
-                  onClick={handleHome}
-                  className="flex cursor-pointer flex-col items-center px-2.5 hover:underline"
-                >
-                  <img width="32" height="32" src={nav5} alt="Home" />
-                  <span>Home</span>
-                </li>
+                        <span className="whitespace-nowrap text-[14px] sm:text-base">
+                          {category.name}
+                        </span>
 
-                <li
-                  onClick={handleAppliances}
-                  className="flex cursor-pointer flex-col items-center px-2.5 hover:underline"
-                >
-                  <img width="32" height="32" src={nav7} alt="Appliances" />
-                  <span>Appliances</span>
-                </li>
+                        <span
+                          className={`absolute bottom-0 left-1/2 h-0. -translate-x-1/2 rounded-t-full bg-blue-600 transition-all duration-200 ${isActive ? "w-4/5 opacity-100" : "w-0 opacity-0"
+                            }`}
+                        />
+                      </button>
+                    </li>
+                  );
+                })}
 
-                <li
-                  onClick={handleToys}
-                  className="flex cursor-pointer flex-col items-center px-2.5 hover:underline"
-                >
-                  <img width="32" height="32" src={nav8} alt="Toys" />
-                  <span>Toys</span>
-                </li>
-
-                <li
-                  onClick={handleFood}
-                  className="flex cursor-pointer flex-col items-center px-2.5 hover:underline"
-                >
-                  <img width="32" height="32" src={nav9} alt="Food" />
-                  <span>Food</span>
-                </li>
-
-                <li
-                  onClick={handlAuto}
-                  className="flex cursor-pointer flex-col items-center px-2.5 hover:underline"
-                >
-                  <img width="32" height="32" src={nav10} alt="Auto" />
-                  <span>Auto</span>
-                </li>
-
-                <li
-                  onClick={handleSports}
-                  className="flex cursor-pointer flex-col items-center px-2.5 hover:underline"
-                >
-                  <img width="32" height="32" src={nav11} alt="Sports" />
-                  <span>Sports</span>
-                </li>
-
-                <li
-                  onClick={handleFurniture}
-                  className="flex cursor-pointer flex-col items-center px-2.5 hover:underline"
-                >
-                  <img width="32" height="32" src={nav12} alt="Furniture" />
-                  <span>Furniture</span>
-                </li>
-
-                <li
-                  onClick={handleBooks}
-                  className="flex cursor-pointer flex-col items-center px-2.5 hover:underline"
-                >
-                  <img width="32" height="32" src={nav13} alt="Books" />
-                  <span>Books</span>
-                </li>
-
-                <li
-                  onClick={handleTwowheels}
-                  className="flex cursor-pointer flex-col items-center px-2.5 hover:underline"
-                >
-                  <img width="32" height="32" src={nav14} alt="2 Wheels" />
-                  <span>2_Wheels</span>
-                </li>
               </ul>
             </div>
           </div>

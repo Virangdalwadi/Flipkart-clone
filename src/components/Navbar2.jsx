@@ -15,6 +15,7 @@ const Navbar2 = ({ setValue }) => {
     loading: suggestionsLoading,
     error: suggestionsError,
   } = useProductSuggestions(search);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const handleSuggestionClick = (item) => {
     setSearch("");
@@ -55,63 +56,103 @@ const Navbar2 = ({ setValue }) => {
   }
 
   return (
+
     <>
-      <div className="w-full bg-white fixed z-10 top-0 left-0 right-0 border-b border-gray-200 shadow-sm">
-        <div className="mx-auto w-full max-w-6xl px-2 sm:px-3 md:px-4 lg:px-6">
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-2 sm:gap-3 md:gap-4 py-2 sm:py-3">
+      <div className="fixed top-0 left-0 right-0 z-50 w-full border-b border-gray-200 bg-white shadow-sm">
+        <div className="relative mx-auto w-full max-w-6xl px-2 sm:px-3 md:px-4 lg:px-6">
 
-            {/* Logo Section */}
-            <div className="flex flex-row gap-2 sm:gap-3 items-center w-full md:w-auto min-w-0">
-              <div className="flex justify-center cursor-pointer rounded-lg items-center shrink-0 px-2 sm:px-3 py-1 sm:py-2 h-auto bg-[#ffe51f]">
-                <img width="24"
-                  height="24" className="size-5 sm:size-6 mr-1" src={logo} alt="Flipkart logo" />
-                <img width="60"
-                  height="20" className="h-4 sm:h-5 w-auto" src={name} alt="Flipkart wordmark" />
-              </div>
+          {/* Main Navbar Row */}
+          <div className="flex items-center gap-2 py-2 sm:gap-3 sm:py-3">
 
-              {/* SearchBar - Full width on mobile, auto on desktop */}
-              <div className="min-w-0 flex-1 md:flex-initial">
-                <SearchBar
-                  value={search}
-                  onChange={setSearch}
-                  onSubmitSuccess={handleFormSubmit}
-                  onClear={handleBack}
-                  onSuggestionClick={handleSuggestionClick}
-                  suggestions={suggestions}
-                  suggestionsLoading={suggestionsLoading}
-                  suggestionsError={suggestionsError}
-                />
-              </div>
+            {/* Logo */}
+            <div className="flex shrink-0 cursor-pointer items-center justify-center rounded-lg bg-[#ffe51f] px-2 py-1.5 sm:px-3">
+              <img
+                width="24"
+                height="24"
+                className="mr-1 size-5 sm:size-6"
+                src={logo}
+                alt="Flipkart logo"
+              />
+              <img
+                width="60"
+                height="20"
+                className="h-4 w-auto sm:h-5"
+                src={name}
+                alt="Flipkart wordmark"
+              />
             </div>
 
-            {/* Navigation Buttons Section */}
-            <div className="flex flex-row gap-1 sm:gap-2 items-center justify-start w-full md:w-auto flex-wrap">
+            {/* Search Bar */}
+            <div className="min-w-0 flex-1">
+              <SearchBar
+                value={search}
+                onChange={setSearch}
+                onSubmitSuccess={handleFormSubmit}
+                onClear={handleBack}
+                onSuggestionClick={handleSuggestionClick}
+                suggestions={suggestions}
+                suggestionsLoading={suggestionsLoading}
+                suggestionsError={suggestionsError}
+              />
+            </div>
+
+            {/* Mobile Hamburger Button */}
+            <button
+              type="button"
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
+              aria-expanded={mobileMenuOpen}
+              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-gray-800 transition-colors hover:bg-gray-100 lg:hidden"
+            >
+              {mobileMenuOpen ? (
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  className="h-6 w-6"
+                >
+                  <path d="M18 6 6 18M6 6l12 12" />
+                </svg>
+              ) : (
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  className="h-6 w-6"
+                >
+                  <path d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+              )}
+            </button>
+
+            {/* Desktop Navigation - Unchanged */}
+            <div className="hidden shrink-0 items-center gap-2 lg:flex">
+
               <NavLink to="/">
                 <button
-                  className="text-white cursor-pointer text-xs sm:text-sm bg-blue-600 hover:bg-blue-700 focus:ring-4 font-medium rounded-md px-2 sm:px-3 py-1 sm:py-1.5 transition-colors focus:outline-none whitespace-nowrap"
                   onClick={handleHomenavigation}
+                  className="rounded-md bg-blue-600 px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-blue-700"
                 >
                   Home
                 </button>
               </NavLink>
+
               {user ? (
                 <>
                   <NavLink to="/pages/profile">
-                    <button className="text-white cursor-pointer text-xs sm:text-sm bg-blue-600 hover:bg-blue-700 focus:ring-4 font-medium rounded-md px-2 sm:px-3 py-1 sm:py-1.5 transition-colors focus:outline-none whitespace-nowrap">
+                    <button className="rounded-md bg-blue-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-blue-700">
                       Profile
                     </button>
                   </NavLink>
-                  {/* {user.role === "admin" && (
-                    <NavLink
-                      to="/admin"
-                      className="text-white cursor-pointer text-xs sm:text-sm bg-blue-600 hover:bg-blue-700 focus:ring-4 font-medium rounded-md px-2 sm:px-3 py-1 sm:py-1.5 transition-colors focus:outline-none whitespace-nowrap"
-                    >
-                      Admin
-                    </NavLink>
-                  )} */}
+
                   <button
-                    onClick={async () => { await logout(); navigate("/"); }}
-                    className="text-white cursor-pointer text-xs sm:text-sm bg-blue-600 hover:bg-blue-700 focus:ring-4 font-medium rounded-md px-2 sm:px-3 py-1 sm:py-1.5 transition-colors focus:outline-none whitespace-nowrap"
+                    onClick={async () => {
+                      await logout();
+                      navigate("/");
+                    }}
+                    className="rounded-md bg-blue-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-blue-700"
                   >
                     Logout
                   </button>
@@ -120,30 +161,106 @@ const Navbar2 = ({ setValue }) => {
                 <>
                   <button
                     onClick={() => navigate("/pages/login", { state: { mode: "login" } })}
-                    className="text-white cursor-pointer text-xs sm:text-sm bg-blue-600 hover:bg-blue-700 focus:ring-4 font-medium rounded-md px-2 sm:px-3 py-1 sm:py-1.5 transition-colors focus:outline-none whitespace-nowrap"
+                    className="rounded-md bg-blue-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-blue-700"
                   >
                     Login
                   </button>
+
                   <button
                     onClick={() => navigate("/pages/login", { state: { mode: "register" } })}
-                    className="text-white cursor-pointer text-xs sm:text-sm bg-blue-600 hover:bg-blue-700 focus:ring-4 font-medium rounded-md px-2 sm:px-3 py-1 sm:py-1.5 transition-colors focus:outline-none whitespace-nowrap"
+                    className="rounded-md bg-blue-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-blue-700"
                   >
                     Register
                   </button>
                 </>
               )}
+
               <NavLink to="/pages/Cart">
-                <button
-                  className="text-white cursor-pointer text-xs sm:text-sm bg-blue-600 hover:bg-blue-700 focus:ring-4 font-medium rounded-md px-2 sm:px-3 py-1 sm:py-1.5 transition-colors focus:outline-none whitespace-nowrap"
-                >
+                <button className="rounded-md bg-blue-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-blue-700">
                   Cart
                 </button>
               </NavLink>
             </div>
           </div>
+
+          {/* Mobile Dropdown Menu */}
+          {mobileMenuOpen && (
+            <div className="absolute right-2 top-full z-50 mt-1 w-52 overflow-hidden rounded-xl border border-gray-200 bg-white shadow-xl lg:hidden">
+
+              <div className="flex flex-col p-2">
+
+                <NavLink
+                  to="/"
+                  onClick={() => {
+                    handleHomenavigation();
+                    setMobileMenuOpen(false);
+                  }}
+                  className="rounded-lg px-4 py-3 text-sm font-medium text-gray-700 hover:bg-blue-50 hover:text-blue-600"
+                >
+                  Home
+                </NavLink>
+
+                {user ? (
+                  <>
+                    <NavLink
+                      to="/pages/profile"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="rounded-lg px-4 py-3 text-sm font-medium text-gray-700 hover:bg-blue-50 hover:text-blue-600"
+                    >
+                      Profile
+                    </NavLink>
+
+                    <button
+                      onClick={async () => {
+                        setMobileMenuOpen(false);
+                        await logout();
+                        navigate("/");
+                      }}
+                      className="rounded-lg px-4 py-3 text-left text-sm font-medium text-gray-700 hover:bg-blue-50 hover:text-blue-600"
+                    >
+                      Logout
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <button
+                      onClick={() => {
+                        setMobileMenuOpen(false);
+                        navigate("/pages/login", { state: { mode: "login" } });
+                      }}
+                      className="rounded-lg px-4 py-3 text-left text-sm font-medium text-gray-700 hover:bg-blue-50 hover:text-blue-600"
+                    >
+                      Login
+                    </button>
+
+                    <button
+                      onClick={() => {
+                        setMobileMenuOpen(false);
+                        navigate("/pages/login", { state: { mode: "register" } });
+                      }}
+                      className="rounded-lg px-4 py-3 text-left text-sm font-medium text-gray-700 hover:bg-blue-50 hover:text-blue-600"
+                    >
+                      Register
+                    </button>
+                  </>
+                )}
+
+                <NavLink
+                  to="/pages/Cart"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="rounded-lg px-4 py-3 text-sm font-medium text-gray-700 hover:bg-blue-50 hover:text-blue-600"
+                >
+                  Cart
+                </NavLink>
+
+              </div>
+            </div>
+          )}
+
         </div>
       </div>
     </>
+
   );
 };
 

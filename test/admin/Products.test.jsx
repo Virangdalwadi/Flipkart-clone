@@ -5,7 +5,7 @@ import {
   createAdminProduct,
   createSellerProduct,
   deleteSellerProduct,
-  deactivateAdminProduct,
+  deleteAdminProduct,
   getAdminProducts,
   getSellerProducts,
   updateAdminProduct,
@@ -19,7 +19,7 @@ vi.mock("../../src/api/Productapi", () => ({
   createAdminProduct: vi.fn(),
   createSellerProduct: vi.fn(),
   deleteSellerProduct: vi.fn(),
-  deactivateAdminProduct: vi.fn(),
+  deleteAdminProduct: vi.fn(),
   getAdminProducts: vi.fn(),
   getSellerProducts: vi.fn(),
   updateAdminProduct: vi.fn(),
@@ -67,8 +67,8 @@ describe("admin product management page", () => {
     updateAdminProduct.mockResolvedValue(product);
     updateSellerProduct.mockResolvedValue(product);
     deleteSellerProduct.mockResolvedValue({ message: "Product deleted successfully" });
+    deleteAdminProduct.mockResolvedValue({ message: "Product deleted successfully" });
     updateAdminProductStatus.mockResolvedValue({ ...product, isActive: false });
-    deactivateAdminProduct.mockResolvedValue({ ...product, isActive: false });
   });
 
   test("loads and displays product details from the admin listing endpoint", async () => {
@@ -248,7 +248,7 @@ describe("admin product management page", () => {
     await waitFor(() => expect(getAdminProducts).toHaveBeenCalledTimes(2));
   });
 
-  test("sends boolean status changes and supports deactivation confirmation", async () => {
+  test("deactivates with the status API and confirms a distinct admin delete", async () => {
     const user = userEvent.setup();
     renderPage();
     await screen.findAllByText("Example phone");
@@ -257,18 +257,114 @@ describe("admin product management page", () => {
     await waitFor(() => {
       expect(updateAdminProductStatus).toHaveBeenCalledWith(42, false);
     });
+    expect(await screen.findByRole("status")).toHaveTextContent(
+      "Product deactivated successfully.",
+    );
 
     await user.click(screen.getAllByRole("button", { name: "Delete" })[0]);
     const confirmation = screen.getByRole("alertdialog");
     expect(confirmation).toHaveTextContent(
-      "will be hidden from the public storefront",
+      "removed from the admin catalog and public storefront",
+    );
+    expect(confirmation).toHaveTextContent(
+      "linked cart, order, and conversation history will be retained",
+    );
+    expect(within(confirmation).getByRole("heading")).toHaveTextContent(
+      "Delete product?",
     );
     await user.click(
-      within(confirmation).getByRole("button", { name: "Deactivate", exact: true }),
+      within(confirmation).getByRole("button", { name: "Delete product" }),
     );
     await waitFor(() => {
-      expect(deactivateAdminProduct).toHaveBeenCalledWith(42);
+      expect(deleteAdminProduct).toHaveBeenCalledWith(42);
     });
+    expect(updateAdminProductStatus).toHaveBeenCalledTimes(1);
+    await waitFor(() => expect(getAdminProducts).toHaveBeenCalledTimes(3));
+    expect(await screen.findByRole("status")).toHaveTextContent(
+      "Product deleted successfully.",
+    );
+  });
+
+  test("activates inactive products through the status API", async () => {
+    getAdminProducts.mockResolvedValue(listing([{ ...product, isActive: false }]));
+    const user = userEvent.setup();
+    renderPage();
+    await screen.findAllByText("Example phone");
+
+    await user.click(screen.getAllByRole("button", { name: "Activate" })[0]);
+
+    await waitFor(() => {
+      expect(updateAdminProductStatus).toHaveBeenCalledWith(42, true);
+    });
+    expect(await screen.findByRole("status")).toHaveTextContent(
+      "Product activated successfully.",
+    );
+    await waitFor(() => expect(getAdminProducts).toHaveBeenCalledTimes(2));
+  });
+
+  test("prevents duplicate admin delete submissions while the request is pending", async () => {
+    let finishDelete;
+    deleteAdminProduct.mockReturnValueOnce(
+      new Promise((resolve) => {
+        finishDelete = resolve;
+      }),
+    );
+    renderPage();
+    await screen.findAllByText("Example phone");
+    fireEvent.click(screen.getAllByRole("button", { name: "Delete" })[0]);
+
+    const confirmButton = within(screen.getByRole("alertdialog")).getByRole(
+      "button",
+      { name: "Delete product" },
+    );
+    fireEvent.click(confirmButton);
+    fireEvent.click(confirmButton);
+
+    expect(deleteAdminProduct).toHaveBeenCalledTimes(1);
+    expect(confirmButton).toBeDisabled();
+    finishDelete({ message: "Product deleted successfully" });
+    await waitFor(() =>
+      expect(screen.queryByRole("alertdialog")).not.toBeInTheDocument(),
+    );
+  });
+
+  test("shows admin delete errors and keeps the confirmation available", async () => {
+    deleteAdminProduct.mockRejectedValueOnce({
+      response: { status: 500, data: { message: "Unable to delete product" } },
+    });
+    const user = userEvent.setup();
+    renderPage();
+    await screen.findAllByText("Example phone");
+    await user.click(screen.getAllByRole("button", { name: "Delete" })[0]);
+    await user.click(
+      within(screen.getByRole("alertdialog")).getByRole("button", {
+        name: "Delete product",
+      }),
+    );
+
+    expect(await screen.findByRole("alert")).toHaveTextContent(
+      "Unable to delete product",
+    );
+    expect(screen.getByRole("alertdialog")).toBeInTheDocument();
+    expect(
+      within(screen.getByRole("alertdialog")).getByRole("button", {
+        name: "Delete product",
+      }),
+    ).toBeEnabled();
+  });
+
+  test("shows admin status update errors", async () => {
+    updateAdminProductStatus.mockRejectedValueOnce({
+      response: { status: 500, data: { message: "Unable to update status" } },
+    });
+    const user = userEvent.setup();
+    renderPage();
+    await screen.findAllByText("Example phone");
+    await user.click(screen.getAllByRole("button", { name: "Deactivate" })[0]);
+
+    expect(await screen.findByRole("alert")).toHaveTextContent(
+      "Unable to update status",
+    );
   });
 
   test("shows backend request errors", async () => {
@@ -299,6 +395,6 @@ describe("admin product management page", () => {
     );
 
     await waitFor(() => expect(deleteSellerProduct).toHaveBeenCalledWith(42));
-    expect(deactivateAdminProduct).not.toHaveBeenCalled();
+    expect(deleteAdminProduct).not.toHaveBeenCalled();
   });
 });

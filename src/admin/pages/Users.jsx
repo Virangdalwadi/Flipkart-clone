@@ -118,15 +118,6 @@ function UserDetailsDialog({ user, loading, error, onClose }) {
             </div>
           </dl>
         ) : null}
-        {/* <div className="mt-6 flex justify-end">
-          <button
-            type="button"
-            onClick={onClose}
-            className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50"
-          >
-            Close
-          </button>
-        </div> */}
       </section>
     </div>
   );
@@ -193,6 +184,7 @@ export default function Users() {
   const [totalPages, setTotalPages] = useState(0);
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
   const [role, setRole] = useState("");
   const [status, setStatus] = useState("");
   const [reload, setReload] = useState(0);
@@ -207,7 +199,8 @@ export default function Users() {
 
   useEffect(() => {
     const controller = new AbortController();
-    const timer = setTimeout(async () => {
+
+    (async () => {
       setLoading(true);
       setError("");
       try {
@@ -215,7 +208,7 @@ export default function Users() {
           {
             page,
             limit: PAGE_SIZE,
-            ...(search.trim() ? { search: search.trim() } : {}),
+            ...(debouncedSearch ? { search: debouncedSearch } : {}),
             ...(role ? { role } : {}),
             ...(status ? { status } : {}),
           },
@@ -235,13 +228,10 @@ export default function Users() {
       } finally {
         if (!controller.signal.aborted) setLoading(false);
       }
-    }, 200);
+    })();
 
-    return () => {
-      clearTimeout(timer);
-      controller.abort();
-    };
-  }, [page, search, role, status, reload]);
+    return () => controller.abort();
+  }, [page, debouncedSearch, role, status, reload]);
 
   useEffect(() => {
     if (!selectedUserId) return undefined;
@@ -263,11 +253,20 @@ export default function Users() {
     return () => controller.abort();
   }, [selectedUserId]);
 
-  const handleFilterChange = (setter, value) => {
-    setter(value);
-    setPage(1);
-    setNotice("");
-  };
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      const next = search.trim();
+      setDebouncedSearch((current) => {
+        if (current !== next) {
+          setPage(1);
+          setNotice("");
+        }
+        return next;
+      });
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [search]);
 
   const confirmStatusChange = async () => {
     if (!pendingUser) return;
@@ -286,6 +285,12 @@ export default function Users() {
     } finally {
       setStatusSaving(false);
     }
+  };
+
+  const handleFilterChange = (setter, value) => {
+    setter(value);
+    setPage(1);
+    setNotice("");
   };
 
   const firstResult = total ? (page - 1) * PAGE_SIZE + 1 : 0;
@@ -307,7 +312,7 @@ export default function Users() {
             aria-label="Search users"
             type="search"
             value={search}
-            onChange={(event) => handleFilterChange(setSearch, event.target.value)}
+            onChange={(event) => setSearch(event.target.value)}
             placeholder="Name or email"
             className={`${fieldClass} mt-1`}
           />
@@ -323,6 +328,7 @@ export default function Users() {
             <option value="">All roles</option>
             <option value="user">Customer</option>
             <option value="admin">Admin</option>
+            <option value="seller">Seller</option>
           </select>
         </label>
         <label className="text-sm font-medium text-gray-700">
@@ -401,7 +407,11 @@ export default function Users() {
                       <p className="mt-0.5 text-gray-500">{user.email}</p>
                     </td>
                     <td className="px-4 py-3 capitalize text-gray-700">
-                      {user.role === "admin" ? "Admin" : "Customer"}
+                      {user.role === "admin"
+                        ? "Admin"
+                        : user.role === "seller"
+                          ? "Seller"
+                          : "Customer"}
                     </td>
                     <td className="px-4 py-3"><StatusBadge isActive={user.isActive} /></td>
                     <td className="px-4 py-3 text-gray-600">

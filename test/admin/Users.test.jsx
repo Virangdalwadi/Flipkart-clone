@@ -86,6 +86,30 @@ describe("admin user management", () => {
     });
   });
 
+  test("filters and labels seller accounts", async () => {
+    getAdminUsers.mockResolvedValue(
+      listing([{ ...customer, role: "seller" }]),
+    );
+    render(<Users />);
+
+    await screen.findByText("Taylor Customer");
+    fireEvent.change(screen.getByLabelText("Filter by role"), {
+      target: { value: "seller" },
+    });
+
+    await waitFor(() => {
+      expect(getAdminUsers).toHaveBeenLastCalledWith(
+        expect.objectContaining({ page: 1, limit: 10, role: "seller" }),
+        expect.objectContaining({ signal: expect.any(AbortSignal) }),
+      );
+    });
+    expect(
+      within(screen.getByRole("row", { name: /Taylor Customer/ })).getByText(
+        "Seller",
+      ),
+    ).toBeInTheDocument();
+  });
+
   test("requests the next backend page when pagination changes", async () => {
     getAdminUsers.mockResolvedValue(
       listing([customer], { total: 25, totalPages: 3 }),
